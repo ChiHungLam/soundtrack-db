@@ -1,7 +1,6 @@
-#summary One-sentence summary of this page.
+#summary Some basic knowledge requirements.
 
 = Explanation =
 
 A good Google code project introduction you'll find here:<br>
 [https://code.google.com/p/support/wiki/GettingStarted]
-
