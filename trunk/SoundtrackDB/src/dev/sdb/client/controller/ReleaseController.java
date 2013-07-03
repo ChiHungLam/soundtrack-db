@@ -24,13 +24,13 @@ public class ReleaseController extends AbstractSearchController {
 		return new ReleaseWidget();
 	}
 
-	@Override public ReleaseWidget getWidget() {
-		return (ReleaseWidget) super.getWidget();
+	@Override public ReleaseWidget getWidget(String state) {
+		return (ReleaseWidget) super.getWidget(state);
 	}
 
 	private void setUp() {
 
-		ReleaseWidget queryWidget = getWidget();
+		ReleaseWidget queryWidget = getWidget(null);
 
 		final SearchField search = queryWidget.getSearchField();
 		final ReleaseResultField result = queryWidget.getResultField();

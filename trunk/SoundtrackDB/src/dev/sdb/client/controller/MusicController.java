@@ -24,13 +24,13 @@ public class MusicController extends AbstractSearchController {
 		return new MusicWidget();
 	}
 
-	@Override public MusicWidget getWidget() {
-		return (MusicWidget) super.getWidget();
+	@Override public MusicWidget getWidget(String state) {
+		return (MusicWidget) super.getWidget(state);
 	}
 
 	private void setUp() {
 
-		MusicWidget queryWidget = getWidget();
+		MusicWidget queryWidget = getWidget(null);
 
 		final SearchField search = queryWidget.getSearchField();
 		final MusicResultField result = queryWidget.getResultField();

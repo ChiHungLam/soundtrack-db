@@ -75,7 +75,7 @@ public class SoundtrackDB implements EntryPoint {
 			return null;
 
 		//		String parameters = parseParament;
-		Widget widget = controller.getWidget();
+		Widget widget = controller.getWidget(historyToken);
 
 		return widget;
 	}

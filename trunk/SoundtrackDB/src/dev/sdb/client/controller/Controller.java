@@ -12,6 +12,6 @@ public interface Controller {
 
 	public static final int VISIBLE_RANGE_LENGTH = 20;
 
-	Widget getWidget();
+	Widget getWidget(String state);
 
 }

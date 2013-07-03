@@ -5,8 +5,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 
-import dev.sdb.client.ui.search.QueryWidget;
 import dev.sdb.client.ui.search.QueryResultField;
+import dev.sdb.client.ui.search.QueryWidget;
 import dev.sdb.client.ui.search.SearchEvent;
 import dev.sdb.client.ui.search.SearchEventHandler;
 import dev.sdb.client.ui.search.SearchField;
@@ -24,13 +24,13 @@ public class QueryController extends AbstractSearchController {
 		return new QueryWidget();
 	}
 
-	@Override public QueryWidget getWidget() {
-		return (QueryWidget) super.getWidget();
+	@Override public QueryWidget getWidget(String state) {
+		return (QueryWidget) super.getWidget(state);
 	}
 
 
 	private void setUp() {
-		QueryWidget queryWidget = getWidget();
+		QueryWidget queryWidget = getWidget(null);
 
 		final SearchField search = queryWidget.getSearchField();
 		final QueryResultField result = queryWidget.getResultField();
