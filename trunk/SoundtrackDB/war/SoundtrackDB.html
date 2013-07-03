@@ -1,0 +1,121 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the     -->
+<!-- browser's rendering engine into                -->
+<!-- "Standards Mode". Replacing this declaration   -->
+<!-- with a "Quirks Mode" doctype is not supported. -->
+
+<html>
+	<head>
+	
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+		<!--                                           -->
+		<!-- Any title is fine                         -->
+		<!--                                           -->
+		<title>Soundtrack DB</title>
+		
+		<!--                                           -->
+		<!-- This script loads your compiled module.   -->
+		<!-- If you add any GWT meta tags, they must   -->
+		<!-- be added before this line.                -->
+		<!--                                           -->
+		<script type="text/javascript" language="javascript" src="soundtrackdb/soundtrackdb.nocache.js"></script>
+		
+    	<!--                                                               -->
+    	<!-- Consider inlining CSS to reduce the number of requested files -->
+    	<!--                                                               -->
+		<link type="text/css" rel="stylesheet" href="SoundtrackDB.css">
+
+		<style type="text/css">
+			#stage {
+				background-color: blue;
+				text-align: center;
+				
+				/* needed for FF */
+				margin: 0;
+				margin-right: 0px;
+				
+				position: fixed;
+				top: 0px;
+				left: 0px;
+				bottom: 0px;
+				right: 0px;
+			}
+			
+			#header_area {
+				background-color: white;
+				
+				position: absolute;
+				left: 0px;
+				right: 0px;
+				top: 0px;
+				height: 100px;
+			}
+			#navigator_area {
+ 				background-color: white;
+				border-color: black;
+				border-style: solid;
+				border-width: 1px;
+				
+				display: block;
+
+				position: absolute;
+				top: 100px;
+				bottom: 55px;
+				left: 0px;
+				width: 150px;
+			}
+			#content_area {
+				padding-left: 5px;
+				padding-right: 5px;
+				background-color: white;
+				
+				display: inline-block;
+
+				position: absolute;	
+				top: 100px;
+				left: 150px;
+				right: 0px;
+				bottom: 55px;
+			}
+			#footer_area {
+				background-color: white;
+				
+				position: absolute;	
+				bottom: 0px;
+				left: 0px;
+				right: 0px;
+				height: 55px;
+			}
+		</style>
+
+	</head>
+
+	<!--                                           -->
+	<!-- The body can have arbitrary html, or      -->
+	<!-- you can leave the body empty if you want  -->
+	<!-- to create a completely dynamic UI.        -->
+	<!--                                           -->
+	<body id="stage">
+
+	    <!-- OPTIONAL: include this if you want history support -->
+		<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
+    
+		<!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+		<noscript>
+			<div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+				Your web browser must have JavaScript enabled
+				in order for this application to display correctly.
+			</div>
+		</noscript>
+
+			<div id="content_area"></div>
+
+			<div id="navigator_area"></div>
+
+			<div id="footer_area"><h4>(P) 2013 JooceWare</h4></div>
+			
+			<div id="header_area"><h1>Larry's Soundtrack DB</h1></div>
+
+	</body>
+</html>
