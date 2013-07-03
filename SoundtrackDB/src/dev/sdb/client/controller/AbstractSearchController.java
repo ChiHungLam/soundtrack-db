@@ -46,7 +46,7 @@ public abstract class AbstractSearchController implements Controller {
 
 	protected abstract Widget createWidget();
 
-	public Widget getWidget() {
+	public Widget getWidget(String state) {
 		if (this.widget == null)
 			this.widget = createWidget();
 		return this.widget;
