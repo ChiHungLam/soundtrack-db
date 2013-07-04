@@ -3,10 +3,9 @@ package dev.sdb.client.ui.search;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ReleaseWidget extends Composite {
+public class ReleaseWidget extends AbstractQueryWidget {
 
 	interface ReleaseWidgetUiBinder extends UiBinder<Widget, ReleaseWidget> {}
 	private static ReleaseWidgetUiBinder uiBinder = GWT.create(ReleaseWidgetUiBinder.class);

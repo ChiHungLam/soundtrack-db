@@ -14,4 +14,5 @@ public interface Controller {
 
 	Widget getWidget(String state);
 
+	ControllerType getType();
 }

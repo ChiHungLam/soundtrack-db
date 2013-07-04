@@ -12,6 +12,10 @@ public class HomeController implements Controller {
 		super();
 	}
 
+	@Override public ControllerType getType() {
+		return ControllerType.HOME;
+	}
+
 	@Override public Widget getWidget(String state) {
 		if (this.homeWidget == null)
 			this.homeWidget = new HomeWidget();

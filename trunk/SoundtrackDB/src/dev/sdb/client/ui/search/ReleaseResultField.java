@@ -96,5 +96,7 @@ public class ReleaseResultField extends AbstractResultField {
 	public void setElementVisibility(int numRows) {
 		this.tablePanel.setVisible(numRows > 0);
 		this.emptyResultLabel.setVisible(numRows == 0);
+		if (numRows < 0)
+			setText("");
 	}
 }

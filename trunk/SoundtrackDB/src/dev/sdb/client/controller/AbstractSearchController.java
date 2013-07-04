@@ -16,6 +16,7 @@ import com.google.gwt.view.client.Range;
 
 import dev.sdb.client.service.SearchService;
 import dev.sdb.client.service.SearchServiceAsync;
+import dev.sdb.client.ui.search.AbstractQueryWidget;
 import dev.sdb.client.ui.search.AbstractResultField;
 import dev.sdb.client.ui.search.SearchField;
 import dev.sdb.shared.model.SearchResult;
@@ -31,27 +32,56 @@ public abstract class AbstractSearchController implements Controller {
 	private static final SearchServiceAsync SEARCH_SERVICE = GWT.create(SearchService.class);
 
 	private String lastSearchTerm;
-	private SearchScope lastSearchScope;
+	private SearchScope scope;
 
-	private Widget widget;
+	private AbstractQueryWidget widget;
 
 	public AbstractSearchController(SearchScope scope) {
 		super();
-		this.lastSearchScope = scope;
+		this.scope = scope;
 	}
 
 	protected void setLastSearchTerm(String lastSearchTerm) {
 		this.lastSearchTerm = lastSearchTerm;
 	}
 
-	protected abstract Widget createWidget();
+	protected abstract AbstractQueryWidget createQueryWidget(String term);
 
 	public Widget getWidget(String state) {
-		if (this.widget == null)
-			this.widget = createWidget();
-		return this.widget;
+		if (state == null || state.isEmpty())
+			return getQueryWidget(null);
+
+		if (state.startsWith("search=")) {
+			return getQueryWidget(state.substring(7));
+		} else {
+			return getQueryWidget("");
+		}
 	}
 
+	private AbstractQueryWidget getQueryWidget(String term) {
+		if (this.widget == null) {
+			this.widget = createQueryWidget(term);
+			if (term != null && !term.isEmpty()) {
+				this.lastSearchTerm = term;
+				doSearchOnServer(this.widget.getSearchField(), this.widget.getResultField());
+			}
+		} else {
+			if (!this.widget.getSearchField().getText().equalsIgnoreCase(term)) {
+				if (term == null)
+					term = "";
+
+				this.widget.getSearchField().setText(term);
+				this.lastSearchTerm = term;
+
+				if (term.isEmpty()) {
+					this.widget.getResultField().setElementVisibility(-1);
+				} else {
+					doSearchOnServer(this.widget.getSearchField(), this.widget.getResultField());
+				}
+			}
+		}
+		return this.widget;
+	}
 
 
 	protected void doSearchOnServer(final SearchField search, final AbstractResultField result) {
@@ -70,7 +100,7 @@ public abstract class AbstractSearchController implements Controller {
 		search.setEnabled(false);
 
 		// Then, we send the input to the server.
-		SEARCH_SERVICE.search(this.lastSearchTerm, this.lastSearchScope, range, sort, new AsyncCallback<SearchResult>() {
+		SEARCH_SERVICE.search(this.lastSearchTerm, this.scope, range, sort, new AsyncCallback<SearchResult>() {
 
 			public void onSuccess(SearchResult searchResult) {
 				int total = searchResult.getTotalLength();

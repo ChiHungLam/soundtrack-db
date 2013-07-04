@@ -30,14 +30,15 @@ public class SoundtrackDB implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		ControllerType startingType = getStartingType();
+		String startingToken = getStartingToken();
+		//		ControllerType startingType = getStartingType(startingToken);
 		
 		Widget navigatorWidget = createNavigatorWidget();
 
 		final RootPanel navigatorArea = RootPanel.get("navigator_area");
 		navigatorArea.add(navigatorWidget);
 		
-		setContentArea(startingType.getToken());
+		setContentArea(startingToken);
 
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {
 			public void onValueChange(ValueChangeEvent<String> event) {
@@ -50,6 +51,7 @@ public class SoundtrackDB implements EntryPoint {
 			}
 		});
 	}
+
 
 	private void setContentArea(String token) {
 		this.currentContent = token;
@@ -67,15 +69,20 @@ public class SoundtrackDB implements EntryPoint {
 		contentArea.add(contentWidget);
 	}
 
-	private ControllerType getStartingType() {
+	private String getStartingToken() {
 		String href = Window.Location.getHref();
-		System.out.println(href);
+		System.out.println("Starting href: " + href);
 		int pos = href.indexOf("#");
 		if (pos == -1)
-			return ControllerType.HOME;
+			return "";
 
-		return ControllerType.getByToken(href.substring(pos + 1));
+		return href.substring(pos + 1);
 	}
+
+	//	private ControllerType getStartingType(String startingToken) {
+	//		ControllerType type = ControllerType.getByToken(startingToken);
+	//		return (type == null) ? ControllerType.HOME : type;
+	//	}
 
 	protected Widget getContentWidget(String historyToken) {
 		ControllerType type = getControllerType(historyToken);

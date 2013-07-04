@@ -1,10 +1,10 @@
 package dev.sdb.client.controller;
 
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 
+import dev.sdb.client.ui.search.AbstractQueryWidget;
 import dev.sdb.client.ui.search.ReleaseResultField;
 import dev.sdb.client.ui.search.ReleaseWidget;
 import dev.sdb.client.ui.search.SearchEvent;
@@ -17,22 +17,18 @@ public class ReleaseController extends AbstractSearchController {
 
 	public ReleaseController() {
 		super(SearchScope.RELEASES);
-		setUp();
 	}
 
-	@Override protected Widget createWidget() {
-		return new ReleaseWidget();
+	@Override public ControllerType getType() {
+		return ControllerType.RELEASE;
 	}
 
-	@Override public ReleaseWidget getWidget(String state) {
-		return (ReleaseWidget) super.getWidget(state);
-	}
-
-	private void setUp() {
-
-		ReleaseWidget queryWidget = getWidget(null);
+	@Override protected AbstractQueryWidget createQueryWidget(String term) {
+		ReleaseWidget queryWidget = new ReleaseWidget();
 
 		final SearchField search = queryWidget.getSearchField();
+		search.setText(term);
+
 		final ReleaseResultField result = queryWidget.getResultField();
 
 		// Create a data provider.
@@ -58,5 +54,7 @@ public class ReleaseController extends AbstractSearchController {
 				doSearchOnServer(search, result);
 			}
 		});
+
+		return queryWidget;
 	}
 }
