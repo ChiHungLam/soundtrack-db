@@ -34,15 +34,15 @@ public class SoundtrackDB implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		String startingToken = getStartingToken();
-		
+		//attaching navigator
 		Widget navigatorWidget = createNavigatorWidget();
+		RootPanel.get("navigator_area").add(navigatorWidget);
 
-		final RootPanel navigatorArea = RootPanel.get("navigator_area");
-		navigatorArea.add(navigatorWidget);
-		
+		//attaching content
+		String startingToken = getStartingToken();
 		setContentArea(startingToken);
 
+		//preparing history support
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				String historyToken = event.getValue();
@@ -65,13 +65,12 @@ public class SoundtrackDB implements EntryPoint {
 	private void setContentArea(String token) {
 		setToken(token);
 
-		Widget contentWidget = getContentWidget(token);
-		
 		final RootPanel contentArea = RootPanel.get("content_area");
 
 		while (contentArea.getWidgetCount() > 0)
 			contentArea.remove(0);
 
+		Widget contentWidget = getContentWidget(token);
 		if (contentWidget == null)
 			return;
 
@@ -90,12 +89,12 @@ public class SoundtrackDB implements EntryPoint {
 
 	protected Widget getContentWidget(String historyToken) {
 		ControllerType type = getControllerType(historyToken);
-		String state = getControllerState(type, historyToken);
 
 		Controller controller = getController(type);
 		if (controller == null)
 			return null;
 
+		String state = getControllerState(type, historyToken);
 		Widget widget = controller.getWidget(state);
 
 		return widget;
@@ -107,8 +106,11 @@ public class SoundtrackDB implements EntryPoint {
 		if (historyToken == null || historyToken.isEmpty())
 			return null;
 
-		if (historyToken.startsWith("?")) {
-			if (historyToken.length() == 1)
+		int pos = historyToken.indexOf("?");
+		int tokenLength = historyToken.length();
+
+		if (pos == 0) {
+			if (tokenLength == 1)
 				return null;
 			return historyToken.substring(1);
 		}
@@ -120,8 +122,7 @@ public class SoundtrackDB implements EntryPoint {
 			return null;
 		}
 
-		int pos = historyToken.indexOf("?");
-		if (pos == -1 || pos == (historyToken.length() - 1))
+		if (pos == -1 || pos == (tokenLength - 1))
 			return null;
 
 		return historyToken.substring(pos + 1);
