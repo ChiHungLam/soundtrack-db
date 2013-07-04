@@ -28,7 +28,7 @@ public abstract class AbstractSearchController implements Controller {
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting service.
 	 */
-	private final SearchServiceAsync searchService = GWT.create(SearchService.class);
+	private static final SearchServiceAsync SEARCH_SERVICE = GWT.create(SearchService.class);
 
 	private String lastSearchTerm;
 	private SearchScope lastSearchScope;
@@ -70,7 +70,7 @@ public abstract class AbstractSearchController implements Controller {
 		search.setEnabled(false);
 
 		// Then, we send the input to the server.
-		this.searchService.search(this.lastSearchTerm, this.lastSearchScope, range, sort, new AsyncCallback<SearchResult>() {
+		SEARCH_SERVICE.search(this.lastSearchTerm, this.lastSearchScope, range, sort, new AsyncCallback<SearchResult>() {
 
 			public void onSuccess(SearchResult searchResult) {
 				int total = searchResult.getTotalLength();

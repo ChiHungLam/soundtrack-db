@@ -14,7 +14,7 @@
 			<g:VerticalPanel ui:field="tablePanel">
 				<c:CellTable ui:field="cellTable"/>
 				<g:Cell horizontalAlignment="ALIGN_CENTER">
-					<c:SimplePager location="CENTER" ui:field="pager"/>
+					<c:SimplePager ui:field="pager"/>
 				</g:Cell>
 			</g:VerticalPanel>
 			<g:Label ui:field="emptyResultLabel" text="Es wurden keine Einträge gefunden."/>

@@ -39,45 +39,45 @@ import dev.sdb.shared.model.SearchScope;
 		SearchResult searchResult = db.querySoundtrackContainer(term, scope, range, sort);
 
 		return searchResult;
-	}
-
-	public SearchResult searchMusic(String term, final Range range, final SearchResultSort sort) throws IllegalArgumentException, IOException {
-		// Verify that the input is valid. 
-		if (!FieldVerifier.isValidSearchTerm(term)) {
-			// If the input is not valid, throw an IllegalArgumentException back to
-			// the client.
-			throw new IllegalArgumentException("Bitte mindestens " + FieldVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
 		}
 
-		// Escape data from the client to avoid cross-site script vulnerabilities.
-		term = escapeHtml(term);
-
-		//		MockupDatabase db = new MockupDatabase();
-		Database db = new Database();
-
-		SearchResult searchResult = db.querySoundtrackContainer(term, SearchScope.MUSIC_ONLY, range, sort);
-
-		return searchResult;
-	}
-
-	public SearchResult searchReleases(String term, final Range range, final SearchResultSort sort) throws IllegalArgumentException, IOException {
-		// Verify that the input is valid. 
-		if (!FieldVerifier.isValidSearchTerm(term)) {
-			// If the input is not valid, throw an IllegalArgumentException back to
-			// the client.
-			throw new IllegalArgumentException("Bitte mindestens " + FieldVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
-		}
-
-		// Escape data from the client to avoid cross-site script vulnerabilities.
-		term = escapeHtml(term);
-
-		//		MockupDatabase db = new MockupDatabase();
-		Database db = new Database();
-
-		SearchResult searchResult = db.querySoundtrackContainer(term, SearchScope.RELEASES_ONLY, range, sort);
-
-		return searchResult;
-	}
+	//	public SearchResult searchMusic(String term, final Range range, final SearchResultSort sort) throws IllegalArgumentException, IOException {
+	//		// Verify that the input is valid. 
+	//		if (!FieldVerifier.isValidSearchTerm(term)) {
+	//			// If the input is not valid, throw an IllegalArgumentException back to
+	//			// the client.
+	//			throw new IllegalArgumentException("Bitte mindestens " + FieldVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
+	//		}
+	//
+	//		// Escape data from the client to avoid cross-site script vulnerabilities.
+	//		term = escapeHtml(term);
+	//
+	//		//		MockupDatabase db = new MockupDatabase();
+	//		Database db = new Database();
+	//
+	//		SearchResult searchResult = db.querySoundtrackContainer(term, SearchScope.MUSIC_ONLY, range, sort);
+	//
+	//		return searchResult;
+	//	}
+	//
+	//	public SearchResult searchReleases(String term, final Range range, final SearchResultSort sort) throws IllegalArgumentException, IOException {
+	//		// Verify that the input is valid. 
+	//		if (!FieldVerifier.isValidSearchTerm(term)) {
+	//			// If the input is not valid, throw an IllegalArgumentException back to
+	//			// the client.
+	//			throw new IllegalArgumentException("Bitte mindestens " + FieldVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
+	//		}
+	//
+	//		// Escape data from the client to avoid cross-site script vulnerabilities.
+	//		term = escapeHtml(term);
+	//
+	//		//		MockupDatabase db = new MockupDatabase();
+	//		Database db = new Database();
+	//
+	//		SearchResult searchResult = db.querySoundtrackContainer(term, SearchScope.RELEASES_ONLY, range, sort);
+	//
+	//		return searchResult;
+	//	}
 
 	/**
 	 * Escape an html string. Escaping data received from the client helps to

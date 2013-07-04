@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,8 +22,8 @@ public class MusicResultField extends AbstractResultField {
 	interface MusicResultFieldUiBinder extends UiBinder<Widget, MusicResultField> {}
 	private static MusicResultFieldUiBinder uiBinder = GWT.create(MusicResultFieldUiBinder.class);
 
-	@UiField CellTable<SoundtrackContainer> cellTable;
-	@UiField SimplePager pager;
+	@UiField(provided = true) CellTable<SoundtrackContainer> cellTable;
+	@UiField(provided = true) SimplePager pager;
 	@UiField Label infoLabel;
 	@UiField VerticalPanel tablePanel;
 	@UiField Label emptyResultLabel;
@@ -30,6 +31,10 @@ public class MusicResultField extends AbstractResultField {
 	public MusicResultField() {
 		super();
 		this.cellTable = new CellTable<SoundtrackContainer>();
+
+		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
+		this.pager = new SimplePager(TextLocation.CENTER, pagerResources, true, 1000, true);
+
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.pager.setDisplay(this.cellTable);
