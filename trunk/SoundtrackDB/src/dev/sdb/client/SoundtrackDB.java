@@ -12,8 +12,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.controller.Controller;
+import dev.sdb.client.controller.ControllerType;
 import dev.sdb.client.controller.MusicController;
-import dev.sdb.client.controller.QueryController;
 import dev.sdb.client.controller.ReleaseController;
 import dev.sdb.client.ui.NavigatorWidget;
 
@@ -23,7 +23,7 @@ import dev.sdb.client.ui.NavigatorWidget;
 public class SoundtrackDB implements EntryPoint {
 
 	private String currentContent;
-	private static final Map<String, Controller> CONTROLLER_MAP = new HashMap<String, Controller>();
+	private static final Map<ControllerType, Controller> CONTROLLER_MAP = new HashMap<ControllerType, Controller>();
 	
 	/**
 	 * This is the entry point method.
@@ -70,38 +70,90 @@ public class SoundtrackDB implements EntryPoint {
 	protected Widget getContentWidget(String historyToken) {
 		this.currentContent = historyToken;
 
-		Controller controller = getController(this.currentContent);
+		ControllerType type = getControllerType(historyToken);
+		String state = getControllerState(type, historyToken);
+
+		Controller controller = getController(type);
 		if (controller == null)
 			return null;
 
-		//		String parameters = parseParament;
-		Widget widget = controller.getWidget(historyToken);
+		Widget widget = controller.getWidget(state);
 
 		return widget;
 	}
 
-	private Controller getController(String historyToken) {
-		Controller controller = CONTROLLER_MAP.get(historyToken);
+	private String getControllerState(ControllerType type, String historyToken) {
+		assert (type != null);
+
+		if (historyToken == null || historyToken.isEmpty())
+			return null;
+
+		if (historyToken.startsWith("?")) {
+			if (historyToken.length() == 1)
+				return null;
+			return historyToken.substring(1);
+		}
+
+		String token = type.getToken();
+
+		if (!historyToken.startsWith(token)) {
+			System.err.println("given ControllerType '" + type + "' does not match historyToken '" + historyToken + "'");
+			return null;
+		}
+
+		int pos = historyToken.indexOf("?");
+		if (pos == -1 || pos == (historyToken.length() - 1))
+			return null;
+
+		return historyToken.substring(pos + 1);
+	}
+
+	private ControllerType getControllerType(String historyToken) {
+		ControllerType type = ControllerType.getByToken(historyToken);
+		if (type == null)
+			type = ControllerType.HOME;
+		return type;
+	}
+
+	protected Controller getController(ControllerType type) {
+		assert (type != null);
+
+		Controller controller = CONTROLLER_MAP.get(type);
 		if (controller != null)
 			return controller;
 
-		// Parse the history token
-		if (historyToken.startsWith("search")) {
-			controller = new QueryController();
+		switch (type) {
+		case HOME:
 
-		} else if (historyToken.startsWith("music")) {
-			controller = new MusicController();
-
-		} else if (historyToken.startsWith("release")) {
+			break;
+		case RELEASE:
 			controller = new ReleaseController();
+			break;
+		case MUSIC:
+			controller = new MusicController();
+			break;
+		case SOUNDTRACK:
+			controller = null; // not yet
+			break;
+		case SERIES:
+			controller = null; // not yet
+			break;
 
-		} else if (historyToken.startsWith("series")) {
-			controller = null;
+		default:
+			System.err.println("unknown ControllerType: " + type);
+			// load the home page
+			return getController(ControllerType.HOME);
 		}
+
+		// "search"
+		// "music"
+		// "release"
+		// "series"
+
 		if (controller == null)
 			return null;
 
-		CONTROLLER_MAP.put(this.currentContent, controller);
+		CONTROLLER_MAP.put(type, controller);
 		return controller;
 	}
 	private Widget createNavigatorWidget() {

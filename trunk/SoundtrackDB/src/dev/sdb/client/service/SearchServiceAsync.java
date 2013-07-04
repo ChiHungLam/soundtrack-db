@@ -13,7 +13,7 @@ import dev.sdb.shared.model.SearchScope;
 public interface SearchServiceAsync {
 	void search(String term, SearchScope scope, Range range, SearchResultSort sort, AsyncCallback<SearchResult> callback);
 
-	void searchMusic(String term, Range range, SearchResultSort sort, AsyncCallback<SearchResult> callback);
-
-	void searchReleases(String term, Range range, SearchResultSort sort, AsyncCallback<SearchResult> callback);
+	//	void searchMusic(String term, Range range, SearchResultSort sort, AsyncCallback<SearchResult> callback);
+	//
+	//	void searchReleases(String term, Range range, SearchResultSort sort, AsyncCallback<SearchResult> callback);
 }

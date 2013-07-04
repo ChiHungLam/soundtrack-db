@@ -4,15 +4,12 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
 import com.google.gwt.view.client.Range;
 
-import dev.sdb.server.db.SqlServer.Property;
 import dev.sdb.shared.model.Music;
 import dev.sdb.shared.model.Release;
 import dev.sdb.shared.model.SearchResult;
@@ -25,16 +22,7 @@ public class Database {
 
 	private static final Properties DB_PROPERTIES = new Properties();
 	static {
-		DB_PROPERTIES.setProperty(Property.DRIVER.name(), "com.mysql.jdbc.Driver");
-		DB_PROPERTIES.setProperty(Property.PROTOCOL.name(), "jdbc");
-		DB_PROPERTIES.setProperty(Property.SUB_PROTOCOL.name(), "mysql");
-		DB_PROPERTIES.setProperty(Property.HOST.name(), "localhost");
-		DB_PROPERTIES.setProperty(Property.PORT.name(), "3306");
-		DB_PROPERTIES.setProperty(Property.DB.name(), "sdb");
-		DB_PROPERTIES.setProperty(Property.USER.name(), "sdbuser");
-		DB_PROPERTIES.setProperty(Property.PASSWORD.name(), "Lq4yVRKRGXtUHcYj");
-		DB_PROPERTIES.setProperty(Property.CHARACTER_ENCODING.name(), "UTF-8");
-		DB_PROPERTIES.setProperty(Property.USE_UNICODE.name(), "true");
+
 	}
 
 	private SqlServer sqlServer;
@@ -48,8 +36,9 @@ public class Database {
 	public SearchResult querySoundtrackContainer(String term, SearchScope scope, Range range, final SearchResultSort sort) throws IOException, IllegalArgumentException {
 
 		String info = "Letzte Suche: nach '" + term + "' im Bereich '" + scope.name() + "'.";
-		int count = 0;
 		List<SoundtrackContainer> result = new Vector<SoundtrackContainer>();
+
+		int count;
 
 		switch (scope) {
 		case RELEASES_ONLY:
@@ -62,17 +51,14 @@ public class Database {
 			queryMusic(result, term, range, sort);
 
 			break;
-		case ALL:
-			count += countReleases(term);
-			count += countMusic(term);
-			queryReleases(result, term, null, null);
-			queryMusic(result, term, null, null);
-
-			result = prepareCombinedResult(result, range, sort);
+		case SOUNDTRACK:
+			count = 0;//countSoundtracks(term);
+			//querySoundtracks(result, term, range, sort);
 
 			break;
 
 		default:
+			result.clear();
 			throw new IllegalArgumentException("illegal scope: " + scope);
 		}
 
@@ -80,67 +66,67 @@ public class Database {
 		return new SearchResult(info, result, count);
 	}
 
-	private List<SoundtrackContainer> prepareCombinedResult(List<SoundtrackContainer> result, Range range, final SearchResultSort sort) {
-		final Comparator<SoundtrackContainer> titleComparator = new Comparator<SoundtrackContainer>() {
-			public int compare(SoundtrackContainer o1, SoundtrackContainer o2) {
-				if (o1 == o2) {
-					return 0;
-				}
-
-				// Compare the name columns.
-				int diff = -1;
-				if (o1 != null) {
-					diff = (o2 != null) ? o1.getTitle().compareTo(o2.getTitle()) : 1;
-				}
-				return sort.isAscending() ? diff : -diff;
-			}
-		};
-
-		Comparator<SoundtrackContainer> comparator;
-		switch (sort.getType()) {
-		case TITLE:
-			comparator = titleComparator;
-			break;
-		case TYPE:
-			final Comparator<SoundtrackContainer> typeComparator = new Comparator<SoundtrackContainer>() {
-				public int compare(SoundtrackContainer o1, SoundtrackContainer o2) {
-					int result;
-
-					if (o1 == o2) {
-						result = 0;
-					} else {
-						int diff = -1;
-						if (o1 != null) {
-							diff = (o2 != null) ? o1.getType().compareTo(o2.getType()) : 1;
-						}
-						result = sort.isAscending() ? diff : -diff;
-					}
-
-					if (result != 0)
-						return result;
-					return titleComparator.compare(o1, o2);
-				}
-			};
-			comparator = typeComparator;
-			break;
-
-		default:
-			comparator = titleComparator;
-			break;
-		}
-
-		Collections.sort(result, comparator);
-
-		int start = range.getStart();
-		int length = range.getLength();
-		int end = start + length;
-
-		if (length > result.size())
-			return result;
-		else
-			return new Vector<SoundtrackContainer>(result.subList(start, end));
-
-	}
+	//	private List<SoundtrackContainer> prepareCombinedResult(List<SoundtrackContainer> result, Range range, final SearchResultSort sort) {
+	//		final Comparator<SoundtrackContainer> titleComparator = new Comparator<SoundtrackContainer>() {
+	//			public int compare(SoundtrackContainer o1, SoundtrackContainer o2) {
+	//				if (o1 == o2) {
+	//					return 0;
+	//				}
+	//
+	//				// Compare the name columns.
+	//				int diff = -1;
+	//				if (o1 != null) {
+	//					diff = (o2 != null) ? o1.getTitle().compareTo(o2.getTitle()) : 1;
+	//				}
+	//				return sort.isAscending() ? diff : -diff;
+	//			}
+	//		};
+	//
+	//		Comparator<SoundtrackContainer> comparator;
+	//		switch (sort.getType()) {
+	//		case TITLE:
+	//			comparator = titleComparator;
+	//			break;
+	//		case TYPE:
+	//			final Comparator<SoundtrackContainer> typeComparator = new Comparator<SoundtrackContainer>() {
+	//				public int compare(SoundtrackContainer o1, SoundtrackContainer o2) {
+	//					int result;
+	//
+	//					if (o1 == o2) {
+	//						result = 0;
+	//					} else {
+	//						int diff = -1;
+	//						if (o1 != null) {
+	//							diff = (o2 != null) ? o1.getType().compareTo(o2.getType()) : 1;
+	//						}
+	//						result = sort.isAscending() ? diff : -diff;
+	//					}
+	//
+	//					if (result != 0)
+	//						return result;
+	//					return titleComparator.compare(o1, o2);
+	//				}
+	//			};
+	//			comparator = typeComparator;
+	//			break;
+	//
+	//		default:
+	//			comparator = titleComparator;
+	//			break;
+	//		}
+	//
+	//		Collections.sort(result, comparator);
+	//
+	//		int start = range.getStart();
+	//		int length = range.getLength();
+	//		int end = start + length;
+	//
+	//		if (length > result.size())
+	//			return result;
+	//		else
+	//			return new Vector<SoundtrackContainer>(result.subList(start, end));
+	//
+	//	}
 
 	private int countMusic(String term) throws IOException {
 		PreparedStatement ps = null;

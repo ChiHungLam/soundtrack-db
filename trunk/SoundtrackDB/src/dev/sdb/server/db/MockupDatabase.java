@@ -29,18 +29,28 @@ public class MockupDatabase {
 
 		List<SoundtrackContainer> totalResult = new Vector<SoundtrackContainer>();
 
-		if (scope == SearchScope.MUSIC_ONLY || scope == SearchScope.ALL) {
-			for (Music music : ALL_MUSIC) {
-				if (music.getTitle().toLowerCase().contains(term))
-					totalResult.add(music);
-			}
-		}
-		if (scope == SearchScope.RELEASES_ONLY || scope == SearchScope.ALL) {
+		switch (scope) {
+		case RELEASES_ONLY:
 			for (Release release : ALL_RELEASES) {
 				if (release.getTitle().toLowerCase().contains(term))
 					totalResult.add(release);
 			}
+			break;
+		case MUSIC_ONLY:
+			for (Music music : ALL_MUSIC) {
+				if (music.getTitle().toLowerCase().contains(term))
+					totalResult.add(music);
+			}
+			break;
+		case SOUNDTRACK:
+
+			break;
+
+		default:
+			break;
 		}
+
+
 
 		final Comparator<SoundtrackContainer> titleComparator = new Comparator<SoundtrackContainer>() {
 			public int compare(SoundtrackContainer o1, SoundtrackContainer o2) {

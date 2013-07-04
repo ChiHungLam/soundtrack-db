@@ -17,8 +17,8 @@ import dev.sdb.shared.model.SearchScope;
 
 	SearchResult search(String term, SearchScope scope, Range range, SearchResultSort sort) throws IllegalArgumentException, IOException;
 
-	SearchResult searchMusic(String term, Range range, SearchResultSort sort) throws IllegalArgumentException, IOException;
-
-	SearchResult searchReleases(String term, Range range, SearchResultSort sort) throws IllegalArgumentException, IOException;
+	//	SearchResult searchMusic(String term, Range range, SearchResultSort sort) throws IllegalArgumentException, IOException;
+	//
+	//	SearchResult searchReleases(String term, Range range, SearchResultSort sort) throws IllegalArgumentException, IOException;
 
 }

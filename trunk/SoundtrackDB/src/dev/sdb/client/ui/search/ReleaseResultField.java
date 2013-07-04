@@ -22,7 +22,7 @@ public class ReleaseResultField extends AbstractResultField {
 	interface ReleaseResultFieldUiBinder extends UiBinder<Widget, ReleaseResultField> {}
 	private static ReleaseResultFieldUiBinder uiBinder = GWT.create(ReleaseResultFieldUiBinder.class);
 
-	@UiField CellTable<SoundtrackContainer> cellTable;
+	@UiField(provided = true) CellTable<SoundtrackContainer> cellTable;
 	@UiField(provided = true) SimplePager pager;
 	@UiField Label infoLabel;
 	@UiField VerticalPanel tablePanel;
@@ -31,6 +31,7 @@ public class ReleaseResultField extends AbstractResultField {
 	public ReleaseResultField() {
 		super();
 		this.cellTable = new CellTable<SoundtrackContainer>();
+
 		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
 		this.pager = new SimplePager(TextLocation.CENTER, pagerResources, true, 1000, true);
 
