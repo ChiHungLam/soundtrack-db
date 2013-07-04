@@ -20,15 +20,18 @@ public enum ControllerType {
 	}
 
 	public static ControllerType getByToken(String token) {
-		if (token == null || token.isEmpty())
+		if (token == null || token.isEmpty()) {
+			System.err.println("ControllerType.getByToken() - empty or null token");
 			return null;
+		}
 
 		token = token.toLowerCase();
 
 		for (ControllerType controllerType : values()) {
-			if (controllerType.getToken().startsWith(token))
+			if (token.startsWith(controllerType.getToken()))
 				return controllerType;
 		}
+		System.err.println("ControllerType.getByToken() - token not recognized: " + token);
 		return null;
 	}
 

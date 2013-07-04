@@ -1,10 +1,10 @@
 package dev.sdb.client.controller;
 
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 
+import dev.sdb.client.ui.search.AbstractQueryWidget;
 import dev.sdb.client.ui.search.MusicResultField;
 import dev.sdb.client.ui.search.MusicWidget;
 import dev.sdb.client.ui.search.SearchEvent;
@@ -17,22 +17,19 @@ public class MusicController extends AbstractSearchController {
 
 	public MusicController() {
 		super(SearchScope.MUSIC);
-		setUp();
+
 	}
 
-	@Override protected Widget createWidget() {
-		return new MusicWidget();
+	@Override public ControllerType getType() {
+		return ControllerType.MUSIC;
 	}
 
-	@Override public MusicWidget getWidget(String state) {
-		return (MusicWidget) super.getWidget(state);
-	}
-
-	private void setUp() {
-
-		MusicWidget queryWidget = getWidget(null);
+	@Override protected AbstractQueryWidget createQueryWidget(String term) {
+		MusicWidget queryWidget = new MusicWidget();
 
 		final SearchField search = queryWidget.getSearchField();
+		search.setText(term);
+
 		final MusicResultField result = queryWidget.getResultField();
 
 		// Create a data provider.
@@ -58,5 +55,7 @@ public class MusicController extends AbstractSearchController {
 				doSearchOnServer(search, result);
 			}
 		});
+
+		return queryWidget;
 	}
 }
