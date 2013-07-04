@@ -7,8 +7,8 @@ public class Music extends AbstractSoundtrackContainer {
 		super();
 	}
 
-	public Music(String title) {
-		super(title);
+	public Music(long id, String title) {
+		super(id, title);
 	}
 
 	@Override public SoundtrackContainerType getType() {

@@ -31,9 +31,6 @@ public class Database {
 	}
 
 	private Properties loadProperties() throws IOException {
-
-		//		String propertiesPath = ;
-
 		Properties properties = new Properties();
 		properties.loadFromXML(Database.class.getResourceAsStream("properties.xml"));
 		return properties;
@@ -41,7 +38,6 @@ public class Database {
 
 	public SearchResult querySoundtrackContainer(String term, SearchScope scope, Range range, final SearchResultSort sort) throws IOException, IllegalArgumentException {
 
-		String info = "Letzte Suche: nach '" + term + "' im Bereich '" + scope.name() + "'.";
 		List<SoundtrackContainer> result = new Vector<SoundtrackContainer>();
 
 		int count;
@@ -68,6 +64,9 @@ public class Database {
 			throw new IllegalArgumentException("illegal scope: " + scope);
 		}
 
+		String info = "Suchergebnis für: '" + term + "'.";
+		if (count > 0)
+			info += "Gefundene Einträge: " + count;
 
 		return new SearchResult(info, result, count);
 	}
@@ -194,7 +193,9 @@ public class Database {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				result.add(new Music(rs.getString("rec_title")));
+				long id = rs.getLong("rec_id");
+				String title = rs.getString("rec_title");
+				result.add(new Music(id, title));
 			}
 
 		} catch (SQLException e) {
@@ -280,7 +281,9 @@ public class Database {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				result.add(new Release(rs.getString("prod_res_title")));
+				long id = rs.getLong("prod_id");
+				String title = rs.getString("prod_res_title");
+				result.add(new Release(id, title));
 			}
 
 		} catch (SQLException e) {

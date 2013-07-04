@@ -1,6 +1,7 @@
 package dev.sdb.shared.model;
 
-public abstract class AbstractSoundtrackContainer implements SoundtrackContainer {
+public abstract class AbstractSoundtrackContainer extends AbstractModel implements SoundtrackContainer {
+
 
 	private String title;
 
@@ -8,8 +9,8 @@ public abstract class AbstractSoundtrackContainer implements SoundtrackContainer
 		super();
 	}
 
-	public AbstractSoundtrackContainer(String title) {
-		super();
+	public AbstractSoundtrackContainer(long id, String title) {
+		super(id);
 		this.title = title;
 	}
 

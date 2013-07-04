@@ -6,8 +6,8 @@ public class Release extends AbstractSoundtrackContainer {
 		super();
 	}
 
-	public Release(String title) {
-		super(title);
+	public Release(long id, String title) {
+		super(id, title);
 	}
 
 	@Override public SoundtrackContainerType getType() {
