@@ -4,9 +4,10 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 
+import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.ui.search.AbstractQueryWidget;
-import dev.sdb.client.ui.search.ReleaseResultField;
 import dev.sdb.client.ui.search.ReleaseQueryWidget;
+import dev.sdb.client.ui.search.ReleaseResultField;
 import dev.sdb.client.ui.search.SearchEvent;
 import dev.sdb.client.ui.search.SearchEventHandler;
 import dev.sdb.client.ui.search.SearchField;
@@ -15,8 +16,8 @@ import dev.sdb.shared.model.SoundtrackContainer;
 
 public class ReleaseController extends AbstractSearchController {
 
-	public ReleaseController() {
-		super(SearchScope.RELEASES);
+	public ReleaseController(SoundtrackDB sdb) {
+		super(sdb, SearchScope.RELEASES);
 	}
 
 	@Override public ControllerType getType() {

@@ -23,15 +23,18 @@ import dev.sdb.client.ui.NavigatorWidget;
  */
 public class SoundtrackDB implements EntryPoint {
 
-	private String currentContent;
+	private String token;
 	private static final Map<ControllerType, Controller> CONTROLLER_MAP = new HashMap<ControllerType, Controller>();
 	
+	public SoundtrackDB() {
+		super();
+	}
+
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
 		String startingToken = getStartingToken();
-		//		ControllerType startingType = getStartingType(startingToken);
 		
 		Widget navigatorWidget = createNavigatorWidget();
 
@@ -44,7 +47,7 @@ public class SoundtrackDB implements EntryPoint {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				String historyToken = event.getValue();
 
-				if (SoundtrackDB.this.currentContent.equals(historyToken))
+				if (getToken().equals(historyToken))
 					return;
 
 				setContentArea(historyToken);
@@ -52,9 +55,15 @@ public class SoundtrackDB implements EntryPoint {
 		});
 	}
 
+	public String getToken() {
+		return this.token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 
 	private void setContentArea(String token) {
-		this.currentContent = token;
+		setToken(token);
 
 		Widget contentWidget = getContentWidget(token);
 		
@@ -78,11 +87,6 @@ public class SoundtrackDB implements EntryPoint {
 
 		return href.substring(pos + 1);
 	}
-
-	//	private ControllerType getStartingType(String startingToken) {
-	//		ControllerType type = ControllerType.getByToken(startingToken);
-	//		return (type == null) ? ControllerType.HOME : type;
-	//	}
 
 	protected Widget getContentWidget(String historyToken) {
 		ControllerType type = getControllerType(historyToken);
@@ -139,13 +143,13 @@ public class SoundtrackDB implements EntryPoint {
 
 		switch (type) {
 		case HOME:
-			controller = new HomeController();
+			controller = new HomeController(this);
 			break;
 		case RELEASE:
-			controller = new ReleaseController();
+			controller = new ReleaseController(this);
 			break;
 		case MUSIC:
-			controller = new MusicController();
+			controller = new MusicController(this);
 			break;
 		case SOUNDTRACK:
 			controller = null; // not yet
@@ -169,4 +173,6 @@ public class SoundtrackDB implements EntryPoint {
 	private Widget createNavigatorWidget() {
 		return new NavigatorWidget();
 	}
+
+
 }
