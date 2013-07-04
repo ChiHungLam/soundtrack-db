@@ -20,17 +20,23 @@ import dev.sdb.shared.model.SoundtrackContainer;
 
 public class Database {
 
-	private static final Properties DB_PROPERTIES = new Properties();
-	static {
-
-	}
-
 	private SqlServer sqlServer;
 
-	public Database() throws IOException {
+	public Database() throws IOException, IllegalArgumentException {
 		super();
+		Properties properties = loadProperties();
+
 		this.sqlServer = new SqlServer();
-		this.sqlServer.init(DB_PROPERTIES);
+		this.sqlServer.init(properties);
+	}
+
+	private Properties loadProperties() throws IOException {
+
+		//		String propertiesPath = ;
+
+		Properties properties = new Properties();
+		properties.loadFromXML(Database.class.getResourceAsStream("properties.xml"));
+		return properties;
 	}
 
 	public SearchResult querySoundtrackContainer(String term, SearchScope scope, Range range, final SearchResultSort sort) throws IOException, IllegalArgumentException {
@@ -41,12 +47,12 @@ public class Database {
 		int count;
 
 		switch (scope) {
-		case RELEASES_ONLY:
+		case RELEASES:
 			count = countReleases(term);
 			queryReleases(result, term, range, sort);
 
 			break;
-		case MUSIC_ONLY:
+		case MUSIC:
 			count = countMusic(term);
 			queryMusic(result, term, range, sort);
 
