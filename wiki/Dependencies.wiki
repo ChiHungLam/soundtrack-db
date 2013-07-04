@@ -1,0 +1,9 @@
+#summary List of dependencies used by this project.
+
+= Details =
+
+For MySQL database connection the *MySQL Connector for Java* (a.k.a. *Connector/J*) is used.<br>
+E.g., you can find the latest version here:
+[http://dev.mysql.com/downloads/connector/j/]
+
+Don't forget to put a copy of the jar-File into your /war/WEB-INF/lib/ directory, next to your gwt-servlet.jar.
