@@ -9,7 +9,6 @@ import dev.sdb.shared.model.SoundtrackContainer;
 
 public abstract class AbstractResultField extends Composite implements HasText {
 
-	//
 	public AbstractResultField() {
 		super();
 	}

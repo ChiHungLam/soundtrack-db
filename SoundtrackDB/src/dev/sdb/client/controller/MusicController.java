@@ -6,7 +6,7 @@ import com.google.gwt.view.client.HasData;
 
 import dev.sdb.client.ui.search.AbstractQueryWidget;
 import dev.sdb.client.ui.search.MusicResultField;
-import dev.sdb.client.ui.search.MusicWidget;
+import dev.sdb.client.ui.search.MusicQueryWidget;
 import dev.sdb.client.ui.search.SearchEvent;
 import dev.sdb.client.ui.search.SearchEventHandler;
 import dev.sdb.client.ui.search.SearchField;
@@ -25,7 +25,7 @@ public class MusicController extends AbstractSearchController {
 	}
 
 	@Override protected AbstractQueryWidget createQueryWidget(String term) {
-		MusicWidget queryWidget = new MusicWidget();
+		MusicQueryWidget queryWidget = new MusicQueryWidget();
 
 		final SearchField search = queryWidget.getSearchField();
 		search.setText(term);
