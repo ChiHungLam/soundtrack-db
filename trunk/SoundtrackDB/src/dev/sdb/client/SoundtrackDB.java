@@ -23,9 +23,10 @@ import dev.sdb.client.ui.NavigatorWidget;
  */
 public class SoundtrackDB implements EntryPoint {
 
-	private String token;
 	private static final Map<ControllerType, Controller> CONTROLLER_MAP = new HashMap<ControllerType, Controller>();
 	
+	private String token;
+
 	public SoundtrackDB() {
 		super();
 	}
@@ -81,10 +82,19 @@ public class SoundtrackDB implements EntryPoint {
 		String href = Window.Location.getHref();
 		System.out.println("Starting href: " + href);
 		int pos = href.indexOf("#");
-		if (pos == -1)
-			return "";
 
-		return href.substring(pos + 1);
+		String token;
+		if (pos == -1)
+			token = "";
+		else
+			token = href.substring(pos + 1);
+
+		//		if (token.isEmpty()) {
+		//			token = ControllerType.HOME.getToken();
+		//			History.newItem(token, false);
+		//		}
+
+		return token;
 	}
 
 	protected Widget getContentWidget(String historyToken) {
@@ -171,6 +181,7 @@ public class SoundtrackDB implements EntryPoint {
 		CONTROLLER_MAP.put(type, controller);
 		return controller;
 	}
+
 	private Widget createNavigatorWidget() {
 		return new NavigatorWidget();
 	}

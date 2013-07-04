@@ -20,11 +20,13 @@ public enum ControllerType {
 	}
 
 	public static ControllerType getByToken(String token) {
-		if (token == null || token.isEmpty()) {
-			System.err.println("ControllerType.getByToken() - empty or null token");
+		if (token == null) {
+			System.err.println("ControllerType.getByToken() - null token");
 			return null;
 		}
-
+		if (token.isEmpty()) {
+			return null;
+		}
 		token = token.toLowerCase();
 
 		for (ControllerType controllerType : values()) {
