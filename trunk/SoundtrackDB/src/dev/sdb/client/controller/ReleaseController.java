@@ -6,7 +6,7 @@ import com.google.gwt.view.client.HasData;
 
 import dev.sdb.client.ui.search.AbstractQueryWidget;
 import dev.sdb.client.ui.search.ReleaseResultField;
-import dev.sdb.client.ui.search.ReleaseWidget;
+import dev.sdb.client.ui.search.ReleaseQueryWidget;
 import dev.sdb.client.ui.search.SearchEvent;
 import dev.sdb.client.ui.search.SearchEventHandler;
 import dev.sdb.client.ui.search.SearchField;
@@ -24,7 +24,7 @@ public class ReleaseController extends AbstractSearchController {
 	}
 
 	@Override protected AbstractQueryWidget createQueryWidget(String term) {
-		ReleaseWidget queryWidget = new ReleaseWidget();
+		ReleaseQueryWidget queryWidget = new ReleaseQueryWidget();
 
 		final SearchField search = queryWidget.getSearchField();
 		search.setText(term);

@@ -22,10 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.shared.FieldVerifier;
 
-/**
- * @author s.christ
- *
- */
+
 public class SearchField extends Composite implements HasEnabled, HasText, HasHandlers {
 
 	private static SearchFieldUiBinder uiBinder = GWT.create(SearchFieldUiBinder.class);
@@ -33,27 +30,9 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 	interface SearchFieldUiBinder extends UiBinder<Widget, SearchField> {}
 
 	@UiField Button button;
-	//	@UiField RadioButton allRadioButton;
-	//	@UiField RadioButton releasesRadioButton;
-	//	@UiField RadioButton musicRadioButton;
 	@UiField TextBox text;
 	@UiField Label errorLabel;
 
-	//	private SearchScope currentSearchScope;
-
-	//	private final HandlerManager handlerManager;
-
-	/**
-	 * Because this class has a default constructor, it can
-	 * be used as a binder template. In other words, it can be used in other
-	 * *.ui.xml files as follows:
-	 * <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	 *   xmlns:g="urn:import:**user's package**">
-	 *  <g:**UserClassName**>Hello!</g:**UserClassName>
-	 * </ui:UiBinder>
-	 * Note that depending on the widget that is used, it may be necessary to
-	 * implement HasHTML instead of HasText.
-	 */
 	public SearchField() {
 		this("");
 	}
@@ -62,13 +41,8 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 		super();
 		initWidget(uiBinder.createAndBindUi(this));
 
-		//		this.handlerManager = new HandlerManager(this);
-
 		if (searchText == null)
 			searchText = "";
-
-		//		if (searchScope == null)
-		//			searchScope = SearchScope.ALL;
 
 		// Can access @UiField after calling createAndBindUi
 		setText(searchText);
@@ -76,24 +50,6 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 		// Focus the cursor on the search field when the app loads
 		this.text.setFocus(true);
 		this.text.selectAll();
-
-		//		switch (searchScope) {
-		//		case ALL:
-		//			this.allRadioButton.setValue(Boolean.TRUE, false);
-		//			break;
-		//		case RELEASES_ONLY:
-		//			this.releasesRadioButton.setValue(Boolean.TRUE, false);
-		//			break;
-		//		case MUSIC_ONLY:
-		//			this.musicRadioButton.setValue(Boolean.TRUE, false);
-		//			break;
-		//		default:
-		//			searchScope = SearchScope.ALL;
-		//			this.allRadioButton.setValue(Boolean.TRUE, false);
-		//			break;
-		//		}
-		//
-		//		this.currentSearchScope = searchScope;
 
 		this.button.addStyleName("sendButton");
 		this.errorLabel.addStyleName("serverResponseLabelError");
@@ -111,22 +67,6 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 		return this.text.getText();
 	}
 
-	//	@UiHandler("allRadioButton")
-	//	void onAllRadioButtonClick(ClickEvent event) {
-	//		this.currentSearchScope = SearchScope.ALL;
-	//	}
-	//	@UiHandler("releasesRadioButton")
-	//	void onReleasesRadioButtonClick(ClickEvent event) {
-	//		this.currentSearchScope = SearchScope.RELEASES_ONLY;
-	//	}
-	//	@UiHandler("musicRadioButton")
-	//	void onMusicRadioButtonClick(ClickEvent event) {
-	//		this.currentSearchScope = SearchScope.MUSIC_ONLY;
-	//	}
-	//
-	//	public SearchScope getSearchScope() {
-	//		return this.currentSearchScope;
-	//	}
 	@UiHandler("button")
 	void onButtonClick(ClickEvent event) {
 		prepareSearchEvent();
@@ -149,7 +89,7 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 			return;
 		}
 
-		SearchEvent searchEvent = new SearchEvent(searchText);//this.currentSearchScope
+		SearchEvent searchEvent = new SearchEvent(searchText);
 		fireEvent(searchEvent);
 	}
 
@@ -162,12 +102,9 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 	}
 
 	@Override public void setEnabled(boolean enabled) {
-		this.text.setEnabled(enabled);
 		this.button.setEnabled(enabled);
-		//		this.allRadioButton.setEnabled(enabled);
-		//		this.musicRadioButton.setEnabled(enabled);
-		//		this.releasesRadioButton.setEnabled(enabled);
 
+		this.text.setEnabled(enabled);
 		this.text.setFocus(true);
 	}
 

@@ -5,15 +5,15 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ReleaseWidget extends AbstractQueryWidget {
+public class MusicQueryWidget extends AbstractQueryWidget {
 
-	interface ReleaseWidgetUiBinder extends UiBinder<Widget, ReleaseWidget> {}
-	private static ReleaseWidgetUiBinder uiBinder = GWT.create(ReleaseWidgetUiBinder.class);
+	interface MusicWidgetUiBinder extends UiBinder<Widget, MusicQueryWidget> {}
+	private static MusicWidgetUiBinder uiBinder = GWT.create(MusicWidgetUiBinder.class);
 
 	@UiField SearchField searchField;
-	@UiField ReleaseResultField resultField;
+	@UiField MusicResultField resultField;
 
-	public ReleaseWidget() {
+	public MusicQueryWidget() {
 		super();
 		initWidget(uiBinder.createAndBindUi(this));
 	}
@@ -22,7 +22,7 @@ public class ReleaseWidget extends AbstractQueryWidget {
 		return this.searchField;
 	}
 
-	public ReleaseResultField getResultField() {
+	public MusicResultField getResultField() {
 		return this.resultField;
 	}
 }

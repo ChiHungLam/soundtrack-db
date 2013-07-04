@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -103,6 +104,8 @@ public abstract class AbstractSearchController implements Controller {
 		SEARCH_SERVICE.search(this.lastSearchTerm, this.scope, range, sort, new AsyncCallback<SearchResult>() {
 
 			public void onSuccess(SearchResult searchResult) {
+				History.newItem(getType().getToken() + "?search=" + AbstractSearchController.this.lastSearchTerm, false);
+
 				int total = searchResult.getTotalLength();
 
 				table.setRowCount(total, true);
