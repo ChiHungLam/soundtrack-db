@@ -18,7 +18,16 @@ import dev.sdb.shared.model.SearchScope;
 @SuppressWarnings("serial") public class SearchServiceImpl extends RemoteServiceServlet implements
 		SearchService {
 
+	private static final Database db;
 	
+	static {
+		try {
+			db = new Database();
+		} catch (Exception e) {
+			throw new IllegalStateException("Database creation failed.", e);
+		}
+	}
+
 	public SearchResult search(String term, final SearchScope scope, final Range range, final SearchResultSort sort) throws IllegalArgumentException, IOException {
 		// Verify that the input is valid. 
 		if (!FieldVerifier.isValidSearchTerm(term)) {
@@ -34,7 +43,7 @@ import dev.sdb.shared.model.SearchScope;
 		term = escapeHtml(term);
 
 		//		MockupDatabase db = new MockupDatabase();
-		Database db = new Database();
+
 
 		SearchResult searchResult = db.querySoundtrackContainer(term, scope, range, sort);
 

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.controller.Controller;
 import dev.sdb.client.controller.ControllerType;
+import dev.sdb.client.controller.HomeController;
 import dev.sdb.client.controller.MusicController;
 import dev.sdb.client.controller.ReleaseController;
 import dev.sdb.client.ui.NavigatorWidget;
@@ -29,16 +30,14 @@ public class SoundtrackDB implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		String startingContent = getStartingContent();
+		ControllerType startingType = getStartingType();
 		
 		Widget navigatorWidget = createNavigatorWidget();
-		Widget contentWidget = getContentWidget(startingContent);
 
-		final RootPanel contentArea = RootPanel.get("content_area");
 		final RootPanel navigatorArea = RootPanel.get("navigator_area");
-
-		contentArea.add(contentWidget);
 		navigatorArea.add(navigatorWidget);
+		
+		setContentArea(startingType.getToken());
 
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {
 			public void onValueChange(ValueChangeEvent<String> event) {
@@ -47,29 +46,38 @@ public class SoundtrackDB implements EntryPoint {
 				if (SoundtrackDB.this.currentContent.equals(historyToken))
 					return;
 
-				if (contentArea.getWidgetCount() > 0)
-					contentArea.remove(0);
-
-				Widget widget = getContentWidget(historyToken);
-				if (widget != null)
-					contentArea.add(widget);
+				setContentArea(historyToken);
 			}
 		});
 	}
 
-	private String getStartingContent() {
+	private void setContentArea(String token) {
+		this.currentContent = token;
+
+		Widget contentWidget = getContentWidget(token);
+		
+		final RootPanel contentArea = RootPanel.get("content_area");
+
+		while (contentArea.getWidgetCount() > 0)
+			contentArea.remove(0);
+
+		if (contentWidget == null)
+			return;
+
+		contentArea.add(contentWidget);
+	}
+
+	private ControllerType getStartingType() {
 		String href = Window.Location.getHref();
 		System.out.println(href);
 		int pos = href.indexOf("#");
 		if (pos == -1)
-			return "search";
+			return ControllerType.HOME;
 
-		return href.substring(pos + 1);
+		return ControllerType.getByToken(href.substring(pos + 1));
 	}
 
 	protected Widget getContentWidget(String historyToken) {
-		this.currentContent = historyToken;
-
 		ControllerType type = getControllerType(historyToken);
 		String state = getControllerState(type, historyToken);
 
@@ -124,7 +132,7 @@ public class SoundtrackDB implements EntryPoint {
 
 		switch (type) {
 		case HOME:
-
+			controller = new HomeController();
 			break;
 		case RELEASE:
 			controller = new ReleaseController();
@@ -144,11 +152,6 @@ public class SoundtrackDB implements EntryPoint {
 			// load the home page
 			return getController(ControllerType.HOME);
 		}
-
-		// "search"
-		// "music"
-		// "release"
-		// "series"
 
 		if (controller == null)
 			return null;

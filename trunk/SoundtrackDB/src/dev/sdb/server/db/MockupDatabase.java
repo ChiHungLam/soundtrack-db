@@ -30,13 +30,13 @@ public class MockupDatabase {
 		List<SoundtrackContainer> totalResult = new Vector<SoundtrackContainer>();
 
 		switch (scope) {
-		case RELEASES_ONLY:
+		case RELEASES:
 			for (Release release : ALL_RELEASES) {
 				if (release.getTitle().toLowerCase().contains(term))
 					totalResult.add(release);
 			}
 			break;
-		case MUSIC_ONLY:
+		case MUSIC:
 			for (Music music : ALL_MUSIC) {
 				if (music.getTitle().toLowerCase().contains(term))
 					totalResult.add(music);
@@ -49,8 +49,6 @@ public class MockupDatabase {
 		default:
 			break;
 		}
-
-
 
 		final Comparator<SoundtrackContainer> titleComparator = new Comparator<SoundtrackContainer>() {
 			public int compare(SoundtrackContainer o1, SoundtrackContainer o2) {

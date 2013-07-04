@@ -16,7 +16,7 @@ import dev.sdb.shared.model.SoundtrackContainer;
 public class ReleaseController extends AbstractSearchController {
 
 	public ReleaseController() {
-		super(SearchScope.RELEASES_ONLY);
+		super(SearchScope.RELEASES);
 		setUp();
 	}
 

@@ -9,9 +9,10 @@
 
 	<g:HTMLPanel>
 		<g:VerticalPanel spacing="5">
-			<g:Hyperlink text="Suche" targetHistoryToken="search"/>
+			<g:Hyperlink text="sdb" targetHistoryToken="home"/>
 			<g:Hyperlink text="Veröffentlichungen" targetHistoryToken="release"/>
 			<g:Hyperlink text="Musik" targetHistoryToken="music"/>
+			<g:Hyperlink text="Soundtrack" targetHistoryToken="soundtrack"/>
 			<g:Hyperlink text="Serien" targetHistoryToken="series"/>
 		</g:VerticalPanel>
 		

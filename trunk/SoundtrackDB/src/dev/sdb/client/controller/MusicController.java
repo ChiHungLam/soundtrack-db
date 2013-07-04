@@ -16,7 +16,7 @@ import dev.sdb.shared.model.SoundtrackContainer;
 public class MusicController extends AbstractSearchController {
 
 	public MusicController() {
-		super(SearchScope.MUSIC_ONLY);
+		super(SearchScope.MUSIC);
 		setUp();
 	}
 
