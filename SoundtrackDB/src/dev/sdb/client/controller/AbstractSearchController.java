@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.Range;
 
+import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.service.SearchService;
 import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.ui.search.AbstractQueryWidget;
@@ -32,13 +33,15 @@ public abstract class AbstractSearchController implements Controller {
 	 */
 	private static final SearchServiceAsync SEARCH_SERVICE = GWT.create(SearchService.class);
 
+	private SoundtrackDB sdb;
 	private String lastSearchTerm;
 	private SearchScope scope;
 
 	private AbstractQueryWidget widget;
 
-	public AbstractSearchController(SearchScope scope) {
+	public AbstractSearchController(SoundtrackDB sdb, SearchScope scope) {
 		super();
+		this.sdb = sdb;
 		this.scope = scope;
 	}
 
@@ -104,7 +107,9 @@ public abstract class AbstractSearchController implements Controller {
 		SEARCH_SERVICE.search(this.lastSearchTerm, this.scope, range, sort, new AsyncCallback<SearchResult>() {
 
 			public void onSuccess(SearchResult searchResult) {
-				History.newItem(getType().getToken() + "?search=" + AbstractSearchController.this.lastSearchTerm, false);
+				String token = getType().getToken() + "?search=" + AbstractSearchController.this.lastSearchTerm;
+				History.newItem(token, false);
+				AbstractSearchController.this.sdb.setToken(token);
 
 				int total = searchResult.getTotalLength();
 
