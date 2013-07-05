@@ -11,8 +11,8 @@ import dev.sdb.client.ui.search.ReleaseResultField;
 import dev.sdb.client.ui.search.SearchEvent;
 import dev.sdb.client.ui.search.SearchEventHandler;
 import dev.sdb.client.ui.search.SearchField;
+import dev.sdb.shared.model.Entity;
 import dev.sdb.shared.model.SearchScope;
-import dev.sdb.shared.model.SoundtrackContainer;
 
 public class ReleaseController extends AbstractSearchController {
 
@@ -33,8 +33,8 @@ public class ReleaseController extends AbstractSearchController {
 		final ReleaseResultField result = queryWidget.getResultField();
 
 		// Create a data provider.
-		AsyncDataProvider<SoundtrackContainer> dataProvider = new AsyncDataProvider<SoundtrackContainer>() {
-			@Override protected void onRangeChanged(HasData<SoundtrackContainer> display) {
+		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
+			@Override protected void onRangeChanged(HasData<Entity> display) {
 				doSearchOnServer(search, result);
 			}
 		};
@@ -50,7 +50,7 @@ public class ReleaseController extends AbstractSearchController {
 			 */
 			@Override public void onSearch(SearchEvent event) {
 				setLastSearchTerm(search.getText());
-				final CellTable<SoundtrackContainer> table = result.getTable();
+				final CellTable<Entity> table = result.getTable();
 				table.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
 				doSearchOnServer(search, result);
 			}

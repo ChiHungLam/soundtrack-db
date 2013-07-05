@@ -6,32 +6,32 @@ import com.google.gwt.view.client.HasData;
 
 import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.ui.search.AbstractQueryWidget;
-import dev.sdb.client.ui.search.MusicQueryWidget;
-import dev.sdb.client.ui.search.MusicResultField;
 import dev.sdb.client.ui.search.SearchEvent;
 import dev.sdb.client.ui.search.SearchEventHandler;
 import dev.sdb.client.ui.search.SearchField;
+import dev.sdb.client.ui.search.SoundtrackQueryWidget;
+import dev.sdb.client.ui.search.SoundtrackResultField;
 import dev.sdb.shared.model.Entity;
 import dev.sdb.shared.model.SearchScope;
 
-public class MusicController extends AbstractSearchController {
+public class SoundtrackController extends AbstractSearchController {
 
-	public MusicController(SoundtrackDB sdb) {
-		super(sdb, SearchScope.MUSIC);
+	public SoundtrackController(SoundtrackDB sdb) {
+		super(sdb, SearchScope.SOUNDTRACK);
 
 	}
 
 	@Override public ControllerType getType() {
-		return ControllerType.MUSIC;
+		return ControllerType.SOUNDTRACK;
 	}
 
 	@Override protected AbstractQueryWidget createQueryWidget(String term) {
-		MusicQueryWidget queryWidget = new MusicQueryWidget();
+		SoundtrackQueryWidget queryWidget = new SoundtrackQueryWidget();
 
 		final SearchField search = queryWidget.getSearchField();
 		search.setText(term);
 
-		final MusicResultField result = queryWidget.getResultField();
+		final SoundtrackResultField result = queryWidget.getResultField();
 
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {

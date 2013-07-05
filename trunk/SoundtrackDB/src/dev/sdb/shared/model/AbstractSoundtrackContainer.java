@@ -1,6 +1,6 @@
 package dev.sdb.shared.model;
 
-public abstract class AbstractSoundtrackContainer extends AbstractModel implements SoundtrackContainer {
+public abstract class AbstractSoundtrackContainer extends AbstractEntity implements SoundtrackContainer {
 
 
 	private String title;

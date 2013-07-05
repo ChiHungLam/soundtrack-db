@@ -10,18 +10,6 @@ import java.util.Date;
 
 public abstract class SqlManager implements Schema {
 
-	public enum ImportType {
-		INBOX,
-		RECOVER,
-		BLACKLIST,
-		MIRROR
-	};
-
-	protected enum MailFlavor {
-		INTERESTED,
-		CAMPAIGN
-	};
-
 	private SqlServer sqlServer;
 	private Connection connection;
 
@@ -105,7 +93,7 @@ public abstract class SqlManager implements Schema {
 		}
 	}
 
-	protected java.sql.Date getSqlDate(Date date) {
+	public static java.sql.Date getSqlDate(Date date) {
 		if (date == null)
 			return null;
 		return new java.sql.Date(date.getTime());

@@ -1,6 +1,6 @@
 package dev.sdb.shared.model;
 
-public class Soundtrack extends AbstractModel {
+public class Soundtrack extends AbstractEntity {
 
 	public Soundtrack() {
 		super();
@@ -10,4 +10,7 @@ public class Soundtrack extends AbstractModel {
 		super(id);
 	}
 
+	@Override public String toString() {
+		return "Soundtrack - id " + getId();
+	}
 }

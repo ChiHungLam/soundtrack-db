@@ -16,12 +16,11 @@ import com.google.gwt.view.client.AsyncDataProvider;
 
 import dev.sdb.shared.model.Entity;
 import dev.sdb.shared.model.SearchResultSortType;
-import dev.sdb.shared.model.SoundtrackContainer;
 
-public class ReleaseResultField extends AbstractResultField {
+public class SoundtrackResultField extends AbstractResultField {
 
-	interface ReleaseResultFieldUiBinder extends UiBinder<Widget, ReleaseResultField> {}
-	private static ReleaseResultFieldUiBinder uiBinder = GWT.create(ReleaseResultFieldUiBinder.class);
+	interface SoundtrackResultFieldUiBinder extends UiBinder<Widget, SoundtrackResultField> {}
+	private static SoundtrackResultFieldUiBinder uiBinder = GWT.create(SoundtrackResultFieldUiBinder.class);
 
 	@UiField(provided = true) CellTable<Entity> cellTable;
 	@UiField(provided = true) SimplePager pager;
@@ -29,7 +28,7 @@ public class ReleaseResultField extends AbstractResultField {
 	@UiField VerticalPanel tablePanel;
 	@UiField Label emptyResultLabel;
 
-	public ReleaseResultField() {
+	public SoundtrackResultField() {
 		super();
 		this.cellTable = new CellTable<Entity>();
 
@@ -51,10 +50,11 @@ public class ReleaseResultField extends AbstractResultField {
 	}
 
 	public void init(AsyncDataProvider<Entity> dataProvider, int rangeLength) {
+
 		// Create title column.
 		final TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
-				return ((SoundtrackContainer) entity).getTitle();
+				return entity.toString();
 			}
 		};
 
@@ -97,7 +97,5 @@ public class ReleaseResultField extends AbstractResultField {
 	public void setElementVisibility(int numRows) {
 		this.tablePanel.setVisible(numRows > 0);
 		this.emptyResultLabel.setVisible(numRows == 0);
-		if (numRows < 0)
-			setText("");
 	}
 }
