@@ -10,16 +10,13 @@ import java.util.Vector;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.shared.model.db.Flavor;
-import dev.sdb.shared.model.db.SearchResult;
+import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
 import dev.sdb.shared.model.entity.Soundtrack;
 
 public class SdbManager extends SqlManager {
-
-	//	private PreparedStatement countPS;
-	//	private PreparedStatement listPS;
 
 	public SdbManager(SqlServer sqlServer) {
 		super(sqlServer);
@@ -30,48 +27,38 @@ public class SdbManager extends SqlManager {
 	}
 
 	@Override public void close() {
-		//		closeStatement(this.countPS);
-		//		closeStatement(this.listPS);
-
 		closeConnection();
-
-		//		this.countPS = null;
-		//		this.listPS = null;
 	}
 
-	//	public void initReleases(Range range, boolean ascending) throws IOException {
-	//		try {
-	//			this.countPS = createReleaseCountPS();
-	//			this.listPS = createReleaseListPS(range, ascending);
-	//		} catch (SQLException e) {
-	//			close();
-	//			throw new IOException(e);
-	//		}
-	//	}
-
-	//	public void initMusic(Range range, boolean ascending) throws IOException {
-	//		try {
-	//			
-	//		} catch (SQLException e) {
-	//			close();
-	//			throw new IOException(e);
-	//		}
-	//	}
-
-	//	public void initSoundtracks(Range range, boolean ascending) throws IOException {
-	//		try {
-	//			this.countPS = createSoundtrackCountPS();
-	//			this.listPS = createSoundtrackListPS(range, ascending);
-	//		} catch (SQLException e) {
-	//			close();
-	//			throw new IOException(e);
-	//		}
-	//	}
-
-
-	public SearchResult query(Flavor flavor, String term, Range range, boolean ascending) throws IOException {
+	public Result getSequenceList(long audioId, Range range) throws IOException {
 		PreparedStatement listPS = null;
 		PreparedStatement countPS = null;
+
+		List<Entity> result = new Vector<Entity>();
+
+		try {
+
+			listPS = createSeqListPS(range);
+			countPS = createSeqListCountPS();
+			int count = count(countPS, Long.valueOf(audioId));
+			querySeqList(listPS, result, audioId, range);
+
+			return new Result(result, count);
+
+		} catch (SQLException e) {
+			result.clear();
+			throw new IOException(e);
+		} finally {
+			closeStatement(listPS);
+			closeStatement(countPS);
+		}
+	}
+
+	public Result query(Flavor flavor, String term, Range range, boolean ascending) throws IOException {
+		PreparedStatement listPS = null;
+		PreparedStatement countPS = null;
+
+		String wildcardedTerm = "%" + term + "%";
 
 		List<Entity> result = new Vector<Entity>();
 
@@ -83,22 +70,22 @@ public class SdbManager extends SqlManager {
 			case RELEASES:
 				listPS = createReleaseListPS(range, ascending);
 				countPS = createReleaseCountPS();
-				count = count(countPS, term);
-				queryReleases(listPS, result, term, range, ascending);
+				count = count(countPS, wildcardedTerm);
+				queryReleases(listPS, result, wildcardedTerm, range, ascending);
 
 				break;
 			case MUSIC:
 				listPS = createMusicListPS(range, ascending);
 				countPS = createMusicCountPS();
-				count = count(countPS, term);
-				queryMusic(listPS, result, term, range, ascending);
+				count = count(countPS, wildcardedTerm);
+				queryMusic(listPS, result, wildcardedTerm, range, ascending);
 
 				break;
 			case SOUNDTRACK:
 				listPS = createSoundtrackListPS(range, ascending);
 				countPS = createSoundtrackCountPS();
-				count = count(countPS, term);
-				querySoundtracks(listPS, result, term, range, ascending);
+				count = count(countPS, wildcardedTerm);
+				querySoundtracks(listPS, result, wildcardedTerm, range, ascending);
 
 				break;
 
@@ -107,11 +94,7 @@ public class SdbManager extends SqlManager {
 				throw new IllegalArgumentException("illegal flavor: " + flavor);
 			}
 
-			String info = "Suchergebnis für: '" + term + "'.";
-			if (count > 0)
-				info += " Gefundene Einträge: " + count;
-
-			return new SearchResult(info, result, count);
+			return new Result(result, count);
 
 		} catch (SQLException e) {
 			result.clear();
@@ -167,14 +150,14 @@ public class SdbManager extends SqlManager {
 		}
 	}
 
-	protected int count(PreparedStatement ps, String term) throws IOException {
+	protected int count(PreparedStatement ps, Object whereArg) throws IOException {
 
 		ResultSet rs = null;
 
 		try {
 
 			ps.clearParameters();
-			ps.setString(1, "%" + term + "%");
+			ps.setObject(1, whereArg);
 
 			rs = ps.executeQuery();
 			if (!rs.next())
@@ -194,10 +177,8 @@ public class SdbManager extends SqlManager {
 
 		try {
 
-			String wildcardedTerm = "%" + term + "%";
-
 			ps.clearParameters();
-			ps.setString(1, wildcardedTerm);
+			ps.setString(1, term);
 
 			rs = ps.executeQuery();
 
@@ -218,10 +199,8 @@ public class SdbManager extends SqlManager {
 
 		try {
 
-			String wildcardedTerm = "%" + term + "%";
-
 			ps.clearParameters();
-			ps.setString(1, wildcardedTerm);
+			ps.setString(1, term);
 
 			rs = ps.executeQuery();
 
@@ -242,10 +221,8 @@ public class SdbManager extends SqlManager {
 
 		try {
 
-			String wildcardedTerm = "%" + term + "%";
-
 			ps.clearParameters();
-			ps.setString(1, wildcardedTerm);
+			ps.setString(1, term);
 
 			rs = ps.executeQuery();
 
@@ -261,11 +238,34 @@ public class SdbManager extends SqlManager {
 		}
 	}
 
+	private void querySeqList(PreparedStatement ps, List<Entity> result, long audioId, Range range) throws IOException {
+		ResultSet rs = null;
+
+		try {
+
+			ps.clearParameters();
+			ps.setLong(1, audioId);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Soundtrack soundtrack = readSoundtrack(rs, false, true);
+				result.add(soundtrack);
+			}
+
+		} catch (SQLException e) {
+			throw new IOException(e);
+		} finally {
+			closeResultSet(rs);
+		}
+	}
+
 	protected Release readRelease(ResultSet rs) throws SQLException {
 		long id = rs.getLong("print_id");
 		String title = rs.getString("prod_res_title");
+		long audioId = rs.getLong("print_audio_id");
 
-		return new Release(id, title);
+		return new Release(id, title, audioId);
 	}
 
 	protected Music readMusic(ResultSet rs) throws SQLException {
@@ -275,8 +275,12 @@ public class SdbManager extends SqlManager {
 	}
 
 	protected Soundtrack readSoundtrack(ResultSet rs) throws SQLException {
-		Release release = readRelease(rs);
-		Music music = readMusic(rs);
+		return readSoundtrack(rs, true, true);
+	}
+
+	protected Soundtrack readSoundtrack(ResultSet rs, boolean readRelease, boolean readMusic) throws SQLException {
+		Release release = readRelease ? readRelease(rs) : null;
+		Music music = readMusic ? readMusic(rs) : null;
 
 		long id = rs.getLong("stk_id");
 		return new Soundtrack(id, release, music);
@@ -287,7 +291,8 @@ public class SdbManager extends SqlManager {
 	}
 
 	private String getLimit(Range range) {
-		return (range == null) ? ";" : "LIMIT " + range.getStart() + " , " + range.getLength() + " ;";
+		//return (range == null) ? ";" : "LIMIT " + range.getStart() + " , " + range.getLength() + " ;";
+		return "LIMIT " + range.getStart() + " , " + range.getLength() + " ;";
 	}
 
 	private String composeReleaseGet() throws SQLException {
@@ -309,7 +314,7 @@ public class SdbManager extends SqlManager {
 	}
 
 	private String composeSoundtrackGet() throws SQLException {
-		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` , `print_id` , `prod_res_title` "
+		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` , `print_id` , `print_audio_id` , `prod_res_title` "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
@@ -351,6 +356,15 @@ public class SdbManager extends SqlManager {
 		return getStatement(sql);
 	}
 
+	private PreparedStatement createSeqListCountPS() throws SQLException {
+		String sql = "SELECT COUNT( * ) AS `rows` "
+				+ "FROM `soundtrack` "
+				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
+				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
+				+ "WHERE `aus_audio_id` LIKE ? ;";
+		return getStatement(sql);
+	}
+
 	private PreparedStatement createReleaseListPS(Range range, boolean ascending) throws SQLException {
 		String sql = "SELECT `print`.* , `prod_res_title` "
 				+ "FROM `print` "
@@ -374,7 +388,7 @@ public class SdbManager extends SqlManager {
 	}
 
 	private PreparedStatement createSoundtrackListPS(Range range, boolean ascending) throws SQLException {
-		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` , `print_id` , `prod_res_title` "
+		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` , `print_id` , `print_audio_id` , `prod_res_title` "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
@@ -390,5 +404,18 @@ public class SdbManager extends SqlManager {
 		return getStatement(sql);
 	}
 
+	private PreparedStatement createSeqListPS(Range range) throws SQLException {
+		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` "
+				+ "FROM `soundtrack` "
+				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
+				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
+				+ "LEFT JOIN `recording` ON `rec_id` = `stk_recording_id` "
+				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
+				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
+				+ "WHERE `aus_audio_id` LIKE ? "
+				+ "ORDER BY `aus_order` ASC , `seq_order` ASC , `stk_order` ASC "
+				+ getLimit(range);
+		return getStatement(sql);
+	}
 
 }

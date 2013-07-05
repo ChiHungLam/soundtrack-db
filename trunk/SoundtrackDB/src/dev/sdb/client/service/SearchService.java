@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.shared.model.db.Flavor;
-import dev.sdb.shared.model.db.SearchResult;
+import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 
 /**
@@ -15,7 +15,9 @@ import dev.sdb.shared.model.entity.Entity;
  */
 @RemoteServiceRelativePath("search") public interface SearchService extends RemoteService {
 
-	SearchResult search(Flavor flavor, String term, Range range, boolean ascending) throws IllegalArgumentException, IOException;
+	Result search(Flavor flavor, String term, Range range, boolean ascending) throws IllegalArgumentException, IOException;
 
 	Entity get(Flavor flavor, long id) throws IllegalArgumentException, IOException;
+
+	Result getSequenceList(long audioId, Range range) throws IllegalArgumentException, IOException;
 }

@@ -13,6 +13,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,7 +32,7 @@ import dev.sdb.client.ui.search.SearchEvent;
 import dev.sdb.client.ui.search.SearchEventHandler;
 import dev.sdb.client.ui.search.SearchField;
 import dev.sdb.shared.model.db.Flavor;
-import dev.sdb.shared.model.db.SearchResult;
+import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 
 public abstract class AbstractSearchController implements Controller {
@@ -39,7 +40,7 @@ public abstract class AbstractSearchController implements Controller {
 	/**
 	 * Create a remote service proxy to talk to the server-side Search service.
 	 */
-	private static final SearchServiceAsync SEARCH_SERVICE = GWT.create(SearchService.class);
+	protected static final SearchServiceAsync SEARCH_SERVICE = GWT.create(SearchService.class);
 
 	private final SoundtrackDB sdb;
 	private final ControllerType type;
@@ -178,7 +179,9 @@ public abstract class AbstractSearchController implements Controller {
 			this.lastId = id;
 			getDetailsFromServer(this.detailWidget);
 		} else {
-			if (this.detailWidget.getCurrentId() != id) {
+			Entity entity = this.detailWidget.getCurrentEntity();
+			long currentId = (entity == null) ? 0 : entity.getId();
+			if (currentId != id) {
 				this.lastId = id;
 				getDetailsFromServer(this.detailWidget);
 			}
@@ -221,61 +224,16 @@ public abstract class AbstractSearchController implements Controller {
 		SEARCH_SERVICE.get(this.flavor, this.lastId, new AsyncCallback<Entity>() {
 
 			public void onSuccess(Entity entity) {
-				//String token = getType().getToken() + "?search=" + AbstractSearchController.this.lastSearchTerm;
-				//History.newItem(token, false);
-				//AbstractSearchController.this.sdb.setToken(token);
-
-				detailWidget.initEntity(entity);
+				detailWidget.initEntity(entity, AbstractSearchController.this);
 				detailWidget.setEnabled(true);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-
-				detailWidget.initEntity(null);
-
-				// Create the popup dialog box
-				final DialogBox dialogBox = new DialogBox();
-				dialogBox.setText("Remote Procedure Call - Fehler");
-				dialogBox.setAnimationEnabled(true);
-				final Button closeButton = new Button("Close");
-
-				// We can set the id of a widget by accessing its Element
-				closeButton.getElement().setId("closeButton");
-
-				final Label textToServerLabel = new Label();
-				textToServerLabel.setText("id=" + AbstractSearchController.this.lastId);
-
-				final HTML serverResponseLabel = new HTML();
-				serverResponseLabel.setText("");
-				serverResponseLabel.addStyleName("serverResponseLabelError");
-				serverResponseLabel.setHTML(SERVER_ERROR);
-
-				VerticalPanel dialogVPanel = new VerticalPanel();
-				dialogVPanel.addStyleName("dialogVPanel");
-				dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-				dialogVPanel.add(textToServerLabel);
-				dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-				dialogVPanel.add(serverResponseLabel);
-				dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-				dialogVPanel.add(closeButton);
-				dialogBox.setWidget(dialogVPanel);
-
-				// Add a handler to close the DialogBox
-				closeButton.addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						dialogBox.hide();
-						detailWidget.setEnabled(true);
-					}
-				});
-
-				// Show the RPC error message to the user
-
-				dialogBox.center();
-				closeButton.setFocus(true);
+				detailWidget.initEntity(null, AbstractSearchController.this);
+				showRpcError(caught, "[" + AbstractSearchController.this.flavor.name() + "] id=" + AbstractSearchController.this.lastId, detailWidget);
 			}
 		});
-
 	}
 
 	protected void getSearchFromServer(QueryWidget queryWidget) {
@@ -291,72 +249,81 @@ public abstract class AbstractSearchController implements Controller {
 		final ColumnSortInfo sortInfo = table.getColumnSortList().get(0);
 		final boolean ascending = sortInfo.isAscending();
 
+		final String term = this.lastSearchTerm;
+
 		//Disable search
 		search.setEnabled(false);
 
 		// Then, we send the input to the server.
-		SEARCH_SERVICE.search(this.flavor, this.lastSearchTerm, range, ascending, new AsyncCallback<SearchResult>() {
+		SEARCH_SERVICE.search(this.flavor, term, range, ascending, new AsyncCallback<Result>() {
 
-			public void onSuccess(SearchResult searchResult) {
-				String token = getType().getToken() + "?search=" + AbstractSearchController.this.lastSearchTerm;
+			public void onSuccess(Result searchResult) {
+				String token = getType().getToken() + "?search=" + term;
 				History.newItem(token, false);
 				AbstractSearchController.this.sdb.setToken(token);
 
 				int total = searchResult.getTotalLength();
 
+				String info = "Suchergebnis für: '" + term + "'.";
+				if (total > 0)
+					info += " Gefundene Einträge: " + total;
+
 				table.setRowCount(total, true);
 				table.setRowData(range.getStart(), searchResult.getResultChunk());
-				result.setText(searchResult.getInfo());
+				result.setText(info);
 				result.setElementVisibility(total);
 				search.setEnabled(true);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-
 				result.setElementVisibility(-1);
-
-				// Create the popup dialog box
-				final DialogBox dialogBox = new DialogBox();
-				dialogBox.setText("Remote Procedure Call - Fehler");
-				dialogBox.setAnimationEnabled(true);
-				final Button closeButton = new Button("Close");
-
-				// We can set the id of a widget by accessing its Element
-				closeButton.getElement().setId("closeButton");
-
-				final Label textToServerLabel = new Label();
-				textToServerLabel.setText(AbstractSearchController.this.lastSearchTerm);
-
-				final HTML serverResponseLabel = new HTML();
-				serverResponseLabel.setText("");
-				serverResponseLabel.addStyleName("serverResponseLabelError");
-				serverResponseLabel.setHTML(SERVER_ERROR);
-
-				VerticalPanel dialogVPanel = new VerticalPanel();
-				dialogVPanel.addStyleName("dialogVPanel");
-				dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-				dialogVPanel.add(textToServerLabel);
-				dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-				dialogVPanel.add(serverResponseLabel);
-				dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-				dialogVPanel.add(closeButton);
-				dialogBox.setWidget(dialogVPanel);
-
-				// Add a handler to close the DialogBox
-				closeButton.addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						dialogBox.hide();
-						search.setEnabled(true);
-					}
-				});
-
-				// Show the RPC error message to the user
-
-				dialogBox.center();
-				closeButton.setFocus(true);
+				showRpcError(caught, "[" + AbstractSearchController.this.flavor.name() + "] " + AbstractSearchController.this.lastSearchTerm, search);
 			}
 		});
 
 	}
+
+	protected void showRpcError(Throwable caught, String msg, final HasEnabled hasEnabled) {
+		// Create the popup dialog box
+		final DialogBox dialogBox = new DialogBox();
+		dialogBox.setText("Remote Procedure Call - Fehler");
+		dialogBox.setAnimationEnabled(true);
+		final Button closeButton = new Button("Close");
+
+		// We can set the id of a widget by accessing its Element
+		closeButton.getElement().setId("closeButton");
+
+		final Label textToServerLabel = new Label();
+		textToServerLabel.setText(msg);
+
+		final HTML serverResponseLabel = new HTML();
+		serverResponseLabel.setText("");
+		serverResponseLabel.addStyleName("serverResponseLabelError");
+		serverResponseLabel.setHTML(SERVER_ERROR + "<p>Original error message:<br/>" + caught.getLocalizedMessage() + "</p>");
+
+		VerticalPanel dialogVPanel = new VerticalPanel();
+		dialogVPanel.addStyleName("dialogVPanel");
+		dialogVPanel.add(new HTML("<b>Sent to the server:</b>"));
+		dialogVPanel.add(textToServerLabel);
+		dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
+		dialogVPanel.add(serverResponseLabel);
+		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
+		dialogVPanel.add(closeButton);
+		dialogBox.setWidget(dialogVPanel);
+
+		// Add a handler to close the DialogBox
+		closeButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				dialogBox.hide();
+				if (hasEnabled != null)
+					hasEnabled.setEnabled(true);
+			}
+		});
+
+		// Show the RPC error message to the user
+		dialogBox.center();
+		closeButton.setFocus(true);
+	}
+
 }
