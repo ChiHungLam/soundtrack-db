@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.shared.model.db.SearchResult;
-import dev.sdb.shared.model.db.SearchResultSort;
 import dev.sdb.shared.model.db.SearchScope;
 
 /**
@@ -15,6 +14,6 @@ import dev.sdb.shared.model.db.SearchScope;
  */
 @RemoteServiceRelativePath("search") public interface SearchService extends RemoteService {
 
-	SearchResult search(String term, SearchScope scope, Range range, SearchResultSort sort) throws IllegalArgumentException, IOException;
+	SearchResult search(String term, SearchScope scope, Range range, boolean ascending) throws IllegalArgumentException, IOException;
 
 }

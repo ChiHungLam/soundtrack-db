@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.gwt.view.client.Range;
 
-import dev.sdb.shared.model.db.SearchResultSort;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
@@ -32,30 +31,30 @@ public class SdbManager extends SqlManager {
 		openConnection();
 	}
 
-	public void initReleases(Range range, SearchResultSort sort) throws IOException {
+	public void initReleases(Range range, boolean ascending) throws IOException {
 		try {
 			this.releaseCountPS = createReleaseCountPS();
-			this.releaseListPS = createReleaseListPS(range, sort);
+			this.releaseListPS = createReleaseListPS(range, ascending);
 		} catch (SQLException e) {
 			close();
 			throw new IOException(e);
 		}
 	}
 
-	public void initMusic(Range range, SearchResultSort sort) throws IOException {
+	public void initMusic(Range range, boolean ascending) throws IOException {
 		try {
 			this.musicCountPS = createMusicCountPS();
-			this.musicListPS = createMusicListPS(range, sort);
+			this.musicListPS = createMusicListPS(range, ascending);
 		} catch (SQLException e) {
 			close();
 			throw new IOException(e);
 		}
 	}
 
-	public void initSoundtracks(Range range, SearchResultSort sort) throws IOException {
+	public void initSoundtracks(Range range, boolean ascending) throws IOException {
 		try {
 			this.soundtrackCountPS = createSoundtrackCountPS();
-			this.soundtrackListPS = createSoundtrackListPS(range, sort);
+			this.soundtrackListPS = createSoundtrackListPS(range, ascending);
 		} catch (SQLException e) {
 			close();
 			throw new IOException(e);
@@ -193,8 +192,8 @@ public class SdbManager extends SqlManager {
 			rs = this.soundtrackListPS.executeQuery();
 
 			while (rs.next()) {
-				Release release = null;//readRelease(rs);
-				Music music = null;//readMusic(rs);
+				Release release = readRelease(rs);
+				Music music = readMusic(rs);
 				Soundtrack soundtrack = readSoundtrack(rs, release, music);
 
 				result.add(soundtrack);
@@ -260,30 +259,27 @@ public class SdbManager extends SqlManager {
 		return getStatement(sql);
 	}
 
-	private PreparedStatement createMusicListPS(Range range, SearchResultSort sort) throws SQLException {
-		String sorting = (sort == null) ? "ASC" : (sort.isAscending() ? "ASC" : "DESC");
+	private PreparedStatement createMusicListPS(Range range, boolean ascending) throws SQLException {
 		String limit = (range == null) ? "" : " LIMIT " + range.getStart() + " , " + range.getLength();
 
 		String sql = "SELECT * FROM `recording` WHERE `rec_title` LIKE ?"
-				+ " ORDER BY `recording`.`rec_title` " + sorting + limit;
+				+ " ORDER BY `recording`.`rec_title` " + (ascending ? "ASC" : "DESC") + limit;
 		return getStatement(sql);
 	}
 
-	private PreparedStatement createReleaseListPS(Range range, SearchResultSort sort) throws SQLException {
-		String sorting = (sort == null) ? "ASC" : (sort.isAscending() ? "ASC" : "DESC");
+	private PreparedStatement createReleaseListPS(Range range, boolean ascending) throws SQLException {
 		String limit = (range == null) ? "" : " LIMIT " + range.getStart() + " , " + range.getLength();
 
 		String sql = "SELECT * FROM `production` WHERE `prod_res_title` LIKE ?"
-				+ " ORDER BY `production`.`prod_res_title` " + sorting + limit;
+				+ " ORDER BY `production`.`prod_res_title` " + (ascending ? "ASC" : "DESC") + limit;
 		return getStatement(sql);
 	}
 
-	private PreparedStatement createSoundtrackListPS(Range range, SearchResultSort sort) throws SQLException {
-		String sorting = (sort == null) ? "ASC" : (sort.isAscending() ? "ASC" : "DESC");
+	private PreparedStatement createSoundtrackListPS(Range range, boolean ascending) throws SQLException {
 		String limit = (range == null) ? "" : " LIMIT " + range.getStart() + " , " + range.getLength();
 
 		String sql = "SELECT * FROM `soundtrack` WHERE `stk_interna` LIKE ?"
-				+ " ORDER BY `soundtrack`.`stk_interna` " + sorting + limit;
+				+ " ORDER BY `soundtrack`.`stk_interna` " + (ascending ? "ASC" : "DESC") + limit;
 		return getStatement(sql);
 	}
 }

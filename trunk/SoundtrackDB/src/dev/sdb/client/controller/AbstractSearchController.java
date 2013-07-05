@@ -22,7 +22,6 @@ import dev.sdb.client.ui.search.AbstractQueryWidget;
 import dev.sdb.client.ui.search.AbstractResultField;
 import dev.sdb.client.ui.search.SearchField;
 import dev.sdb.shared.model.db.SearchResult;
-import dev.sdb.shared.model.db.SearchResultSort;
 import dev.sdb.shared.model.db.SearchScope;
 import dev.sdb.shared.model.entity.Entity;
 
@@ -97,14 +96,13 @@ public abstract class AbstractSearchController implements Controller {
 		final CellTable<Entity> table = result.getTable();
 		final Range range = table.getVisibleRange();
 		final ColumnSortInfo sortInfo = table.getColumnSortList().get(0);
-
-		final SearchResultSort sort = new SearchResultSort(result.getSortType(), sortInfo.isAscending());
+		final boolean ascending = sortInfo.isAscending();
 
 		//Disable search
 		search.setEnabled(false);
 
 		// Then, we send the input to the server.
-		SEARCH_SERVICE.search(this.lastSearchTerm, this.scope, range, sort, new AsyncCallback<SearchResult>() {
+		SEARCH_SERVICE.search(this.lastSearchTerm, this.scope, range, ascending, new AsyncCallback<SearchResult>() {
 
 			public void onSuccess(SearchResult searchResult) {
 				String token = getType().getToken() + "?search=" + AbstractSearchController.this.lastSearchTerm;
