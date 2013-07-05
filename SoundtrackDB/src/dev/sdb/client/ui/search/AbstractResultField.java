@@ -4,8 +4,8 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 
-import dev.sdb.shared.model.Entity;
-import dev.sdb.shared.model.SearchResultSortType;
+import dev.sdb.shared.model.db.SearchResultSortType;
+import dev.sdb.shared.model.entity.Entity;
 
 public abstract class AbstractResultField extends Composite implements HasText {
 

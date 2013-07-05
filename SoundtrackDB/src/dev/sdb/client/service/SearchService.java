@@ -6,9 +6,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.view.client.Range;
 
-import dev.sdb.shared.model.SearchResult;
-import dev.sdb.shared.model.SearchResultSort;
-import dev.sdb.shared.model.SearchScope;
+import dev.sdb.shared.model.db.SearchResult;
+import dev.sdb.shared.model.db.SearchResultSort;
+import dev.sdb.shared.model.db.SearchScope;
 
 /**
  * The client side stub for the RPC service.

@@ -21,10 +21,10 @@ import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.ui.search.AbstractQueryWidget;
 import dev.sdb.client.ui.search.AbstractResultField;
 import dev.sdb.client.ui.search.SearchField;
-import dev.sdb.shared.model.Entity;
-import dev.sdb.shared.model.SearchResult;
-import dev.sdb.shared.model.SearchResultSort;
-import dev.sdb.shared.model.SearchScope;
+import dev.sdb.shared.model.db.SearchResult;
+import dev.sdb.shared.model.db.SearchResultSort;
+import dev.sdb.shared.model.db.SearchScope;
+import dev.sdb.shared.model.entity.Entity;
 
 public abstract class AbstractSearchController implements Controller {
 

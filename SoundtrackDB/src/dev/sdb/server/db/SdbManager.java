@@ -8,11 +8,11 @@ import java.util.List;
 
 import com.google.gwt.view.client.Range;
 
-import dev.sdb.shared.model.Entity;
-import dev.sdb.shared.model.Music;
-import dev.sdb.shared.model.Release;
-import dev.sdb.shared.model.SearchResultSort;
-import dev.sdb.shared.model.Soundtrack;
+import dev.sdb.shared.model.db.SearchResultSort;
+import dev.sdb.shared.model.entity.Entity;
+import dev.sdb.shared.model.entity.Music;
+import dev.sdb.shared.model.entity.Release;
+import dev.sdb.shared.model.entity.Soundtrack;
 
 public class SdbManager extends SqlManager {
 
@@ -32,9 +32,7 @@ public class SdbManager extends SqlManager {
 		openConnection();
 	}
 
-	public void openReleases(Range range, SearchResultSort sort) throws IOException {
-		open();
-
+	public void initReleases(Range range, SearchResultSort sort) throws IOException {
 		try {
 			this.releaseCountPS = createReleaseCountPS();
 			this.releaseListPS = createReleaseListPS(range, sort);
@@ -44,9 +42,7 @@ public class SdbManager extends SqlManager {
 		}
 	}
 
-	public void openMusic(Range range, SearchResultSort sort) throws IOException {
-		open();
-
+	public void initMusic(Range range, SearchResultSort sort) throws IOException {
 		try {
 			this.musicCountPS = createMusicCountPS();
 			this.musicListPS = createMusicListPS(range, sort);
@@ -56,9 +52,7 @@ public class SdbManager extends SqlManager {
 		}
 	}
 
-	public void openSoundtracks(Range range, SearchResultSort sort) throws IOException {
-		open();
-
+	public void initSoundtracks(Range range, SearchResultSort sort) throws IOException {
 		try {
 			this.soundtrackCountPS = createSoundtrackCountPS();
 			this.soundtrackListPS = createSoundtrackListPS(range, sort);
@@ -126,9 +120,8 @@ public class SdbManager extends SqlManager {
 			rs = this.musicListPS.executeQuery();
 
 			while (rs.next()) {
-				long id = rs.getLong("rec_id");
-				String title = rs.getString("rec_title");
-				result.add(new Music(id, title));
+				Music music = readMusic(rs);
+				result.add(music);
 			}
 
 		} catch (SQLException e) {
@@ -137,6 +130,12 @@ public class SdbManager extends SqlManager {
 			closeResultSet(rs);
 		}
 
+	}
+
+	protected Music readMusic(ResultSet rs) throws SQLException {
+		long id = rs.getLong("rec_id");
+		String title = rs.getString("rec_title");
+		return new Music(id, title);
 	}
 
 	public int countSoundtracks(String term) throws IOException {
@@ -194,9 +193,11 @@ public class SdbManager extends SqlManager {
 			rs = this.soundtrackListPS.executeQuery();
 
 			while (rs.next()) {
-				long id = rs.getLong("stk_id");
-				//				String title = rs.getString("prod_res_title");
-				result.add(new Soundtrack(id));
+				Release release = null;//readRelease(rs);
+				Music music = null;//readMusic(rs);
+				Soundtrack soundtrack = readSoundtrack(rs, release, music);
+
+				result.add(soundtrack);
 			}
 
 		} catch (SQLException e) {
@@ -205,6 +206,11 @@ public class SdbManager extends SqlManager {
 		} finally {
 			closeResultSet(rs);
 		}
+	}
+
+	protected Soundtrack readSoundtrack(ResultSet rs, Release release, Music music) throws SQLException {
+		long id = rs.getLong("stk_id");
+		return new Soundtrack(id, release, music);
 	}
 
 	public void queryReleases(List<Entity> result, String term) throws IOException {
@@ -220,9 +226,8 @@ public class SdbManager extends SqlManager {
 			rs = this.releaseListPS.executeQuery();
 
 			while (rs.next()) {
-				long id = rs.getLong("prod_id");
-				String title = rs.getString("prod_res_title");
-				result.add(new Release(id, title));
+				Release release = readRelease(rs);
+				result.add(release);
 			}
 
 		} catch (SQLException e) {
@@ -231,6 +236,13 @@ public class SdbManager extends SqlManager {
 		} finally {
 			closeResultSet(rs);
 		}
+	}
+
+	protected Release readRelease(ResultSet rs) throws SQLException {
+		long id = rs.getLong("prod_id");
+		String title = rs.getString("prod_res_title");
+
+		return new Release(id, title);
 	}
 
 	private PreparedStatement createMusicCountPS() throws SQLException {

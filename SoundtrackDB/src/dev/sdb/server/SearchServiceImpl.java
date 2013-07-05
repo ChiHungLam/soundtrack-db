@@ -12,10 +12,10 @@ import dev.sdb.client.service.SearchService;
 import dev.sdb.server.db.SdbManager;
 import dev.sdb.server.db.SqlServer;
 import dev.sdb.shared.FieldVerifier;
-import dev.sdb.shared.model.Entity;
-import dev.sdb.shared.model.SearchResult;
-import dev.sdb.shared.model.SearchResultSort;
-import dev.sdb.shared.model.SearchScope;
+import dev.sdb.shared.model.db.SearchResult;
+import dev.sdb.shared.model.db.SearchResultSort;
+import dev.sdb.shared.model.db.SearchScope;
+import dev.sdb.shared.model.entity.Entity;
 
 /**
  * The server side implementation of the RPC service.
@@ -64,6 +64,7 @@ import dev.sdb.shared.model.SearchScope;
 
 	private SearchResult query(String term, SearchScope scope, Range range, final SearchResultSort sort) throws IOException, IllegalArgumentException {
 		SdbManager manager = new SdbManager(sqlServer);
+		manager.open();
 
 		try {
 
@@ -73,19 +74,19 @@ import dev.sdb.shared.model.SearchScope;
 
 			switch (scope) {
 			case RELEASES:
-				manager.openReleases(range, sort);
+				manager.initReleases(range, sort);
 				count = manager.countReleases(term);
 				manager.queryReleases(result, term);
 
 				break;
 			case MUSIC:
-				manager.openMusic(range, sort);
+				manager.initMusic(range, sort);
 				count = manager.countMusic(term);
 				manager.queryMusic(result, term);
 
 				break;
 			case SOUNDTRACK:
-				manager.openSoundtracks(range, sort);
+				manager.initSoundtracks(range, sort);
 				count = manager.countSoundtracks(term);
 				manager.querySoundtracks(result, term);
 

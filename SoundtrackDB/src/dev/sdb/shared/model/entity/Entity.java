@@ -1,4 +1,4 @@
-package dev.sdb.shared.model;
+package dev.sdb.shared.model.entity;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

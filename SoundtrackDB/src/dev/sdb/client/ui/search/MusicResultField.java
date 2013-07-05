@@ -14,9 +14,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 
-import dev.sdb.shared.model.Entity;
-import dev.sdb.shared.model.SearchResultSortType;
-import dev.sdb.shared.model.SoundtrackContainer;
+import dev.sdb.shared.model.db.SearchResultSortType;
+import dev.sdb.shared.model.entity.Entity;
+import dev.sdb.shared.model.entity.Music;
 
 public class MusicResultField extends AbstractResultField {
 
@@ -55,7 +55,7 @@ public class MusicResultField extends AbstractResultField {
 		// Create title column.
 		final TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
-				return ((SoundtrackContainer) entity).getTitle();
+				return ((Music) entity).getTitle();
 			}
 		};
 

@@ -1,4 +1,4 @@
-package dev.sdb.shared.model;
+package dev.sdb.shared.model.entity;
 
 public abstract class AbstractEntity implements Entity {
 
@@ -15,10 +15,6 @@ public abstract class AbstractEntity implements Entity {
 
 	@Override public long getId() {
 		return this.id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 }
