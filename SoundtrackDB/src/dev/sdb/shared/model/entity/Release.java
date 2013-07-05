@@ -17,7 +17,8 @@ public class Release extends AbstractEntity {
 		return this.title;
 	}
 
-	//	@Override public SoundtrackContainerType getType() {
-	//		return SoundtrackContainerType.RELEASE;
-	//	}
+	@Override public String toString() {
+		String info = "Release #" + getId() + ": " + getTitle();
+		return info;
+	}
 }

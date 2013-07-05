@@ -11,10 +11,8 @@ public class Soundtrack extends AbstractEntity {
 
 	public Soundtrack(long id, Release release, Music music) {
 		super(id);
-	}
-
-	@Override public String toString() {
-		return "Soundtrack - id " + getId();
+		this.release = release;
+		this.music = music;
 	}
 
 	public Release getRelease() {
@@ -23,5 +21,12 @@ public class Soundtrack extends AbstractEntity {
 
 	public Music getMusic() {
 		return this.music;
+	}
+
+	@Override public String toString() {
+		String info = "Soundtrack #" + getId();
+		info += " - " + ((this.release == null) ? "no release" : this.release);
+		info += " - " + ((this.music == null) ? "no music" : this.music);
+		return info;
 	}
 }

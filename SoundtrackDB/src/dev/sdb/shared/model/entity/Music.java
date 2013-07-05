@@ -17,7 +17,8 @@ public class Music extends AbstractEntity {
 		return this.title;
 	}
 
-	//	@Override public SoundtrackContainerType getType() {
-	//		return SoundtrackContainerType.MUSIC;
-	//	}
+	@Override public String toString() {
+		String info = "Music #" + getId() + ": " + getTitle();
+		return info;
+	}
 }
