@@ -12,8 +12,8 @@ import dev.sdb.client.service.SearchService;
 import dev.sdb.server.db.SdbManager;
 import dev.sdb.server.db.SqlServer;
 import dev.sdb.shared.FieldVerifier;
+import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.SearchResult;
-import dev.sdb.shared.model.db.SearchScope;
 import dev.sdb.shared.model.entity.Entity;
 
 /**
@@ -41,27 +41,28 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
-	public SearchResult search(String term, SearchScope scope, Range range, boolean ascending) throws IllegalArgumentException, IOException {
+	public SearchResult search(String term, Flavor flavor, Range range, boolean ascending) throws IllegalArgumentException, IOException {
+		assert (flavor != null);
+
 		// Verify that the input is valid. 
 		if (!FieldVerifier.isValidSearchTerm(term)) {
 			// If the input is not valid, throw an IllegalArgumentException back to
 			// the client.
 			throw new IllegalArgumentException("Bitte mindestens " + FieldVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
 		}
-		if (scope == null) {
-			throw new IllegalArgumentException("Bitte einen Suchbereich auswŠhlen.");
-		}
 
 		// Escape data from the client to avoid cross-site script vulnerabilities.
 		term = escapeHtml(term);
 
 		// Perform the actual query
-		SearchResult searchResult = query(term, scope, range, ascending);
+		SearchResult searchResult = query(term, flavor, range, ascending);
 
 		return searchResult;
 	}
 
-	private SearchResult query(String term, SearchScope scope, Range range, boolean ascending) throws IOException, IllegalArgumentException {
+	private SearchResult query(String term, Flavor flavor, Range range, boolean ascending) throws IOException, IllegalArgumentException {
+		assert (flavor != null);
+
 		SdbManager manager = new SdbManager(sqlServer);
 		manager.open();
 
@@ -71,7 +72,7 @@ import dev.sdb.shared.model.entity.Entity;
 
 			int count;
 
-			switch (scope) {
+			switch (flavor) {
 			case RELEASES:
 				manager.initReleases(range, ascending);
 				count = manager.countReleases(term);
@@ -93,12 +94,12 @@ import dev.sdb.shared.model.entity.Entity;
 
 			default:
 				result.clear();
-				throw new IllegalArgumentException("illegal scope: " + scope);
+				throw new IllegalArgumentException("illegal flavor: " + flavor);
 			}
 
 			String info = "Suchergebnis fŸr: '" + term + "'.";
 			if (count > 0)
-				info += "Gefundene EintrŠge: " + count;
+				info += " Gefundene EintrŠge: " + count;
 
 			return new SearchResult(info, result, count);
 

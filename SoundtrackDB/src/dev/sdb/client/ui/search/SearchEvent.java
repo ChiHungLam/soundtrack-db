@@ -6,13 +6,10 @@ public class SearchEvent extends GwtEvent<SearchEventHandler> {
 
 	public static Type<SearchEventHandler> TYPE = new Type<SearchEventHandler>();
 
-	private final String text;
+	private final String searchTerm;
 
-	//	private final SearchScope range;
-
-	public SearchEvent(String text) { // SearchScope range
-		this.text = text;
-		//		this.range = range;
+	public SearchEvent(String searchTerm) {
+		this.searchTerm = searchTerm;
 	}
 
 	@Override public GwtEvent.Type<SearchEventHandler> getAssociatedType() {
@@ -23,11 +20,7 @@ public class SearchEvent extends GwtEvent<SearchEventHandler> {
 		handler.onSearch(this);
 	}
 
-	//	public SearchScope getRange() {
-	//		return this.range;
-	//	}
-
-	public String getText() {
-		return this.text;
+	public String getSearchTerm() {
+		return this.searchTerm;
 	}
 }
