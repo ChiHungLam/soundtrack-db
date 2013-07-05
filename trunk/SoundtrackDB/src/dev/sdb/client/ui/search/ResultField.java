@@ -5,22 +5,23 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
-import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 
 import dev.sdb.shared.model.entity.Entity;
-import dev.sdb.shared.model.entity.Soundtrack;
 
-public class SoundtrackResultField extends AbstractResultField {
+public class ResultField extends Composite implements HasText {
 
-	interface SoundtrackResultFieldUiBinder extends UiBinder<Widget, SoundtrackResultField> {}
-	private static SoundtrackResultFieldUiBinder uiBinder = GWT.create(SoundtrackResultFieldUiBinder.class);
+	interface ResultFieldUiBinder extends UiBinder<Widget, ResultField> {}
+	private static ResultFieldUiBinder uiBinder = GWT.create(ResultFieldUiBinder.class);
 
 	@UiField(provided = true) CellTable<Entity> cellTable;
 	@UiField(provided = true) SimplePager pager;
@@ -28,7 +29,7 @@ public class SoundtrackResultField extends AbstractResultField {
 	@UiField VerticalPanel tablePanel;
 	@UiField Label emptyResultLabel;
 
-	public SoundtrackResultField() {
+	public ResultField() {
 		super();
 		this.cellTable = new CellTable<Entity>();
 
@@ -45,27 +46,20 @@ public class SoundtrackResultField extends AbstractResultField {
 		return this.cellTable;
 	}
 
-	public void init(AsyncDataProvider<Entity> dataProvider, int rangeLength) {
-
-		// Create title column.
-		final TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Soundtrack) entity).toString();
-			}
-		};
+	public void init(Column<Entity, ?> column, AsyncDataProvider<Entity> dataProvider, int rangeLength) {
 
 		// Make the columns sortable.
-		titleColumn.setSortable(true);
+		column.setSortable(true);
 
 		// Add the columns.
-		this.cellTable.addColumn(titleColumn, "Titel");
+		this.cellTable.addColumn(column, "Titel");
 
 		this.cellTable.setWidth("100%", true);
-		this.cellTable.setColumnWidth(titleColumn, 100.0, Unit.PCT);
+		this.cellTable.setColumnWidth(column, 100.0, Unit.PCT);
 
 		// Set the total row count. You might send an RPC request to determine the
 		// total row count.
-		this.cellTable.setRowCount(0, true);//CONTACTS.size()
+		this.cellTable.setRowCount(0, true);
 
 		// Set the range to display. In this case, our visible range is smaller than
 		// the data set.
@@ -79,7 +73,7 @@ public class SoundtrackResultField extends AbstractResultField {
 		this.cellTable.addColumnSortHandler(columnSortHandler);
 
 		// We know that the data is sorted alphabetically by default.
-		this.cellTable.getColumnSortList().push(titleColumn);
+		this.cellTable.getColumnSortList().push(column);
 	}
 
 	@Override public String getText() {
@@ -93,5 +87,7 @@ public class SoundtrackResultField extends AbstractResultField {
 	public void setElementVisibility(int numRows) {
 		this.tablePanel.setVisible(numRows > 0);
 		this.emptyResultLabel.setVisible(numRows == 0);
+		if (numRows < 0)
+			setText("");
 	}
 }

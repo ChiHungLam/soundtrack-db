@@ -25,9 +25,8 @@ import dev.sdb.shared.FieldVerifier;
 
 public class SearchField extends Composite implements HasEnabled, HasText, HasHandlers {
 
-	private static SearchFieldUiBinder uiBinder = GWT.create(SearchFieldUiBinder.class);
-
 	interface SearchFieldUiBinder extends UiBinder<Widget, SearchField> {}
+	private static SearchFieldUiBinder uiBinder = GWT.create(SearchFieldUiBinder.class);
 
 	@UiField Button button;
 	@UiField TextBox text;
