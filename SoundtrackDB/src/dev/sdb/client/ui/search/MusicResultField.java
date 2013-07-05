@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 
+import dev.sdb.shared.model.Entity;
 import dev.sdb.shared.model.SearchResultSortType;
 import dev.sdb.shared.model.SoundtrackContainer;
 
@@ -22,7 +23,7 @@ public class MusicResultField extends AbstractResultField {
 	interface MusicResultFieldUiBinder extends UiBinder<Widget, MusicResultField> {}
 	private static MusicResultFieldUiBinder uiBinder = GWT.create(MusicResultFieldUiBinder.class);
 
-	@UiField(provided = true) CellTable<SoundtrackContainer> cellTable;
+	@UiField(provided = true) CellTable<Entity> cellTable;
 	@UiField(provided = true) SimplePager pager;
 	@UiField Label infoLabel;
 	@UiField VerticalPanel tablePanel;
@@ -30,7 +31,7 @@ public class MusicResultField extends AbstractResultField {
 
 	public MusicResultField() {
 		super();
-		this.cellTable = new CellTable<SoundtrackContainer>();
+		this.cellTable = new CellTable<Entity>();
 
 		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
 		this.pager = new SimplePager(TextLocation.CENTER, pagerResources, true, 1000, true);
@@ -41,7 +42,7 @@ public class MusicResultField extends AbstractResultField {
 		setElementVisibility(-1);
 	}
 
-	public CellTable<SoundtrackContainer> getTable() {
+	public CellTable<Entity> getTable() {
 		return this.cellTable;
 	}
 
@@ -49,12 +50,12 @@ public class MusicResultField extends AbstractResultField {
 		return SearchResultSortType.TITLE;
 	}
 
-	public void init(AsyncDataProvider<SoundtrackContainer> dataProvider, int rangeLength) {
+	public void init(AsyncDataProvider<Entity> dataProvider, int rangeLength) {
 
 		// Create title column.
-		final TextColumn<SoundtrackContainer> titleColumn = new TextColumn<SoundtrackContainer>() {
-			@Override public String getValue(SoundtrackContainer container) {
-				return container.getTitle();
+		final TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((SoundtrackContainer) entity).getTitle();
 			}
 		};
 

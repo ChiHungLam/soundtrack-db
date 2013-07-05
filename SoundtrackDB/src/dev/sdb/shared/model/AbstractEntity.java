@@ -1,19 +1,19 @@
 package dev.sdb.shared.model;
 
-public abstract class AbstractModel {
+public abstract class AbstractEntity implements Entity {
 
 	private long id;
 
-	public AbstractModel() {
+	public AbstractEntity() {
 		super();
 	}
 
-	public AbstractModel(long id) {
+	public AbstractEntity(long id) {
 		super();
 		this.id = id;
 	}
 
-	public long getId() {
+	@Override public long getId() {
 		return this.id;
 	}
 

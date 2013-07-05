@@ -21,10 +21,10 @@ import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.ui.search.AbstractQueryWidget;
 import dev.sdb.client.ui.search.AbstractResultField;
 import dev.sdb.client.ui.search.SearchField;
+import dev.sdb.shared.model.Entity;
 import dev.sdb.shared.model.SearchResult;
 import dev.sdb.shared.model.SearchResultSort;
 import dev.sdb.shared.model.SearchScope;
-import dev.sdb.shared.model.SoundtrackContainer;
 
 public abstract class AbstractSearchController implements Controller {
 
@@ -94,7 +94,7 @@ public abstract class AbstractSearchController implements Controller {
 		if (this.lastSearchTerm == null)
 			return;
 
-		final CellTable<SoundtrackContainer> table = result.getTable();
+		final CellTable<Entity> table = result.getTable();
 		final Range range = table.getVisibleRange();
 		final ColumnSortInfo sortInfo = table.getColumnSortList().get(0);
 

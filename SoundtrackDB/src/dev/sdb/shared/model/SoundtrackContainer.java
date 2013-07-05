@@ -1,8 +1,7 @@
 package dev.sdb.shared.model;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 
-public interface SoundtrackContainer extends IsSerializable {
+public interface SoundtrackContainer extends Entity {
 
 	String getTitle();
 	SoundtrackContainerType getType();

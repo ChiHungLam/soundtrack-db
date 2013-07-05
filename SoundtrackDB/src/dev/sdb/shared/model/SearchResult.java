@@ -7,14 +7,14 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class SearchResult implements IsSerializable {
 
 	private String info;
-	private List<SoundtrackContainer> resultChunk;
+	private List<Entity> resultChunk;
 	private int totalLength;
 
 	public SearchResult() {
 		super();
 	}
 
-	public SearchResult(String info, List<SoundtrackContainer> resultChunk, int totalLength) {
+	public SearchResult(String info, List<Entity> resultChunk, int totalLength) {
 		super();
 		this.info = info;
 		this.resultChunk = resultChunk;
@@ -24,7 +24,8 @@ public class SearchResult implements IsSerializable {
 	public String getInfo() {
 		return this.info;
 	}
-	public List<SoundtrackContainer> getResultChunk() {
+
+	public List<Entity> getResultChunk() {
 		return this.resultChunk;
 	}
 

@@ -108,7 +108,7 @@ public final class SqlServer {
 		if (!this.driverInitiated)
 			throw new IOException("Database driver not initiated");
 		if (!this.connectionTested)
-			throw new IOException("Untested connection");
+			throw new IOException("Untested database connection");
 
 		return getConnection(this.url, this.user, this.password);
 	}
@@ -126,8 +126,6 @@ public final class SqlServer {
 		try {
 			connection = getConnection(this.url, this.user, this.password);
 		} finally {
-			//			if (connection == null)
-			//				return;
 			try {
 				if (connection != null)
 					connection.close();

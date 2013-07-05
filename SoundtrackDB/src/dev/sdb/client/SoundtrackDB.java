@@ -16,6 +16,7 @@ import dev.sdb.client.controller.ControllerType;
 import dev.sdb.client.controller.HomeController;
 import dev.sdb.client.controller.MusicController;
 import dev.sdb.client.controller.ReleaseController;
+import dev.sdb.client.controller.SoundtrackController;
 import dev.sdb.client.ui.NavigatorWidget;
 
 /**
@@ -163,7 +164,7 @@ public class SoundtrackDB implements EntryPoint {
 			controller = new MusicController(this);
 			break;
 		case SOUNDTRACK:
-			controller = null; // not yet
+			controller = new SoundtrackController(this); // not yet
 			break;
 		case SERIES:
 			controller = null; // not yet

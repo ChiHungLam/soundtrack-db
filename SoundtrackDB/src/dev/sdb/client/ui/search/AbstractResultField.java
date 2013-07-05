@@ -4,8 +4,8 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 
+import dev.sdb.shared.model.Entity;
 import dev.sdb.shared.model.SearchResultSortType;
-import dev.sdb.shared.model.SoundtrackContainer;
 
 public abstract class AbstractResultField extends Composite implements HasText {
 
@@ -13,7 +13,7 @@ public abstract class AbstractResultField extends Composite implements HasText {
 		super();
 	}
 
-	public abstract CellTable<SoundtrackContainer> getTable();
+	public abstract CellTable<Entity> getTable();
 
 	public abstract SearchResultSortType getSortType();
 
