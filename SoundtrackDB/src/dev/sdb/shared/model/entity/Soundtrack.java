@@ -19,8 +19,16 @@ public class Soundtrack extends AbstractEntity {
 		return this.release;
 	}
 
+	public void setRelease(Release release) {
+		this.release = release;
+	}
+
 	public Music getMusic() {
 		return this.music;
+	}
+
+	public void setMusic(Music music) {
+		this.music = music;
 	}
 
 	@Override public String toString() {
@@ -29,4 +37,6 @@ public class Soundtrack extends AbstractEntity {
 		info += " - " + ((this.music == null) ? "no music" : this.music);
 		return info;
 	}
+
+
 }

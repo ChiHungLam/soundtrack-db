@@ -1,9 +1,7 @@
 package dev.sdb.server;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.view.client.Range;
@@ -11,7 +9,7 @@ import com.google.gwt.view.client.Range;
 import dev.sdb.client.service.SearchService;
 import dev.sdb.server.db.SdbManager;
 import dev.sdb.server.db.SqlServer;
-import dev.sdb.shared.FieldVerifier;
+import dev.sdb.shared.SearchTermVerifier;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.SearchResult;
 import dev.sdb.shared.model.entity.Entity;
@@ -41,68 +39,38 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
-	public SearchResult search(String term, Flavor flavor, Range range, boolean ascending) throws IllegalArgumentException, IOException {
+	@Override public Entity get(Flavor flavor, long id) throws IllegalArgumentException, IOException {
 		assert (flavor != null);
-
-		// Verify that the input is valid. 
-		if (!FieldVerifier.isValidSearchTerm(term)) {
-			// If the input is not valid, throw an IllegalArgumentException back to
-			// the client.
-			throw new IllegalArgumentException("Bitte mindestens " + FieldVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
-		}
-
-		// Escape data from the client to avoid cross-site script vulnerabilities.
-		term = escapeHtml(term);
-
-		// Perform the actual query
-		SearchResult searchResult = query(term, flavor, range, ascending);
-
-		return searchResult;
-	}
-
-	private SearchResult query(String term, Flavor flavor, Range range, boolean ascending) throws IOException, IllegalArgumentException {
-		assert (flavor != null);
+		assert (id > 0);
 
 		SdbManager manager = new SdbManager(sqlServer);
 		manager.open();
 
 		try {
+			return manager.getEntity(flavor, id);
+		} finally {
+			manager.close();
+		}
+	}
 
-			List<Entity> result = new Vector<Entity>();
+	@Override public SearchResult search(Flavor flavor, String term, Range range, boolean ascending) throws IllegalArgumentException, IOException {
+		assert (flavor != null);
 
-			int count;
+		// Verify that the input is valid. 
+		if (!SearchTermVerifier.isValidSearchTerm(term)) {
+			// If the input is not valid, throw an IllegalArgumentException back to
+			// the client.
+			throw new IllegalArgumentException("Bitte mindestens " + SearchTermVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
+		}
 
-			switch (flavor) {
-			case RELEASES:
-				manager.initReleases(range, ascending);
-				count = manager.countReleases(term);
-				manager.queryReleases(result, term);
+		// Escape data from the client to avoid cross-site script vulnerabilities.
+		term = escapeHtml(term);
 
-				break;
-			case MUSIC:
-				manager.initMusic(range, ascending);
-				count = manager.countMusic(term);
-				manager.queryMusic(result, term);
+		SdbManager manager = new SdbManager(sqlServer);
+		manager.open();
 
-				break;
-			case SOUNDTRACK:
-				manager.initSoundtracks(range, ascending);
-				count = manager.countSoundtracks(term);
-				manager.querySoundtracks(result, term);
-
-				break;
-
-			default:
-				result.clear();
-				throw new IllegalArgumentException("illegal flavor: " + flavor);
-			}
-
-			String info = "Suchergebnis fŸr: '" + term + "'.";
-			if (count > 0)
-				info += " Gefundene EintrŠge: " + count;
-
-			return new SearchResult(info, result, count);
-
+		try {
+			return manager.query(flavor, term, range, ascending);
 		} finally {
 			manager.close();
 		}

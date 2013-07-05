@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.shared.FieldVerifier;
+import dev.sdb.shared.SearchTermVerifier;
 
 
 public class SearchField extends Composite implements HasEnabled, HasText, HasHandlers {
@@ -43,7 +43,6 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 		if (searchText == null)
 			searchText = "";
 
-		// Can access @UiField after calling createAndBindUi
 		setText(searchText);
 
 		// Focus the cursor on the search field when the app loads
@@ -68,28 +67,32 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 
 	@UiHandler("button")
 	void onButtonClick(ClickEvent event) {
-		prepareSearchEvent();
+		prepareSearch();
 	}
 
 	@UiHandler("text")
 	void onTextKeyUp(KeyUpEvent event) {
 		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-			prepareSearchEvent();
+			prepareSearch();
 		}
 	}
 
-	private void prepareSearchEvent() {
-		// First, we validate the input.
+	private void prepareSearch() {
+		// Clear any previous error message
 		this.errorLabel.setText("");
+
+		// Get the input
 		String searchText = this.text.getText();
 
-		if (!FieldVerifier.isValidSearchTerm(searchText)) {
-			this.errorLabel.setText("Bitte mindestens " + FieldVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
-			return;
+		// Validate the input
+		if (!SearchTermVerifier.isValidSearchTerm(searchText)) {
+			// Show error message
+			this.errorLabel.setText("Bitte mindestens " + SearchTermVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
+			return; //cancel here!
 		}
 
-		SearchEvent searchEvent = new SearchEvent(searchText);
-		fireEvent(searchEvent);
+		// Fire search event
+		fireEvent(new SearchEvent(searchText));
 	}
 
 	public HandlerRegistration addSearchEventHandler(SearchEventHandler handler) {
