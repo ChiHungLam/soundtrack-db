@@ -11,7 +11,7 @@ import dev.sdb.server.db.SdbManager;
 import dev.sdb.server.db.SqlServer;
 import dev.sdb.shared.SearchTermVerifier;
 import dev.sdb.shared.model.db.Flavor;
-import dev.sdb.shared.model.db.SearchResult;
+import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 
 /**
@@ -53,8 +53,23 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
-	@Override public SearchResult search(Flavor flavor, String term, Range range, boolean ascending) throws IllegalArgumentException, IOException {
+	@Override public Result getSequenceList(long audioId, Range range) throws IllegalArgumentException, IOException {
+		assert (audioId > 0);
+		assert (range != null);
+
+		SdbManager manager = new SdbManager(sqlServer);
+		manager.open();
+
+		try {
+			return manager.getSequenceList(audioId, range);
+		} finally {
+			manager.close();
+		}
+	}
+
+	@Override public Result search(Flavor flavor, String term, Range range, boolean ascending) throws IllegalArgumentException, IOException {
 		assert (flavor != null);
+		assert (range != null);
 
 		// Verify that the input is valid. 
 		if (!SearchTermVerifier.isValidSearchTerm(term)) {

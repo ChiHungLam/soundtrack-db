@@ -1,4 +1,6 @@
-package dev.sdb.client.ui.search;
+package dev.sdb.client.ui.detail.sublist;
+
+import java.util.Vector;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -10,27 +12,20 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 
 import dev.sdb.shared.model.entity.Entity;
 
-public class ResultField extends Composite implements HasText {
+public class SequenceList extends Composite {
 
-	interface ResultFieldUiBinder extends UiBinder<Widget, ResultField> {}
-	private static ResultFieldUiBinder uiBinder = GWT.create(ResultFieldUiBinder.class);
+	interface SequenceListUiBinder extends UiBinder<Widget, SequenceList> {}
+	private static SequenceListUiBinder uiBinder = GWT.create(SequenceListUiBinder.class);
 
 	@UiField(provided = true) CellTable<Entity> cellTable;
 	@UiField(provided = true) SimplePager pager;
 
-	@UiField Label infoLabel;
-	@UiField VerticalPanel tablePanel;
-	@UiField Label emptyResultLabel;
-
-	public ResultField() {
+	public SequenceList() {
 		super();
 		this.cellTable = new CellTable<Entity>();
 
@@ -40,14 +35,15 @@ public class ResultField extends Composite implements HasText {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.pager.setDisplay(this.cellTable);
-		setElementVisibility(-1);
 	}
 
 	public CellTable<Entity> getTable() {
 		return this.cellTable;
 	}
 
-	public void init(Column<Entity, ?> column, AsyncDataProvider<Entity> dataProvider, int rangeLength) {
+	public void init(Column<Entity, ?> column, AsyncDataProvider<Entity> dataProvider) {
+
+		int rangeLength = 10;
 
 		// Make the columns sortable.
 		column.setSortable(true);
@@ -75,20 +71,13 @@ public class ResultField extends Composite implements HasText {
 
 		// We know that the data is sorted alphabetically by default.
 		this.cellTable.getColumnSortList().push(column);
+	
+
 	}
 
-	@Override public String getText() {
-		return this.infoLabel.getText();
+	public void clearTable() {
+		this.cellTable.setRowCount(0, true);
+		this.cellTable.setRowData(0, new Vector<Entity>());
 	}
 
-	@Override public void setText(String text) {
-		this.infoLabel.setText(text);
-	}
-
-	public void setElementVisibility(int numRows) {
-		this.tablePanel.setVisible(numRows > 0);
-		this.emptyResultLabel.setVisible(numRows == 0);
-		if (numRows < 0)
-			setText("");
-	}
 }
