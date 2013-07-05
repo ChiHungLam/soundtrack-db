@@ -11,8 +11,8 @@ import dev.sdb.client.ui.search.SearchEventHandler;
 import dev.sdb.client.ui.search.SearchField;
 import dev.sdb.client.ui.search.SoundtrackQueryWidget;
 import dev.sdb.client.ui.search.SoundtrackResultField;
-import dev.sdb.shared.model.Entity;
-import dev.sdb.shared.model.SearchScope;
+import dev.sdb.shared.model.db.SearchScope;
+import dev.sdb.shared.model.entity.Entity;
 
 public class SoundtrackController extends AbstractSearchController {
 

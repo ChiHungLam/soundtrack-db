@@ -1,8 +1,10 @@
-package dev.sdb.shared.model;
+package dev.sdb.shared.model.db;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import dev.sdb.shared.model.entity.Entity;
 
 public class SearchResult implements IsSerializable {
 
