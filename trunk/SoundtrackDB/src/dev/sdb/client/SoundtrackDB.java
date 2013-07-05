@@ -115,14 +115,14 @@ public class SoundtrackDB implements EntryPoint {
 		assert (type != null);
 
 		if (historyToken == null || historyToken.isEmpty())
-			return null;
+			return "";
 
 		int pos = historyToken.indexOf("?");
 		int tokenLength = historyToken.length();
 
 		if (pos == 0) {
 			if (tokenLength == 1)
-				return null;
+				return "";
 			return historyToken.substring(1);
 		}
 
@@ -130,11 +130,11 @@ public class SoundtrackDB implements EntryPoint {
 
 		if (!historyToken.startsWith(token)) {
 			System.err.println("given ControllerType '" + type + "' does not match historyToken '" + historyToken + "'");
-			return null;
+			return "";
 		}
 
 		if (pos == -1 || pos == (tokenLength - 1))
-			return null;
+			return "";
 
 		return historyToken.substring(pos + 1);
 	}

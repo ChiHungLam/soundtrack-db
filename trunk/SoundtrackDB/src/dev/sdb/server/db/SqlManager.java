@@ -63,7 +63,7 @@ public abstract class SqlManager implements Schema {
 		return getConnection().prepareStatement(sql, columnNames);
 	}
 
-	protected void closeStatement(PreparedStatement ps) {
+	public void closeStatement(PreparedStatement ps) {
 		if (ps == null)
 			return;
 

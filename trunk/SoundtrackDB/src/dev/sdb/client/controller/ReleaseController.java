@@ -4,6 +4,8 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 
 import dev.sdb.client.SoundtrackDB;
+import dev.sdb.client.ui.detail.DetailWidget;
+import dev.sdb.client.ui.detail.ReleaseDetailWidget;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Release;
@@ -23,4 +25,7 @@ public class ReleaseController extends AbstractSearchController {
 		return column;
 	}
 
+	@Override protected DetailWidget createDetailWidget() {
+		return new ReleaseDetailWidget();
+	}
 }

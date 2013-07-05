@@ -3,6 +3,8 @@ package dev.sdb.client.controller;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
@@ -17,10 +19,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.service.SearchService;
 import dev.sdb.client.service.SearchServiceAsync;
+import dev.sdb.client.ui.detail.DetailWidget;
 import dev.sdb.client.ui.search.QueryWidget;
 import dev.sdb.client.ui.search.ResultField;
 import dev.sdb.client.ui.search.SearchEvent;
@@ -37,13 +41,14 @@ public abstract class AbstractSearchController implements Controller {
 	 */
 	private static final SearchServiceAsync SEARCH_SERVICE = GWT.create(SearchService.class);
 
-	private SoundtrackDB sdb;
+	private final SoundtrackDB sdb;
+	private final ControllerType type;
+	private final Flavor flavor;
+
 	private String lastSearchTerm;
-	private Flavor flavor;
-	private ControllerType type;
-
-	private QueryWidget widget;
-
+	private long lastId;
+	private DetailWidget detailWidget;
+	private QueryWidget queryWidget;
 	private Column<Entity, ?> rendererColumn;
 
 	public AbstractSearchController(SoundtrackDB sdb, ControllerType type, Flavor flavor) {
@@ -61,9 +66,11 @@ public abstract class AbstractSearchController implements Controller {
 		this.lastSearchTerm = lastSearchTerm;
 	}
 
+	protected abstract DetailWidget createDetailWidget();
+
 	private QueryWidget createQueryWidget(String term) {
 		// Create the query widget instance
-		QueryWidget queryWidget = new QueryWidget();
+		final QueryWidget queryWidget = new QueryWidget();
 
 		// Get the search and result fields
 		final SearchField search = queryWidget.getSearchField();
@@ -75,7 +82,7 @@ public abstract class AbstractSearchController implements Controller {
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
 			@Override protected void onRangeChanged(HasData<Entity> display) {
-				doSearchOnServer(search, result);
+				getSearchFromServer(queryWidget);
 			}
 		};
 
@@ -84,6 +91,10 @@ public abstract class AbstractSearchController implements Controller {
 
 		// Init result field with the column and the data provider
 		result.init(column, dataProvider, VISIBLE_RANGE_LENGTH);
+
+		// Get the result table
+		final CellTable<Entity> table = result.getTable();
+		//		table.getSelectionModel().
 
 		//Add a search event handler to send the search to the server, when the user chooses to
 		search.addSearchEventHandler(new SearchEventHandler() {
@@ -94,11 +105,23 @@ public abstract class AbstractSearchController implements Controller {
 			@Override public void onSearch(SearchEvent event) {
 				String term = event.getSearchTerm();
 				setLastSearchTerm(term);
-				final CellTable<Entity> table = result.getTable();
+
 				table.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
-				doSearchOnServer(search, result);
+				getSearchFromServer(queryWidget);
 			}
 		});
+
+		final SingleSelectionModel<Entity> selectionModel = new SingleSelectionModel<Entity>();
+		table.setSelectionModel(selectionModel);
+
+		table.addDomHandler(new DoubleClickHandler() {
+			@Override public void onDoubleClick(final DoubleClickEvent event) {
+				Entity entity = selectionModel.getSelectedObject();
+				if (entity != null) {
+					History.newItem(AbstractSearchController.this.type.getToken() + "?id=" + entity.getId());
+				}
+			}
+		}, DoubleClickEvent.getType());
 
 		return queryWidget;
 	}
@@ -113,43 +136,151 @@ public abstract class AbstractSearchController implements Controller {
 
 
 	public Widget getWidget(String state) {
-		if (state == null || state.isEmpty())
-			return getQueryWidget(null);
+		assert (state != null);
+
+		if (state.isEmpty())
+			return getQueryWidget("");
 
 		if (state.startsWith("search=")) {
-			return getQueryWidget(state.substring(7));
-		} else {
-			return getQueryWidget("");
+			return getQueryWidget(getSearchFromState(state));
+
+		} else if (state.startsWith("id=")) {
+			long id = getIdFromState(state);
+			if (id > 0) {
+				return getDetailWidget(id);
+			}
+		}
+		return getQueryWidget("");
+	}
+
+	private String getSearchFromState(String state) {
+		try {
+			return state.substring(7);
+		} catch (Exception e) {
+			return "";
 		}
 	}
 
+	private long getIdFromState(String state) {
+		try {
+			String value = state.substring(3);
+			return Long.parseLong(value);
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	private Widget getDetailWidget(long id) {
+		assert (id > 0);
+
+		if (this.detailWidget == null) {
+			this.detailWidget = createDetailWidget();
+			this.lastId = id;
+			getDetailsFromServer(this.detailWidget);
+		} else {
+			if (this.detailWidget.getCurrentId() != id) {
+				this.lastId = id;
+				getDetailsFromServer(this.detailWidget);
+			}
+		}
+		return this.detailWidget;
+	}
+
+
 	private QueryWidget getQueryWidget(String term) {
-		if (this.widget == null) {
-			this.widget = createQueryWidget(term);
-			if (term != null && !term.isEmpty()) {
+		assert (term != null);
+
+		if (this.queryWidget == null) {
+			this.queryWidget = createQueryWidget(term);
+			if (!term.isEmpty()) {
 				this.lastSearchTerm = term;
-				doSearchOnServer(this.widget.getSearchField(), this.widget.getResultField());
+				getSearchFromServer(this.queryWidget);
 			}
 		} else {
-			if (!this.widget.getSearchField().getText().equalsIgnoreCase(term)) {
-				if (term == null)
-					term = "";
-
-				this.widget.getSearchField().setText(term);
+			if (!this.queryWidget.getSearchField().getText().equalsIgnoreCase(term)) {
+				this.queryWidget.getSearchField().setText(term);
 				this.lastSearchTerm = term;
 
 				if (term.isEmpty()) {
-					this.widget.getResultField().setElementVisibility(-1);
+					this.queryWidget.getResultField().setElementVisibility(-1);
 				} else {
-					doSearchOnServer(this.widget.getSearchField(), this.widget.getResultField());
+					getSearchFromServer(this.queryWidget);
 				}
 			}
 		}
-		return this.widget;
+		return this.queryWidget;
 	}
 
+	protected void getDetailsFromServer(final DetailWidget detailWidget) {
+		//if there's no id, cancel the action
+		if (this.lastId <= 0)
+			return;
+		
+		
+		// Then, we send the input to the server.
+		SEARCH_SERVICE.get(this.flavor, this.lastId, new AsyncCallback<Entity>() {
 
-	protected void doSearchOnServer(final SearchField search, final ResultField result) {
+			public void onSuccess(Entity entity) {
+				//String token = getType().getToken() + "?search=" + AbstractSearchController.this.lastSearchTerm;
+				//History.newItem(token, false);
+				//AbstractSearchController.this.sdb.setToken(token);
+
+				detailWidget.initEntity(entity);
+				detailWidget.setEnabled(true);
+			}
+
+			public void onFailure(Throwable caught) {
+				caught.printStackTrace();
+
+				detailWidget.initEntity(null);
+
+				// Create the popup dialog box
+				final DialogBox dialogBox = new DialogBox();
+				dialogBox.setText("Remote Procedure Call - Fehler");
+				dialogBox.setAnimationEnabled(true);
+				final Button closeButton = new Button("Close");
+
+				// We can set the id of a widget by accessing its Element
+				closeButton.getElement().setId("closeButton");
+
+				final Label textToServerLabel = new Label();
+				textToServerLabel.setText("id=" + AbstractSearchController.this.lastId);
+
+				final HTML serverResponseLabel = new HTML();
+				serverResponseLabel.setText("");
+				serverResponseLabel.addStyleName("serverResponseLabelError");
+				serverResponseLabel.setHTML(SERVER_ERROR);
+
+				VerticalPanel dialogVPanel = new VerticalPanel();
+				dialogVPanel.addStyleName("dialogVPanel");
+				dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
+				dialogVPanel.add(textToServerLabel);
+				dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
+				dialogVPanel.add(serverResponseLabel);
+				dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
+				dialogVPanel.add(closeButton);
+				dialogBox.setWidget(dialogVPanel);
+
+				// Add a handler to close the DialogBox
+				closeButton.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						dialogBox.hide();
+						detailWidget.setEnabled(true);
+					}
+				});
+
+				// Show the RPC error message to the user
+
+				dialogBox.center();
+				closeButton.setFocus(true);
+			}
+		});
+
+	}
+
+	protected void getSearchFromServer(QueryWidget queryWidget) {
+		final SearchField search = queryWidget.getSearchField();
+		final ResultField result = queryWidget.getResultField();
 
 		//if there hasn't been a search before, cancel the action
 		if (this.lastSearchTerm == null)
@@ -164,7 +295,7 @@ public abstract class AbstractSearchController implements Controller {
 		search.setEnabled(false);
 
 		// Then, we send the input to the server.
-		SEARCH_SERVICE.search(this.lastSearchTerm, this.flavor, range, ascending, new AsyncCallback<SearchResult>() {
+		SEARCH_SERVICE.search(this.flavor, this.lastSearchTerm, range, ascending, new AsyncCallback<SearchResult>() {
 
 			public void onSuccess(SearchResult searchResult) {
 				String token = getType().getToken() + "?search=" + AbstractSearchController.this.lastSearchTerm;
@@ -187,10 +318,10 @@ public abstract class AbstractSearchController implements Controller {
 
 				// Create the popup dialog box
 				final DialogBox dialogBox = new DialogBox();
-				dialogBox.setText("RPC - Fehler");
-				//				dialogBox.setText("Remote Procedure Call");
+				dialogBox.setText("Remote Procedure Call - Fehler");
 				dialogBox.setAnimationEnabled(true);
 				final Button closeButton = new Button("Close");
+
 				// We can set the id of a widget by accessing its Element
 				closeButton.getElement().setId("closeButton");
 
