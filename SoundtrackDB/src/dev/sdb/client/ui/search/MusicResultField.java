@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 
-import dev.sdb.shared.model.db.SearchResultSortType;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 
@@ -44,10 +43,6 @@ public class MusicResultField extends AbstractResultField {
 
 	public CellTable<Entity> getTable() {
 		return this.cellTable;
-	}
-
-	public SearchResultSortType getSortType() {
-		return SearchResultSortType.TITLE;
 	}
 
 	public void init(AsyncDataProvider<Entity> dataProvider, int rangeLength) {

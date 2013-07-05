@@ -13,7 +13,6 @@ import dev.sdb.server.db.SdbManager;
 import dev.sdb.server.db.SqlServer;
 import dev.sdb.shared.FieldVerifier;
 import dev.sdb.shared.model.db.SearchResult;
-import dev.sdb.shared.model.db.SearchResultSort;
 import dev.sdb.shared.model.db.SearchScope;
 import dev.sdb.shared.model.entity.Entity;
 
@@ -42,7 +41,7 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
-	public SearchResult search(String term, final SearchScope scope, final Range range, final SearchResultSort sort) throws IllegalArgumentException, IOException {
+	public SearchResult search(String term, SearchScope scope, Range range, boolean ascending) throws IllegalArgumentException, IOException {
 		// Verify that the input is valid. 
 		if (!FieldVerifier.isValidSearchTerm(term)) {
 			// If the input is not valid, throw an IllegalArgumentException back to
@@ -57,12 +56,12 @@ import dev.sdb.shared.model.entity.Entity;
 		term = escapeHtml(term);
 
 		// Perform the actual query
-		SearchResult searchResult = query(term, scope, range, sort);
+		SearchResult searchResult = query(term, scope, range, ascending);
 
 		return searchResult;
 	}
 
-	private SearchResult query(String term, SearchScope scope, Range range, final SearchResultSort sort) throws IOException, IllegalArgumentException {
+	private SearchResult query(String term, SearchScope scope, Range range, boolean ascending) throws IOException, IllegalArgumentException {
 		SdbManager manager = new SdbManager(sqlServer);
 		manager.open();
 
@@ -74,19 +73,19 @@ import dev.sdb.shared.model.entity.Entity;
 
 			switch (scope) {
 			case RELEASES:
-				manager.initReleases(range, sort);
+				manager.initReleases(range, ascending);
 				count = manager.countReleases(term);
 				manager.queryReleases(result, term);
 
 				break;
 			case MUSIC:
-				manager.initMusic(range, sort);
+				manager.initMusic(range, ascending);
 				count = manager.countMusic(term);
 				manager.queryMusic(result, term);
 
 				break;
 			case SOUNDTRACK:
-				manager.initSoundtracks(range, sort);
+				manager.initSoundtracks(range, ascending);
 				count = manager.countSoundtracks(term);
 				manager.querySoundtracks(result, term);
 
