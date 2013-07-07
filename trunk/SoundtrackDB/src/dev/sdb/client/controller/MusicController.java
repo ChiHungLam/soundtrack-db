@@ -1,7 +1,8 @@
 package dev.sdb.client.controller;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -24,39 +25,92 @@ public class MusicController extends AbstractSearchController {
 		super(sdb, ControllerType.MUSIC, Flavor.MUSIC);
 	}
 
-	@Override protected Column<Entity, ?> createRendererColumn() {
-		TextColumn<Entity> column = new TextColumn<Entity>() {
+	@Override protected void addSearchResultColumns(CellTable<Entity> table) {
+		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
 				return ((Music) entity).getTitle();
 			}
 		};
-		return column;
+
+		// Make the columns sortable.
+		titleColumn.setSortable(true);
+
+		// Add the columns.
+		table.addColumn(titleColumn, "Titel");
+
+		table.setColumnWidth(titleColumn, 100.0, Unit.PCT);
+
+		// We know that the data is sorted alphabetically by default.
+		table.getColumnSortList().push(titleColumn);
+
 	}
+
 
 	@Override protected DetailWidget createDetailWidget() {
 		final MusicDetailWidget widget = new MusicDetailWidget();
-
-		// Create a data provider.
-		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
-			@Override protected void onRangeChanged(HasData<Entity> display) {
-				getReleaseListFromServer(widget);
-			}
-		};
-		widget.getReleaseList().init(createReleaseListColumn(), dataProvider);
-
+		initMusicReleaseListTable(widget);
 		return widget;
 	}
 
-	private Column<Entity, ?> createReleaseListColumn() {
-		final TextColumn<Entity> column = new TextColumn<Entity>() {
+	public void initMusicReleaseListTable(final MusicDetailWidget widget) {
+		CellTable<Entity> table = widget.getReleaseList().getTable();
+
+		TextColumn<Entity> catColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getCatalogInfo();
+			}
+		};
+
+		TextColumn<Entity> yearColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getYearInfo();
+			}
+		};
+
+		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
 				return ((Release) entity).getTitle();
 			}
 		};
-		return column;
+
+
+		// Add the columns.
+		table.addColumn(catColumn, "Kat.-Nr.");
+		table.setColumnWidth(catColumn, 20.0, Unit.PCT);
+
+		table.addColumn(yearColumn, "Jahr");
+		table.setColumnWidth(yearColumn, 10.0, Unit.PCT);
+
+		table.addColumn(titleColumn, "Titel");
+		table.setColumnWidth(titleColumn, 70.0, Unit.PCT);
+
+		table.setWidth("100%", true);
+
+		// Set the total row count. You might send an RPC request to determine the
+		// total row count.
+		table.setRowCount(0, true);
+
+		// Set the range to display. In this case, our visible range is smaller than
+		// the data set.
+		int rangeLength = 10;
+		table.setVisibleRange(0, rangeLength);
+
+		// Create a data provider.
+		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
+			@Override protected void onRangeChanged(HasData<Entity> display) {
+				getMusicReleaseListFromServer(widget);
+			}
+		};
+		dataProvider.addDataDisplay(table);
+
+		// Add a ColumnSortEvent.AsyncHandler to connect sorting to the
+		// AsyncDataPRrovider.
+		AsyncHandler columnSortHandler = new AsyncHandler(table);
+		table.addColumnSortHandler(columnSortHandler);
+
 	}
 
-	public void getReleaseListFromServer(MusicDetailWidget detailWidget) {
+	public void getMusicReleaseListFromServer(MusicDetailWidget detailWidget) {
 		final ReleaseList list = detailWidget.getReleaseList();
 
 		Music music = (Music) detailWidget.getCurrentEntity();
@@ -96,5 +150,6 @@ public class MusicController extends AbstractSearchController {
 		});
 
 	}
+
 
 }

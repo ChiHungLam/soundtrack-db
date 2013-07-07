@@ -17,4 +17,5 @@ public abstract class AbstractEntity implements Entity {
 		return this.id;
 	}
 
+
 }
