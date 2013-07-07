@@ -42,7 +42,7 @@ public class MusicDetailWidget extends DetailWidget {
 		} else {
 			Music music = (Music) entity;
 			this.musicMasterData.initEntity(music);
-			((MusicController) controller).getReleaseListFromServer(this);
+			((MusicController) controller).getMusicReleaseListFromServer(this);
 		}
 	}
 }

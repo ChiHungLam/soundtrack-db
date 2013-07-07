@@ -6,8 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -50,7 +49,8 @@ public abstract class AbstractSearchController implements Controller {
 	private long lastId;
 	private DetailWidget detailWidget;
 	private QueryWidget queryWidget;
-	private Column<Entity, ?> rendererColumn;
+
+	//	private Column<Entity, ?> rendererColumn;
 
 	public AbstractSearchController(SoundtrackDB sdb, ControllerType type, Flavor flavor) {
 		super();
@@ -80,21 +80,35 @@ public abstract class AbstractSearchController implements Controller {
 		// Set the search term
 		search.setText(term);
 
+		// Get the result table
+		final CellTable<Entity> table = result.getTable();
+
+		// Add the columns.
+		addSearchResultColumns(table);
+
+		table.setWidth("100%", true);
+
+		// Set the total row count. You might send an RPC request to determine the
+		// total row count.
+		table.setRowCount(0, true);
+
+		// Set the range to display. In this case, our visible range is smaller than
+		// the data set.
+		table.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
+
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
 			@Override protected void onRangeChanged(HasData<Entity> display) {
 				getSearchFromServer(queryWidget);
 			}
 		};
+		dataProvider.addDataDisplay(table);
 
-		// Create the renderer column.
-		Column<Entity, ?> column = getRendererColumn();
+		// Add a ColumnSortEvent.AsyncHandler to connect sorting to the
+		// AsyncDataPRrovider.
+		AsyncHandler columnSortHandler = new AsyncHandler(table);
+		table.addColumnSortHandler(columnSortHandler);
 
-		// Init result field with the column and the data provider
-		result.init(column, dataProvider, VISIBLE_RANGE_LENGTH);
-
-		// Get the result table
-		final CellTable<Entity> table = result.getTable();
 		//		table.getSelectionModel().
 
 		//Add a search event handler to send the search to the server, when the user chooses to
@@ -127,14 +141,7 @@ public abstract class AbstractSearchController implements Controller {
 		return queryWidget;
 	}
 
-	protected abstract Column<Entity, ?> createRendererColumn();
-
-	public Column<Entity, ?> getRendererColumn() {
-		if (this.rendererColumn == null)
-			this.rendererColumn = createRendererColumn();
-		return this.rendererColumn;
-	}
-
+	protected abstract void addSearchResultColumns(CellTable<Entity> table);
 
 	public Widget getWidget(String state) {
 		assert (state != null);
@@ -246,8 +253,8 @@ public abstract class AbstractSearchController implements Controller {
 
 		final CellTable<Entity> table = result.getTable();
 		final Range range = table.getVisibleRange();
-		final ColumnSortInfo sortInfo = table.getColumnSortList().get(0);
-		final boolean ascending = sortInfo.isAscending();
+		//		final ColumnSortInfo sortInfo = table.getColumnSortList().get(0);
+		final boolean ascending = true; //sortInfo.isAscending();
 
 		final String term = this.lastSearchTerm;
 

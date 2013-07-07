@@ -1,5 +1,6 @@
 package dev.sdb.client.controller;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -24,13 +25,41 @@ public class ReleaseController extends AbstractSearchController {
 		super(sdb, ControllerType.RELEASE, Flavor.RELEASES);
 	}
 
-	@Override protected Column<Entity, ?> createRendererColumn() {
-		final TextColumn<Entity> column = new TextColumn<Entity>() {
+	@Override protected void addSearchResultColumns(CellTable<Entity> table) {
+		TextColumn<Entity> catColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getCatalogInfo();
+			}
+		};
+
+		TextColumn<Entity> yearColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getYearInfo();
+			}
+		};
+
+		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
 				return ((Release) entity).getTitle();
 			}
 		};
-		return column;
+
+		// Make the columns sortable.
+		//		titleColumn.setSortable(true);
+
+		// Add the columns.
+		table.addColumn(catColumn, "Kat.-Nr.");
+		table.setColumnWidth(catColumn, 20.0, Unit.PCT);
+
+		table.addColumn(yearColumn, "Jahr");
+		table.setColumnWidth(yearColumn, 10.0, Unit.PCT);
+
+		table.addColumn(titleColumn, "Titel");
+		table.setColumnWidth(titleColumn, 70.0, Unit.PCT);
+
+		
+		// We know that the data is sorted alphabetically by default.
+		//		table.getColumnSortList().push(titleColumn);
 	}
 
 	@Override protected DetailWidget createDetailWidget() {
