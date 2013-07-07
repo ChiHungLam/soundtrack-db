@@ -16,6 +16,7 @@ public class StatusChecker {
 	public static boolean isBitSet(int byteValue, int bit) throws IllegalArgumentException {
 		if (bit < 0 || bit > 31)
 			throw new IllegalArgumentException("bit must not be less than 0 or greater than 31.");
+
 		return ((byteValue & (1L << bit)) != 0);
 	}
 

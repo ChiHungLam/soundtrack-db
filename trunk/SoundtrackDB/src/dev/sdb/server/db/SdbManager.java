@@ -33,11 +33,8 @@ public class SdbManager extends SqlManager {
 			"`cal_date_1st` , " +
 			"`au_total_length`";
 
-	private static final String PRINT_SORT_FIELDS = "" +
-			//			"`cal_order` ? , " +
-			"`cat_hierar_sort` ? , " +
-			"`rel_catalog_index` ? , " +
-			"`print_order` ?";
+
+			
 
 	public SdbManager(SqlServer sqlServer) {
 		super(sqlServer);
@@ -382,8 +379,11 @@ public class SdbManager extends SqlManager {
 	}
 
 	private String composePrintOrder(boolean ascending) {
-		return PRINT_SORT_FIELDS.replace("?", getOrderDirection(ascending));
+		String direction = getOrderDirection(ascending);
+		//`cal_order`
+		return "`cat_hierar_sort` " + direction + " , `rel_catalog_index` " + direction + " , `print_order` " + direction;
 	}
+
 	private String composeReleaseGet() throws SQLException {
 		String sql = "SELECT " + PRINT_INFO_FIELDS + " "
 				+ "FROM `print` "

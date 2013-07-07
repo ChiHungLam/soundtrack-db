@@ -13,7 +13,7 @@
 		<g:VerticalPanel>
 			<g:Label text="Musik-Details"/>
 			<m:MusicMasterData ui:field="musicMasterData"/>
-			<g:Label text="Sequenz-Liste"/>
+			<g:Label text="Veröffentlichungen mit dieser Musik"/>
 			<s:ReleaseList ui:field="releaseList"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
