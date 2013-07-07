@@ -30,7 +30,7 @@ public class SdbManager extends SqlManager {
 		closeConnection();
 	}
 
-	public Result getSequenceList(long audioId, Range range) throws IOException {
+	public Result getMusicReleaseList(long versionId, Range range) throws IOException {
 		PreparedStatement listPS = null;
 		PreparedStatement countPS = null;
 
@@ -38,10 +38,37 @@ public class SdbManager extends SqlManager {
 
 		try {
 
-			listPS = createSeqListPS(range);
-			countPS = createSeqListCountPS();
+			listPS = createMusicReleaseListPS(range);
+			countPS = createMusicReleaseListCountPS();
+			int count = count(countPS, Long.valueOf(versionId));
+			queryMusicReleaseList(listPS, result, versionId, range);
+
+			return new Result(result, count);
+
+		} catch (SQLException e) {
+			result.clear();
+			throw new IOException(e);
+		} finally {
+			closeStatement(listPS);
+			closeStatement(countPS);
+		}
+	}
+
+
+
+
+	public Result getReleaseSoundtrackList(long audioId, Range range) throws IOException {
+		PreparedStatement listPS = null;
+		PreparedStatement countPS = null;
+
+		List<Entity> result = new Vector<Entity>();
+
+		try {
+
+			listPS = createReleaseSoundtrackListPS(range);
+			countPS = createReleaseSoundtrackListCountPS();
 			int count = count(countPS, Long.valueOf(audioId));
-			querySeqList(listPS, result, audioId, range);
+			queryReleaseSoundtrackList(listPS, result, audioId, range);
 
 			return new Result(result, count);
 
@@ -238,7 +265,29 @@ public class SdbManager extends SqlManager {
 		}
 	}
 
-	private void querySeqList(PreparedStatement ps, List<Entity> result, long audioId, Range range) throws IOException {
+	protected void queryMusicReleaseList(PreparedStatement ps, List<Entity> result, long versionId, Range range) throws IOException {
+		ResultSet rs = null;
+
+		try {
+
+			ps.clearParameters();
+			ps.setLong(1, versionId);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Release release = readRelease(rs);
+				result.add(release);
+			}
+
+		} catch (SQLException e) {
+			throw new IOException(e);
+		} finally {
+			closeResultSet(rs);
+		}
+	}
+
+	protected void queryReleaseSoundtrackList(PreparedStatement ps, List<Entity> result, long audioId, Range range) throws IOException {
 		ResultSet rs = null;
 
 		try {
@@ -356,7 +405,7 @@ public class SdbManager extends SqlManager {
 		return getStatement(sql);
 	}
 
-	private PreparedStatement createSeqListCountPS() throws SQLException {
+	private PreparedStatement createReleaseSoundtrackListCountPS() throws SQLException {
 		String sql = "SELECT COUNT( * ) AS `rows` "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
@@ -365,6 +414,37 @@ public class SdbManager extends SqlManager {
 		return getStatement(sql);
 	}
 
+	private PreparedStatement createMusicReleaseListCountPS() throws SQLException {
+		String inSelect = "SELECT `aus_audio_id` "
+				+ "FROM `soundtrack` "
+				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
+				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
+				+ "WHERE `stk_version_id` LIKE ?";
+
+		String sql = "SELECT COUNT( * ) AS `rows` "
+				+ "FROM `print` "
+				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
+				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
+				+ "WHERE `print_audio_id` IN ( " + inSelect + " ) ;";
+		return getStatement(sql);
+	}
+
+	//	private PreparedStatement createMusicReleaseListPS(Range range) throws SQLException {
+	//		String inSelect = "SELECT `aus_audio_id` "
+	//				+ "FROM `soundtrack` "
+	//				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
+	//				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
+	//				+ "WHERE `stk_version_id` LIKE ?";
+	//
+	//		String sql = "SELECT `print`.* , `prod_res_title` "
+	//				+ "FROM `print` "
+	//				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
+	//				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
+	//				+ "WHERE `print_audio_id` IN ( " + inSelect + " ) "
+	//				+ "ORDER BY `prod_res_title` "
+	//				+ getLimit(range);
+	//		return getStatement(sql);
+	//	}
 	private PreparedStatement createReleaseListPS(Range range, boolean ascending) throws SQLException {
 		String sql = "SELECT `print`.* , `prod_res_title` "
 				+ "FROM `print` "
@@ -375,6 +455,8 @@ public class SdbManager extends SqlManager {
 				+ getLimit(range);
 		return getStatement(sql);
 	}
+
+
 
 	private PreparedStatement createMusicListPS(Range range, boolean ascending) throws SQLException {
 		String sql = "SELECT `version`.* , `rec_title` "
@@ -404,7 +486,7 @@ public class SdbManager extends SqlManager {
 		return getStatement(sql);
 	}
 
-	private PreparedStatement createSeqListPS(Range range) throws SQLException {
+	private PreparedStatement createReleaseSoundtrackListPS(Range range) throws SQLException {
 		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
@@ -414,6 +496,23 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
 				+ "WHERE `aus_audio_id` LIKE ? "
 				+ "ORDER BY `aus_order` ASC , `seq_order` ASC , `stk_order` ASC "
+				+ getLimit(range);
+		return getStatement(sql);
+	}
+
+	private PreparedStatement createMusicReleaseListPS(Range range) throws SQLException {
+		String inSelect = "SELECT `aus_audio_id` "
+				+ "FROM `soundtrack` "
+				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
+				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
+				+ "WHERE `stk_version_id` LIKE ?";
+
+		String sql = "SELECT `print`.* , `prod_res_title` "
+				+ "FROM `print` "
+				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
+				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
+				+ "WHERE `print_audio_id` IN ( " + inSelect + " ) "
+				+ "ORDER BY `prod_res_title` "
 				+ getLimit(range);
 		return getStatement(sql);
 	}

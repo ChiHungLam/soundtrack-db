@@ -16,5 +16,7 @@ public interface SearchServiceAsync {
 
 	void get(Flavor flavor, long id, AsyncCallback<Entity> callback);
 
-	void getSequenceList(long audioId, Range range, AsyncCallback<Result> asyncCallback);
+	void getReleaseSoundtrackList(long id, Range range, AsyncCallback<Result> asyncCallback);
+
+	void getMusicReleaseList(long id, Range range, AsyncCallback<Result> asyncCallback);
 }

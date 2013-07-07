@@ -77,7 +77,7 @@ public class ReleaseController extends AbstractSearchController {
 		final Range range = table.getVisibleRange();
 
 		// Then, we send the input to the server.
-		SEARCH_SERVICE.getSequenceList(audioId, range, new AsyncCallback<Result>() {
+		SEARCH_SERVICE.getReleaseSoundtrackList(audioId, range, new AsyncCallback<Result>() {
 
 			public void onSuccess(Result searchResult) {
 				int total = searchResult.getTotalLength();
@@ -95,4 +95,5 @@ public class ReleaseController extends AbstractSearchController {
 			}
 		});
 	}
+
 }
