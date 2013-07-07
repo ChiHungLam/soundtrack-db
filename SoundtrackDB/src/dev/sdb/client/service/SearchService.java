@@ -19,5 +19,7 @@ import dev.sdb.shared.model.entity.Entity;
 
 	Entity get(Flavor flavor, long id) throws IllegalArgumentException, IOException;
 
-	Result getSequenceList(long audioId, Range range) throws IllegalArgumentException, IOException;
+	Result getReleaseSoundtrackList(long id, Range range) throws IllegalArgumentException, IOException;
+
+	Result getMusicReleaseList(long id, Range range) throws IllegalArgumentException, IOException;
 }

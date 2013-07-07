@@ -53,15 +53,29 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
-	@Override public Result getSequenceList(long audioId, Range range) throws IllegalArgumentException, IOException {
-		assert (audioId > 0);
+	@Override public Result getMusicReleaseList(long id, Range range) throws IllegalArgumentException, IOException {
+		assert (id > 0);
 		assert (range != null);
 
 		SdbManager manager = new SdbManager(sqlServer);
 		manager.open();
 
 		try {
-			return manager.getSequenceList(audioId, range);
+			return manager.getMusicReleaseList(id, range);
+		} finally {
+			manager.close();
+		}
+	}
+
+	@Override public Result getReleaseSoundtrackList(long id, Range range) throws IllegalArgumentException, IOException {
+		assert (id > 0);
+		assert (range != null);
+
+		SdbManager manager = new SdbManager(sqlServer);
+		manager.open();
+
+		try {
+			return manager.getReleaseSoundtrackList(id, range);
 		} finally {
 			manager.close();
 		}

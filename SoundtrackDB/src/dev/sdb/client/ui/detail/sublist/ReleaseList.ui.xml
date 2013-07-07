@@ -2,8 +2,7 @@
 <ui:UiBinder
 	xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:m="urn:import:dev.sdb.client.ui.detail.master"
-	xmlns:s="urn:import:dev.sdb.client.ui.detail.sublist">
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	
 	<ui:style>
 		
@@ -11,10 +10,10 @@
 
 	<g:HTMLPanel>
 		<g:VerticalPanel>
-			<g:Label text="Musik-Details"/>
-			<m:MusicMasterData ui:field="musicMasterData"/>
-			<g:Label text="Sequenz-Liste"/>
-			<s:ReleaseList ui:field="releaseList"/>
+			<c:CellTable ui:field="cellTable"/>
+			<g:Cell horizontalAlignment="ALIGN_CENTER">
+				<c:SimplePager ui:field="pager"/>
+			</g:Cell>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
