@@ -1,9 +1,7 @@
 package dev.sdb.client.controller;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -17,53 +15,33 @@ import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Release;
-import dev.sdb.shared.model.entity.Soundtrack;
 
-public class ReleaseController extends AbstractSearchController {
+public class ReleaseController extends AbstractDataController {
 
 	public ReleaseController(SoundtrackDB sdb) {
 		super(sdb, ControllerType.RELEASE, Flavor.RELEASES);
 	}
 
 	@Override protected void addSearchResultColumns(CellTable<Entity> table) {
-		TextColumn<Entity> catColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getCatalogInfo();
-			}
-		};
-
-		TextColumn<Entity> yearColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getYearInfo();
-			}
-		};
-
-		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getTitle();
-			}
-		};
-
-		// Make the columns sortable.
-		//		titleColumn.setSortable(true);
-
-		// Add the columns.
-		table.addColumn(catColumn, "Kat.-Nr.");
-		table.setColumnWidth(catColumn, 20.0, Unit.PCT);
-
-		table.addColumn(yearColumn, "Jahr");
-		table.setColumnWidth(yearColumn, 10.0, Unit.PCT);
-
-		table.addColumn(titleColumn, "Titel");
-		table.setColumnWidth(titleColumn, 70.0, Unit.PCT);
-
-		
-		// We know that the data is sorted alphabetically by default.
-		//		table.getColumnSortList().push(titleColumn);
+		addReleaseColumns(table);
 	}
 
 	@Override protected DetailWidget createDetailWidget() {
 		final ReleaseDetailWidget widget = new ReleaseDetailWidget();
+		CellTable<Entity> table = widget.getSequenceList().getTable();
+
+		addReleaseMusicColumns(table);
+
+		table.setWidth("100%", true);
+
+		// Set the total row count. You might send an RPC request to determine the
+		// total row count.
+		table.setRowCount(0, true);
+
+		// Set the range to display. In this case, our visible range is smaller than
+		// the data set.
+		int rangeLength = 10;
+		table.setVisibleRange(0, rangeLength);
 
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
@@ -71,18 +49,14 @@ public class ReleaseController extends AbstractSearchController {
 				getSequenceListFromServer(widget);
 			}
 		};
-		widget.getSequenceList().init(createSequenceListColumn(), dataProvider);
+		dataProvider.addDataDisplay(table);
+
+		// Add a ColumnSortEvent.AsyncHandler to connect sorting to the
+		// AsyncDataPRrovider.
+		AsyncHandler columnSortHandler = new AsyncHandler(table);
+		table.addColumnSortHandler(columnSortHandler);
 
 		return widget;
-	}
-
-	protected Column<Entity, ?> createSequenceListColumn() {
-		final TextColumn<Entity> column = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Soundtrack) entity).toString();
-			}
-		};
-		return column;
 	}
 
 	public void getSequenceListFromServer(final ReleaseDetailWidget detailWidget) {

@@ -3,7 +3,7 @@ package dev.sdb.client.ui.detail;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
 
-import dev.sdb.client.controller.AbstractSearchController;
+import dev.sdb.client.controller.AbstractDataController;
 import dev.sdb.client.ui.detail.master.MasterDataWidget;
 import dev.sdb.shared.model.entity.Entity;
 
@@ -19,7 +19,7 @@ public abstract class DetailWidget extends Composite implements HasEnabled {
 
 	protected abstract MasterDataWidget getMasterDataWidget();
 
-	public abstract void initEntity(Entity entity, AbstractSearchController controller);
+	public abstract void initEntity(Entity entity, AbstractDataController controller);
 
 	@Override public boolean isEnabled() {
 		// TODO Auto-generated method stub
