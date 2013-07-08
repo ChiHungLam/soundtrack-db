@@ -9,7 +9,7 @@ public class Release extends AbstractEntity {
 	private String type;
 	private Series series;
 	private int episode;
-	private String artist;
+	//	private String artist;
 	private String title;
 	private String label;
 	private String media;
@@ -27,12 +27,12 @@ public class Release extends AbstractEntity {
 		super();
 	}
 
-	public Release(long id, String type, Series series, int episode, String artist, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, Date duration, long audioId) {
+	public Release(long id, String type, Series series, int episode, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, Date duration, long audioId) {
 		super(id);
 		this.type = type;
 		this.series = series;
 		this.episode = episode;
-		this.artist = artist;
+		//		this.artist = artist;
 		this.title = title;
 		this.label = label;
 		this.media = media;
@@ -48,7 +48,7 @@ public class Release extends AbstractEntity {
 	}
 
 	@Override public String toString() {
-		String info = "Release #" + getId() + ": " + getTitle();
+		String info = "Release #" + getId() + ": " + getTitleInfo();
 		return info;
 	}
 
@@ -56,7 +56,7 @@ public class Release extends AbstractEntity {
 		String info;
 
 		String preInfo = getSeries().getTitleInfo();
-		String postInfo = canContainSoundtrack() ? null : getArtist();
+		//		String postInfo = canContainSoundtrack() ? null : getArtist();
 
 		if (preInfo == null || preInfo.isEmpty()) {
 			info = this.title;
@@ -85,21 +85,21 @@ public class Release extends AbstractEntity {
 				info += " " + title;
 		}
 
-		if (postInfo != null && !postInfo.isEmpty() && !info.contains(postInfo)) {
-			info += " (" + postInfo + ")";
-		}
+		//		if (postInfo != null && !postInfo.isEmpty() && !info.contains(postInfo)) {
+		//			info += " (" + postInfo + ")";
+		//		}
 
 		return info;
 	}
 
 
 
-	public String getArtistInfo() {
-		if (isVariousArtists())
-			return "V.A.";
-		else
-			return getArtist();
-	}
+	//	public String getArtistInfo() {
+	//		if (isVariousArtists())
+	//			return "V.A.";
+	//		else
+	//			return getArtist();
+	//	}
 
 	public String getYearInfo() {
 		if (this.year <= 0)
@@ -141,12 +141,12 @@ public class Release extends AbstractEntity {
 		return this.episode;
 	}
 
-	/**
-	 * @return the artist
-	 */
-	public String getArtist() {
-		return this.artist;
-	}
+	//	/**
+	//	 * @return the artist
+	//	 */
+	//	public String getArtist() {
+	//		return this.artist;
+	//	}
 
 	/**
 	 * @return the title
@@ -241,9 +241,9 @@ public class Release extends AbstractEntity {
 		return StatusChecker.isBitSet(this.printStatus, 11);
 	}
 
-	public boolean isVariousArtists() {
-		return StatusChecker.isBitSet(this.printStatus, 13);
-	}
+	//	public boolean isVariousArtists() {
+	//		return StatusChecker.isBitSet(this.printStatus, 13);
+	//	}
 
 	public boolean hasAssumedCatalogNumber() {
 		return StatusChecker.isBitSet(this.releaseStatus, 10);

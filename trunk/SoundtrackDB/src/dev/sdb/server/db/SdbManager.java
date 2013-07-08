@@ -13,6 +13,7 @@ import com.google.gwt.view.client.Range;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
+import dev.sdb.shared.model.entity.Genre;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
 import dev.sdb.shared.model.entity.Series;
@@ -28,7 +29,7 @@ public class SdbManager extends SqlManager {
 			"`edt_singles` , " +
 			"`ser_various`";
 
-	private static final String PRINT_INFO_FIELDS = "" +
+	private static final String RELEASE_INFO_FIELDS = "" +
 			"`print_id` , " +
 			"`print_audio_id` , " +
 			"`print_or_res_title` , " +
@@ -44,9 +45,29 @@ public class SdbManager extends SqlManager {
 			"`typ_status` , " +
 			SERIES_INFO_FIELDS + " , " +
 			"`mm_name` , " +
-			"`perf_name` , " +
+			//			"`perf_name` , " +
 			"`cal_date_1st` , " +
 			"`au_total_length`";
+
+	private static final String GENRE_INFO_FIELDS = "" +
+			"`gen_id` , " +
+			"`gen_status` , " +
+			"`gen_hierar_parent_name` , " +
+			"`gen_hierar_child_name`";
+
+	private static final String MUSIC_INFO_FIELDS = "" +
+			"`vers_id` , " +
+			"`vers_order` , " +
+			"`vers_name_full` , " +
+			"`vers_status` , " +
+			"`vers_year` , " +
+			"`part_order` , " +
+			"`part_status` , " +
+			"`part_title` , " +
+			"`rec_status` , " +
+			GENRE_INFO_FIELDS + " , " +
+			"`auts_display` , " +
+			"`perf_name`";
 
 	public SdbManager(SqlServer sqlServer) {
 		super(sqlServer);
@@ -354,7 +375,7 @@ public class SdbManager extends SqlManager {
 
 		String label = rs.getString("lab_titel");
 		String media = rs.getString("mm_name");
-		String artist = rs.getString("perf_name");
+		//		String artist = rs.getString("perf_name");
 		Date date = rs.getDate("cal_date_1st");
 		Date duration = rs.getDate("au_total_length");
 
@@ -367,7 +388,7 @@ public class SdbManager extends SqlManager {
 
 		Series series = readSeries(rs);
 
-		return new Release(id, type, series, episode, artist, title, label, media, catalogNumber, print, year, typeStatus, productionStatus, releaseStatus, printStatus, duration, audioId);
+		return new Release(id, type, series, episode, title, label, media, catalogNumber, print, year, typeStatus, productionStatus, releaseStatus, printStatus, duration, audioId);
 	}
 
 	protected Series readSeries(ResultSet rs) throws SQLException {
@@ -385,8 +406,32 @@ public class SdbManager extends SqlManager {
 
 	protected Music readMusic(ResultSet rs) throws SQLException {
 		long id = rs.getLong("vers_id");
-		String title = rs.getString("rec_title");
-		return new Music(id, title);
+		int versionOrder = rs.getInt("vers_order");
+		String versionName = rs.getString("vers_name_full");
+		int year = rs.getInt("vers_year");
+
+		int partOrder = rs.getInt("part_order");
+		String title = rs.getString("part_title");
+
+		int versionStatus = rs.getInt("vers_status");
+		int partStatus = rs.getInt("part_status");
+		int recStatus = rs.getInt("rec_status");
+
+		String authors = rs.getString("auts_display");
+		String artist = rs.getString("perf_name");
+
+		Genre genre = readGenre(rs);
+
+		return new Music(id, genre, title, versionName, year, authors, artist, partOrder, versionOrder, recStatus, partStatus, versionStatus);
+	}
+
+	protected Genre readGenre(ResultSet rs) throws SQLException {
+		long id = rs.getLong("gen_id");
+		int status = rs.getInt("gen_status");
+		String parentName = rs.getString("gen_hierar_parent_name");
+		String childName = rs.getString("gen_hierar_child_name");
+
+		return new Genre(id, status, parentName, childName);
 	}
 
 	protected Soundtrack readSoundtrack(ResultSet rs) throws SQLException {
@@ -415,13 +460,13 @@ public class SdbManager extends SqlManager {
 	}
 
 	private String composeReleaseGet() throws SQLException {
-		String sql = "SELECT " + PRINT_INFO_FIELDS + " "
+		String sql = "SELECT " + RELEASE_INFO_FIELDS + " "
 				+ "FROM `print` "
 				+ "LEFT JOIN `calendar` ON `cal_id` = `print_calendar_id` "
 				+ "LEFT JOIN `audio` ON `au_id` = `print_audio_id` "
 				+ "LEFT JOIN `label` ON `lab_id` = `print_label_id` "
-				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
-				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				//				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
+				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
@@ -433,20 +478,28 @@ public class SdbManager extends SqlManager {
 	}
 
 	private String composeMusicGet() throws SQLException {
-		String sql = "SELECT `version`.* , `rec_title` "
+		String sql = "SELECT " + MUSIC_INFO_FIELDS + " "
 				+ "FROM `version` "
 				+ "LEFT JOIN `part` ON `part_id` = `vers_part_id` "
 				+ "LEFT JOIN `recording` ON `rec_id` = `part_recording_id` "
+				+ "LEFT JOIN `genre` ON `gen_id` = `rec_genre_id` "
+				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
+				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
 				+ "WHERE `vers_id` = ? ;";
 		return sql;
 	}
 
 	private String composeSoundtrackGet() throws SQLException {
-		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` , " + PRINT_INFO_FIELDS + " "
+		String sql = "SELECT `soundtrack`.* , " + MUSIC_INFO_FIELDS + " , " + RELEASE_INFO_FIELDS + " "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
 				+ "LEFT JOIN `recording` ON `rec_id` = `stk_recording_id` "
+				+ "LEFT JOIN `genre` ON `gen_id` = `rec_genre_id` "
+				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
+				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
 				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
 				+ "LEFT JOIN `seq_set` ON `sqst_id` = `seq_seqset_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `sqst_production_id` "
@@ -455,8 +508,8 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `calendar` ON `cal_id` = `print_calendar_id` "
 				+ "LEFT JOIN `audio` ON `au_id` = `print_audio_id` "
 				+ "LEFT JOIN `label` ON `lab_id` = `print_label_id` "
-				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
-				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				//				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
+				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
 				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
@@ -518,13 +571,13 @@ public class SdbManager extends SqlManager {
 	}
 
 	private PreparedStatement createReleaseListPS(Range range, boolean ascending) throws SQLException {
-		String sql = "SELECT " + PRINT_INFO_FIELDS + " "
+		String sql = "SELECT " + RELEASE_INFO_FIELDS + " "
 				+ "FROM `print` "
 				+ "LEFT JOIN `calendar` ON `cal_id` = `print_calendar_id` "
 				+ "LEFT JOIN `audio` ON `au_id` = `print_audio_id` "
 				+ "LEFT JOIN `label` ON `lab_id` = `print_label_id` "
-				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
-				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				//				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
+				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
@@ -539,10 +592,14 @@ public class SdbManager extends SqlManager {
 	}
 
 	private PreparedStatement createMusicListPS(Range range, boolean ascending) throws SQLException {
-		String sql = "SELECT `version`.* , `rec_title` "
+		String sql = "SELECT " + MUSIC_INFO_FIELDS + " "
 				+ "FROM `version` "
 				+ "LEFT JOIN `part` ON `part_id` = `vers_part_id` "
 				+ "LEFT JOIN `recording` ON `rec_id` = `part_recording_id` "
+				+ "LEFT JOIN `genre` ON `gen_id` = `rec_genre_id` "
+				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
+				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
 				+ "WHERE `rec_title` LIKE ? "
 				+ "ORDER BY `rec_title` " + getOrderDirection(ascending) + " "
 				+ getLimit(range);
@@ -550,11 +607,15 @@ public class SdbManager extends SqlManager {
 	}
 
 	private PreparedStatement createSoundtrackListPS(Range range, boolean ascending) throws SQLException {
-		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` , " + PRINT_INFO_FIELDS + " "
+		String sql = "SELECT `soundtrack`.* , " + MUSIC_INFO_FIELDS + " , " + RELEASE_INFO_FIELDS + " "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
 				+ "LEFT JOIN `recording` ON `rec_id` = `stk_recording_id` "
+				+ "LEFT JOIN `genre` ON `gen_id` = `rec_genre_id` "
+				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
+				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
 				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
 				+ "LEFT JOIN `seq_set` ON `sqst_id` = `seq_seqset_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `sqst_production_id` "
@@ -563,8 +624,8 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `calendar` ON `cal_id` = `print_calendar_id` "
 				+ "LEFT JOIN `audio` ON `au_id` = `print_audio_id` "
 				+ "LEFT JOIN `label` ON `lab_id` = `print_label_id` "
-				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
-				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				//				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
+				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
 				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
@@ -576,11 +637,15 @@ public class SdbManager extends SqlManager {
 	}
 
 	private PreparedStatement createReleaseSoundtrackListPS(Range range) throws SQLException {
-		String sql = "SELECT `soundtrack`.* , `vers_id` , `rec_title` "
+		String sql = "SELECT `soundtrack`.* , " + MUSIC_INFO_FIELDS + " "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
 				+ "LEFT JOIN `recording` ON `rec_id` = `stk_recording_id` "
+				+ "LEFT JOIN `genre` ON `gen_id` = `rec_genre_id` "
+				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
+				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
 				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
 				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
 				+ "WHERE `aus_audio_id` LIKE ? "
@@ -596,13 +661,13 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
 				+ "WHERE `stk_version_id` LIKE ?";
 
-		String sql = "SELECT " + PRINT_INFO_FIELDS + " "
+		String sql = "SELECT " + RELEASE_INFO_FIELDS + " "
 				+ "FROM `print` "
 				+ "LEFT JOIN `calendar` ON `cal_id` = `print_calendar_id` "
 				+ "LEFT JOIN `audio` ON `au_id` = `print_audio_id` "
 				+ "LEFT JOIN `label` ON `lab_id` = `print_label_id` "
-				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
-				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				//				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
+				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
