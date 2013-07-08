@@ -6,7 +6,9 @@ import dev.sdb.shared.model.StatusChecker;
 
 public class Release extends AbstractEntity {
 
-	private long audioId;
+	private String type;
+	private String series;
+	private int episode;
 	private String artist;
 	private String title;
 	private String label;
@@ -14,16 +16,22 @@ public class Release extends AbstractEntity {
 	private String catalogNumber;
 	private int print;
 	private int year;
+	private int typeStatus;
+	private int productionStatus;
+	private int releaseStatus;
 	private int printStatus;
 	private Date duration;
+	private long audioId;
 
 	public Release() {
 		super();
 	}
 
-	public Release(long id, long audioId, String artist, String title, String label, String media, String catalogNumber, int print, int year, int printStatus, Date duration) {
+	public Release(long id, String type, String series, int episode, String artist, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, Date duration, long audioId) {
 		super(id);
-		this.audioId = audioId;
+		this.type = type;
+		this.series = series;
+		this.episode = episode;
 		this.artist = artist;
 		this.title = title;
 		this.label = label;
@@ -31,13 +39,38 @@ public class Release extends AbstractEntity {
 		this.catalogNumber = catalogNumber;
 		this.print = print;
 		this.year = year;
+		this.typeStatus = typeStatus;
+		this.productionStatus = productionStatus;
+		this.releaseStatus = releaseStatus;
 		this.printStatus = printStatus;
 		this.duration = duration;
+		this.audioId = audioId;
 	}
 
 	@Override public String toString() {
 		String info = "Release #" + getId() + ": " + getTitle();
 		return info;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return this.type;
+	}
+
+	/**
+	 * @return the series
+	 */
+	public String getSeries() {
+		return this.series;
+	}
+
+	/**
+	 * @return the episode
+	 */
+	public int getEpisode() {
+		return this.episode;
 	}
 
 	/**
@@ -160,5 +193,41 @@ public class Release extends AbstractEntity {
 
 	public boolean isVariousArtists() {
 		return StatusChecker.isBitSet(this.printStatus, 13);
+	}
+
+	public boolean hasAssumedCatalogNumber() {
+		return StatusChecker.isBitSet(this.releaseStatus, 10);
+	}
+
+	public boolean isDigiPack() {
+		return StatusChecker.isBitSet(this.releaseStatus, 11);
+	}
+
+	public boolean isBoxSet() {
+		return StatusChecker.isBitSet(this.releaseStatus, 12);
+	}
+
+	public boolean isSlipcase() {
+		return StatusChecker.isBitSet(this.releaseStatus, 13);
+	}
+
+	public boolean isBlacklisted() {
+		return StatusChecker.isBitSet(this.productionStatus, 1);
+	}
+
+	public boolean isContainingRemixSoundtrack() {
+		return StatusChecker.isBitSet(this.productionStatus, 6);
+	}
+
+	public boolean isContainingAlternateSoundtrack() {
+		return StatusChecker.isBitSet(this.productionStatus, 7);
+	}
+
+	public boolean isContainingOriginalSoundtrack() {
+		return StatusChecker.isBitSet(this.productionStatus, 11);
+	}
+
+	public boolean canContainSoundtrack() {
+		return StatusChecker.isBitSet(this.typeStatus, 0);
 	}
 }

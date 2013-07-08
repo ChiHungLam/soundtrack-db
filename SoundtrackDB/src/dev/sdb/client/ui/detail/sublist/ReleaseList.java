@@ -37,8 +37,6 @@ public class ReleaseList extends Composite {
 		return this.cellTable;
 	}
 
-
-
 	public void clearTable() {
 		this.cellTable.setRowCount(0, true);
 		this.cellTable.setRowData(0, new Vector<Entity>());

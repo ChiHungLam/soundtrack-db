@@ -26,15 +26,18 @@ public class SdbManager extends SqlManager {
 			"`print_status` , " +
 			"`print_catalog_number` , " +
 			"`print_order` , " +
+			"`rel_status` , " +
 			"`prod_res_title` , " +
+			"`prod_status` , " +
+			"`prod_episode` , " +
 			"`lab_titel` , " +
+			"`typ_name` , " +
+			"`typ_status` , " +
+			"`ser_name` , " +
 			"`mm_name` , " +
 			"`perf_name` , " +
 			"`cal_date_1st` , " +
 			"`au_total_length`";
-
-
-			
 
 	public SdbManager(SqlServer sqlServer) {
 		super(sqlServer);
@@ -71,9 +74,6 @@ public class SdbManager extends SqlManager {
 			closeStatement(countPS);
 		}
 	}
-
-
-
 
 	public Result getReleaseSoundtrackList(long audioId, Range range) throws IOException {
 		PreparedStatement listPS = null;
@@ -327,7 +327,6 @@ public class SdbManager extends SqlManager {
 		}
 	}
 
-	// 
 	protected Release readRelease(ResultSet rs) throws SQLException {
 		long id = rs.getLong("print_id");
 		long audioId = rs.getLong("print_audio_id");
@@ -336,7 +335,11 @@ public class SdbManager extends SqlManager {
 		if (title == null || title.isEmpty())
 			title = rs.getString("prod_res_title");
 
+		int typeStatus = rs.getInt("typ_status");
+		int productionStatus = rs.getInt("prod_status");
+		int releaseStatus = rs.getInt("rel_status");
 		int printStatus = rs.getInt("print_status");
+
 		String catalogNumber = rs.getString("print_catalog_number");
 		int print = rs.getInt("print_order");
 
@@ -346,9 +349,14 @@ public class SdbManager extends SqlManager {
 		Date date = rs.getDate("cal_date_1st");
 		Date duration = rs.getDate("au_total_length");
 
+
+		String type = rs.getString("typ_name");
+		String series = rs.getString("ser_name");
+		int episode = rs.getInt("prod_episode");
+
 		@SuppressWarnings("deprecation") int year = (date == null) ? 0 : date.getYear() + 1900;
 
-		return new Release(id, audioId, artist, title, label, media, catalogNumber, print, year, printStatus, duration);
+		return new Release(id, type, series, episode, artist, title, label, media, catalogNumber, print, year, typeStatus, productionStatus, releaseStatus, printStatus, duration, audioId);
 	}
 
 	protected Music readMusic(ResultSet rs) throws SQLException {
@@ -374,13 +382,11 @@ public class SdbManager extends SqlManager {
 	}
 
 	private String getLimit(Range range) {
-		//return (range == null) ? ";" : "LIMIT " + range.getStart() + " , " + range.getLength() + " ;";
 		return "LIMIT " + range.getStart() + " , " + range.getLength() + " ;";
 	}
 
 	private String composePrintOrder(boolean ascending) {
-		String direction = getOrderDirection(ascending);
-		//`cal_order`
+		String direction = getOrderDirection(ascending);//`cal_order`
 		return "`cat_hierar_sort` " + direction + " , `rel_catalog_index` " + direction + " , `print_order` " + direction;
 	}
 
@@ -395,6 +401,9 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
+				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `print_id` = ? ;";
 		return sql;
 	}
@@ -425,6 +434,9 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
 				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
+				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `stk_id` = ? ;";
 		return sql;
 	}
@@ -493,6 +505,9 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
+				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `prod_res_title` LIKE ? "
 				+ "ORDER BY " + composePrintOrder(ascending) + " "
 				+ getLimit(range);
@@ -527,6 +542,9 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
 				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
+				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `rec_title` LIKE ? "
 				+ "ORDER BY `rec_title` " + getOrderDirection(ascending) + " "
 				+ getLimit(range);
@@ -565,6 +583,9 @@ public class SdbManager extends SqlManager {
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
+				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `print_audio_id` IN ( " + inSelect + " ) "
 				+ "ORDER BY " + composePrintOrder(true) + " "
 				+ getLimit(range);

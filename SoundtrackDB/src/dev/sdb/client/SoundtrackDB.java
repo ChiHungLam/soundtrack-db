@@ -25,7 +25,7 @@ import dev.sdb.client.ui.NavigatorWidget;
 public class SoundtrackDB implements EntryPoint {
 
 	private static final Map<ControllerType, Controller> CONTROLLER_MAP = new HashMap<ControllerType, Controller>();
-	
+
 	private String token;
 
 	public SoundtrackDB() {
@@ -164,7 +164,7 @@ public class SoundtrackDB implements EntryPoint {
 			controller = new MusicController(this);
 			break;
 		case SOUNDTRACK:
-			controller = new SoundtrackController(this); // not yet
+			controller = new SoundtrackController(this);
 			break;
 		case SERIES:
 			controller = null; // not yet

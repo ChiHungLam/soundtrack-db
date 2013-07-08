@@ -1,9 +1,7 @@
 package dev.sdb.client.controller;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -17,32 +15,15 @@ import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
-import dev.sdb.shared.model.entity.Release;
 
-public class MusicController extends AbstractSearchController {
+public class MusicController extends AbstractDataController {
 
 	public MusicController(SoundtrackDB sdb) {
 		super(sdb, ControllerType.MUSIC, Flavor.MUSIC);
 	}
 
 	@Override protected void addSearchResultColumns(CellTable<Entity> table) {
-		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Music) entity).getTitle();
-			}
-		};
-
-		// Make the columns sortable.
-		titleColumn.setSortable(true);
-
-		// Add the columns.
-		table.addColumn(titleColumn, "Titel");
-
-		table.setColumnWidth(titleColumn, 100.0, Unit.PCT);
-
-		// We know that the data is sorted alphabetically by default.
-		table.getColumnSortList().push(titleColumn);
-
+		addMusicColumns(table);
 	}
 
 
@@ -52,37 +33,10 @@ public class MusicController extends AbstractSearchController {
 		return widget;
 	}
 
-	public void initMusicReleaseListTable(final MusicDetailWidget widget) {
+	private void initMusicReleaseListTable(final MusicDetailWidget widget) {
 		CellTable<Entity> table = widget.getReleaseList().getTable();
 
-		TextColumn<Entity> catColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getCatalogInfo();
-			}
-		};
-
-		TextColumn<Entity> yearColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getYearInfo();
-			}
-		};
-
-		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getTitle();
-			}
-		};
-
-
-		// Add the columns.
-		table.addColumn(catColumn, "Kat.-Nr.");
-		table.setColumnWidth(catColumn, 20.0, Unit.PCT);
-
-		table.addColumn(yearColumn, "Jahr");
-		table.setColumnWidth(yearColumn, 10.0, Unit.PCT);
-
-		table.addColumn(titleColumn, "Titel");
-		table.setColumnWidth(titleColumn, 70.0, Unit.PCT);
+		addReleaseColumns(table);
 
 		table.setWidth("100%", true);
 

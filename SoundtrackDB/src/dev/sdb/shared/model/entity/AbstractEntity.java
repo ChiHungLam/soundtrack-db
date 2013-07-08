@@ -13,6 +13,11 @@ public abstract class AbstractEntity implements Entity {
 		this.id = id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see dev.sdb.shared.model.entity.Entity#getId()
+	 */
 	@Override public long getId() {
 		return this.id;
 	}

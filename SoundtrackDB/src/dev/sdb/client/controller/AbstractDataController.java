@@ -1,12 +1,14 @@
 package dev.sdb.client.controller;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -33,8 +35,11 @@ import dev.sdb.client.ui.search.SearchField;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
+import dev.sdb.shared.model.entity.Music;
+import dev.sdb.shared.model.entity.Release;
+import dev.sdb.shared.model.entity.Soundtrack;
 
-public abstract class AbstractSearchController implements Controller {
+public abstract class AbstractDataController implements Controller {
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Search service.
@@ -50,15 +55,18 @@ public abstract class AbstractSearchController implements Controller {
 	private DetailWidget detailWidget;
 	private QueryWidget queryWidget;
 
-	//	private Column<Entity, ?> rendererColumn;
-
-	public AbstractSearchController(SoundtrackDB sdb, ControllerType type, Flavor flavor) {
+	public AbstractDataController(SoundtrackDB sdb, ControllerType type, Flavor flavor) {
 		super();
 		this.sdb = sdb;
 		this.type = type;
 		this.flavor = flavor;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see dev.sdb.client.controller.Controller#getType()
+	 */
 	@Override public ControllerType getType() {
 		return this.type;
 	}
@@ -133,7 +141,7 @@ public abstract class AbstractSearchController implements Controller {
 			@Override public void onDoubleClick(final DoubleClickEvent event) {
 				Entity entity = selectionModel.getSelectedObject();
 				if (entity != null) {
-					History.newItem(AbstractSearchController.this.type.getToken() + "?id=" + entity.getId());
+					History.newItem(AbstractDataController.this.type.getToken() + "?id=" + entity.getId());
 				}
 			}
 		}, DoubleClickEvent.getType());
@@ -231,14 +239,14 @@ public abstract class AbstractSearchController implements Controller {
 		SEARCH_SERVICE.get(this.flavor, this.lastId, new AsyncCallback<Entity>() {
 
 			public void onSuccess(Entity entity) {
-				detailWidget.initEntity(entity, AbstractSearchController.this);
+				detailWidget.initEntity(entity, AbstractDataController.this);
 				detailWidget.setEnabled(true);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				detailWidget.initEntity(null, AbstractSearchController.this);
-				showRpcError(caught, "[" + AbstractSearchController.this.flavor.name() + "] id=" + AbstractSearchController.this.lastId, detailWidget);
+				detailWidget.initEntity(null, AbstractDataController.this);
+				showRpcError(caught, "[" + AbstractDataController.this.flavor.name() + "] id=" + AbstractDataController.this.lastId, detailWidget);
 			}
 		});
 	}
@@ -267,7 +275,7 @@ public abstract class AbstractSearchController implements Controller {
 			public void onSuccess(Result searchResult) {
 				String token = getType().getToken() + "?search=" + term;
 				History.newItem(token, false);
-				AbstractSearchController.this.sdb.setToken(token);
+				AbstractDataController.this.sdb.setToken(token);
 
 				int total = searchResult.getTotalLength();
 
@@ -285,7 +293,7 @@ public abstract class AbstractSearchController implements Controller {
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
 				result.setElementVisibility(-1);
-				showRpcError(caught, "[" + AbstractSearchController.this.flavor.name() + "] " + AbstractSearchController.this.lastSearchTerm, search);
+				showRpcError(caught, "[" + AbstractDataController.this.flavor.name() + "] " + AbstractDataController.this.lastSearchTerm, search);
 			}
 		});
 
@@ -333,4 +341,118 @@ public abstract class AbstractSearchController implements Controller {
 		closeButton.setFocus(true);
 	}
 
+	public void addSoundtrackColumns(CellTable<Entity> table) {
+		TextColumn<Entity> column = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Soundtrack) entity).toString();
+			}
+		};
+
+		// Make the columns sortable.
+		column.setSortable(true);
+
+		// Add the columns.
+		table.addColumn(column, "Titel");
+
+		table.setColumnWidth(column, 100.0, Unit.PCT);
+
+		// We know that the data is sorted alphabetically by default.
+		table.getColumnSortList().push(column);
+	}
+
+	public void addReleaseColumns(CellTable<Entity> table) {
+		TextColumn<Entity> typeColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getType();
+			}
+		};
+
+		TextColumn<Entity> catColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getCatalogInfo();
+			}
+		};
+
+		TextColumn<Entity> yearColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getYearInfo();
+			}
+		};
+
+		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getTitle();
+			}
+		};
+
+		TextColumn<Entity> artistColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				Release release = ((Release) entity);
+				if (!release.canContainSoundtrack())
+					return release.getArtist();
+				return release.getSeries();
+			}
+		};
+
+		// Make the columns sortable.
+		//		titleColumn.setSortable(true);
+
+		// Add the columns.
+		table.addColumn(typeColumn, "Typ");
+		table.setColumnWidth(typeColumn, 5.0, Unit.PCT);
+
+		table.addColumn(catColumn, "Kat.-Nr.");
+		table.setColumnWidth(catColumn, 20.0, Unit.PCT);
+
+		table.addColumn(yearColumn, "Jahr");
+		table.setColumnWidth(yearColumn, 5.0, Unit.PCT);
+
+		table.addColumn(artistColumn, "Interpret / Serie");
+		table.setColumnWidth(artistColumn, 30.0, Unit.PCT);
+
+		table.addColumn(titleColumn, "Titel");
+		table.setColumnWidth(titleColumn, 40.0, Unit.PCT);
+
+		// We know that the data is sorted alphabetically by default.
+		//		table.getColumnSortList().push(titleColumn);
+
+	}
+
+	public void addMusicColumns(CellTable<Entity> table) {
+		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Music) entity).getTitle();
+			}
+		};
+
+		// Make the columns sortable.
+		titleColumn.setSortable(true);
+
+		// Add the columns.
+		table.addColumn(titleColumn, "Titel");
+
+		table.setColumnWidth(titleColumn, 100.0, Unit.PCT);
+
+		// We know that the data is sorted alphabetically by default.
+		table.getColumnSortList().push(titleColumn);
+	}
+
+	public void addReleaseMusicColumns(CellTable<Entity> table) {
+		TextColumn<Entity> column = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Soundtrack) entity).toString();
+			}
+		};
+
+		// Make the columns sortable.
+		column.setSortable(true);
+
+		// Add the columns.
+		table.addColumn(column, "Titel");
+
+		table.setColumnWidth(column, 100.0, Unit.PCT);
+
+		// We know that the data is sorted alphabetically by default.
+		table.getColumnSortList().push(column);
+	}
 }

@@ -5,7 +5,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.controller.AbstractSearchController;
+import dev.sdb.client.controller.AbstractDataController;
 import dev.sdb.client.controller.MusicController;
 import dev.sdb.client.ui.detail.master.MasterDataWidget;
 import dev.sdb.client.ui.detail.master.MusicMasterData;
@@ -34,7 +34,7 @@ public class MusicDetailWidget extends DetailWidget {
 		return this.releaseList;
 	}
 
-	public void initEntity(Entity entity, AbstractSearchController controller) {
+	public void initEntity(Entity entity, AbstractDataController controller) {
 		this.releaseList.clearTable();
 
 		if (entity == null) {
