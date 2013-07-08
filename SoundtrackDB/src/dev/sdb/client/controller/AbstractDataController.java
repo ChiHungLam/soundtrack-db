@@ -417,6 +417,24 @@ public abstract class AbstractDataController implements Controller {
 	}
 
 	public void addMusicColumns(CellTable<Entity> table) {
+		TextColumn<Entity> genreColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Music) entity).getGenre().getChildName();
+			}
+		};
+
+		TextColumn<Entity> yearColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return "" + ((Music) entity).getYear();
+			}
+		};
+
+		TextColumn<Entity> artistColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Music) entity).getArtist();
+			}
+		};
+
 		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
 				return ((Music) entity).getTitleInfo();
@@ -427,9 +445,17 @@ public abstract class AbstractDataController implements Controller {
 		titleColumn.setSortable(true);
 
 		// Add the columns.
-		table.addColumn(titleColumn, "Titel");
+		table.addColumn(genreColumn, "Genre");
+		table.setColumnWidth(genreColumn, 10.0, Unit.PCT);
 
-		table.setColumnWidth(titleColumn, 100.0, Unit.PCT);
+		table.addColumn(yearColumn, "Jahr");
+		table.setColumnWidth(yearColumn, 10.0, Unit.PCT);
+
+		table.addColumn(artistColumn, "Interpret");
+		table.setColumnWidth(artistColumn, 30.0, Unit.PCT);
+
+		table.addColumn(titleColumn, "Titel");
+		table.setColumnWidth(titleColumn, 50.0, Unit.PCT);
 
 		// We know that the data is sorted alphabetically by default.
 		table.getColumnSortList().push(titleColumn);
