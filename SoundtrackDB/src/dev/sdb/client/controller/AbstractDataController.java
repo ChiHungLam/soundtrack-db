@@ -419,7 +419,7 @@ public abstract class AbstractDataController implements Controller {
 	public void addMusicColumns(CellTable<Entity> table) {
 		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
-				return ((Music) entity).getTitle();
+				return ((Music) entity).getTitleInfo();
 			}
 		};
 
