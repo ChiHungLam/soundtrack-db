@@ -7,7 +7,7 @@ import dev.sdb.shared.model.StatusChecker;
 public class Release extends AbstractEntity {
 
 	private String type;
-	private String series;
+	private Series series;
 	private int episode;
 	private String artist;
 	private String title;
@@ -27,7 +27,7 @@ public class Release extends AbstractEntity {
 		super();
 	}
 
-	public Release(long id, String type, String series, int episode, String artist, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, Date duration, long audioId) {
+	public Release(long id, String type, Series series, int episode, String artist, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, Date duration, long audioId) {
 		super(id);
 		this.type = type;
 		this.series = series;
@@ -52,6 +52,74 @@ public class Release extends AbstractEntity {
 		return info;
 	}
 
+	public String getTitleInfo() {
+		String info;
+
+		String preInfo = getSeries().getTitleInfo();
+		String postInfo = canContainSoundtrack() ? null : getArtist();
+
+		if (preInfo == null || preInfo.isEmpty()) {
+			info = this.title;
+		} else if (preInfo.equals(this.title)) {
+			info = this.title;
+		} else {
+
+			int len = preInfo.length();
+
+			String title;
+			if (this.title.startsWith(preInfo) && (this.title.length() > (len + 1)) && (this.title.charAt(len) == ' ')) {
+				title = this.title.substring(len + 1);
+			} else {
+				title = this.title;
+			}
+
+			String episode;
+			if (this.episode > 0)
+				episode = " (" + this.episode + ")";
+			else
+				episode = preInfo.contains(title) ? "" : ":";
+
+			info = preInfo + episode;
+
+			if (!info.contains(title))
+				info += " " + title;
+		}
+
+		if (postInfo != null && !postInfo.isEmpty() && !info.contains(postInfo)) {
+			info += " (" + postInfo + ")";
+		}
+
+		return info;
+	}
+
+
+
+	public String getArtistInfo() {
+		if (isVariousArtists())
+			return "V.A.";
+		else
+			return getArtist();
+	}
+
+	public String getYearInfo() {
+		if (this.year <= 0)
+			return null;
+		return (isYearApprox() ? "ca. " : "") + this.year;
+	}
+
+	public String getCatalogInfo() {
+		String info = "";
+		if (this.label != null && !this.label.isEmpty())
+			info += (info.isEmpty() ? "" : " ") + this.label;
+		if (this.media != null && !this.media.isEmpty())
+			info += (info.isEmpty() ? "" : " ") + this.media;
+		if (this.catalogNumber != null && !this.catalogNumber.isEmpty())
+			info += (info.isEmpty() ? "" : " ") + this.catalogNumber;
+		if (this.print > 0)
+			info += (info.isEmpty() ? "" : " ") + "(Aufl. " + this.print + ")";
+		return info;
+	}
+
 	/**
 	 * @return the type
 	 */
@@ -62,7 +130,7 @@ public class Release extends AbstractEntity {
 	/**
 	 * @return the series
 	 */
-	public String getSeries() {
+	public Series getSeries() {
 		return this.series;
 	}
 
@@ -108,19 +176,6 @@ public class Release extends AbstractEntity {
 		return this.catalogNumber;
 	}
 
-	public String getCatalogInfo() {
-		String info = "";
-		if (this.label != null && !this.label.isEmpty())
-			info += (info.isEmpty() ? "" : " ") + this.label;
-		if (this.media != null && !this.media.isEmpty())
-			info += (info.isEmpty() ? "" : " ") + this.media;
-		if (this.catalogNumber != null && !this.catalogNumber.isEmpty())
-			info += (info.isEmpty() ? "" : " ") + this.catalogNumber;
-		if (this.print > 0)
-			info += (info.isEmpty() ? "" : " ") + "(Aufl. " + this.print + ")";
-		return info;
-	}
-
 	/**
 	 * @return the label
 	 */
@@ -142,11 +197,6 @@ public class Release extends AbstractEntity {
 		return this.year;
 	}
 
-	public String getYearInfo() {
-		if (this.year <= 0)
-			return null;
-		return (isYearApprox() ? "ca. " : "") + this.year;
-	}
 	/**
 	 * @return the duration
 	 */
@@ -212,7 +262,7 @@ public class Release extends AbstractEntity {
 	}
 
 	public boolean isBlacklisted() {
-		return StatusChecker.isBitSet(this.productionStatus, 1);
+		return StatusChecker.isBitSet(this.productionStatus, 1) || getSeries().isBlacklisted();
 	}
 
 	public boolean isContainingRemixSoundtrack() {
