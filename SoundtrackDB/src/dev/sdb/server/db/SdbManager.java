@@ -15,9 +15,18 @@ import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
+import dev.sdb.shared.model.entity.Series;
 import dev.sdb.shared.model.entity.Soundtrack;
 
 public class SdbManager extends SqlManager {
+
+	private static final String SERIES_INFO_FIELDS = "" +
+			"`edt_id` , " +
+			"`edt_status` , " +
+			"`edt_override_title` , " +
+			"`edt_abbrev` , " +
+			"`edt_singles` , " +
+			"`ser_various`";
 
 	private static final String PRINT_INFO_FIELDS = "" +
 			"`print_id` , " +
@@ -33,7 +42,7 @@ public class SdbManager extends SqlManager {
 			"`lab_titel` , " +
 			"`typ_name` , " +
 			"`typ_status` , " +
-			"`ser_name` , " +
+			SERIES_INFO_FIELDS + " , " +
 			"`mm_name` , " +
 			"`perf_name` , " +
 			"`cal_date_1st` , " +
@@ -351,12 +360,27 @@ public class SdbManager extends SqlManager {
 
 
 		String type = rs.getString("typ_name");
-		String series = rs.getString("ser_name");
+
 		int episode = rs.getInt("prod_episode");
 
 		@SuppressWarnings("deprecation") int year = (date == null) ? 0 : date.getYear() + 1900;
 
+		Series series = readSeries(rs);
+
 		return new Release(id, type, series, episode, artist, title, label, media, catalogNumber, print, year, typeStatus, productionStatus, releaseStatus, printStatus, duration, audioId);
+	}
+
+	protected Series readSeries(ResultSet rs) throws SQLException {
+		long id = rs.getLong("edt_id");
+		int editionStatus = rs.getInt("edt_status");
+		String title = rs.getString("edt_override_title");
+		String shortTitle = rs.getString("edt_abbrev");
+
+		boolean singles = rs.getBoolean("ser_various");
+		if (!singles)
+			singles = rs.getBoolean("edt_singles");
+
+		return new Series(id, title, shortTitle, editionStatus, singles);
 	}
 
 	protected Music readMusic(ResultSet rs) throws SQLException {

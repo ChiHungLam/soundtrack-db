@@ -1,12 +1,16 @@
 package dev.sdb.client.controller;
 
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.History;
@@ -379,18 +383,15 @@ public abstract class AbstractDataController implements Controller {
 			}
 		};
 
-		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getTitle();
-			}
-		};
+		final SafeHtmlCell progressCell = new SafeHtmlCell();
 
-		TextColumn<Entity> artistColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				Release release = ((Release) entity);
-				if (!release.canContainSoundtrack())
-					return release.getArtist();
-				return release.getSeries();
+		Column<Entity, SafeHtml> titleColumn = new Column<Entity, SafeHtml>(progressCell) {
+			@Override public SafeHtml getValue(Entity entity) {
+				SafeHtmlBuilder sb = new SafeHtmlBuilder();
+				//				sb.appendHtmlConstant("<div style='width: 100px; height: 20px; position: relative;'>");
+				sb.appendHtmlConstant(((Release) entity).getTitleInfo());
+				//				sb.appendHtmlConstant("</div>");
+				return sb.toSafeHtml();
 			}
 		};
 
@@ -399,19 +400,16 @@ public abstract class AbstractDataController implements Controller {
 
 		// Add the columns.
 		table.addColumn(typeColumn, "Typ");
-		table.setColumnWidth(typeColumn, 5.0, Unit.PCT);
+		table.setColumnWidth(typeColumn, 10.0, Unit.PCT);
 
 		table.addColumn(catColumn, "Kat.-Nr.");
 		table.setColumnWidth(catColumn, 20.0, Unit.PCT);
 
 		table.addColumn(yearColumn, "Jahr");
-		table.setColumnWidth(yearColumn, 5.0, Unit.PCT);
-
-		table.addColumn(artistColumn, "Interpret / Serie");
-		table.setColumnWidth(artistColumn, 30.0, Unit.PCT);
+		table.setColumnWidth(yearColumn, 10.0, Unit.PCT);
 
 		table.addColumn(titleColumn, "Titel");
-		table.setColumnWidth(titleColumn, 40.0, Unit.PCT);
+		table.setColumnWidth(titleColumn, 60.0, Unit.PCT);
 
 		// We know that the data is sorted alphabetically by default.
 		//		table.getColumnSortList().push(titleColumn);
