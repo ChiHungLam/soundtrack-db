@@ -7,8 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-
-public abstract class SqlManager implements Schema {
+public abstract class SqlManager {
 
 	private SqlServer sqlServer;
 	private Connection connection;

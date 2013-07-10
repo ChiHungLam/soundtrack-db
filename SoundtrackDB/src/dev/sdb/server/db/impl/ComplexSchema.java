@@ -1,6 +1,6 @@
-package dev.sdb.server.db;
+package dev.sdb.server.db.impl;
 
-interface Schema {
+interface ComplexSchema {
 
 	String PRODUCTION = "production";
 	String RECORDING = "recording";
