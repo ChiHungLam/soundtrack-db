@@ -82,7 +82,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 			listPS = getStatement(composeMusicReleaseList(range));
 			countPS = getStatement(composeMusicReleaseListCount());
 			int count = count(countPS, Long.valueOf(versionId));
-			queryMusicReleaseList(listPS, result, versionId, range);
+			selectMusicReleaseList(listPS, result, versionId, range);
 
 			return new Result(result, count);
 
@@ -106,7 +106,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 			listPS = getStatement(composeReleaseSoundtrackList(range));
 			countPS = getStatement(composeReleaseSoundtrackListCount());
 			int count = count(countPS, Long.valueOf(audioId));
-			queryReleaseSoundtrackList(listPS, result, audioId, range);
+			selectReleaseSoundtrackList(listPS, result, audioId, range);
 
 			return new Result(result, count);
 
@@ -307,7 +307,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		}
 	}
 
-	protected void queryMusicReleaseList(PreparedStatement ps, List<Entity> result, long versionId, Range range) throws IOException {
+	protected void selectMusicReleaseList(PreparedStatement ps, List<Entity> result, long versionId, Range range) throws IOException {
 		ResultSet rs = null;
 
 		try {
@@ -329,7 +329,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		}
 	}
 
-	protected void queryReleaseSoundtrackList(PreparedStatement ps, List<Entity> result, long audioId, Range range) throws IOException {
+	protected void selectReleaseSoundtrackList(PreparedStatement ps, List<Entity> result, long audioId, Range range) throws IOException {
 		ResultSet rs = null;
 
 		try {

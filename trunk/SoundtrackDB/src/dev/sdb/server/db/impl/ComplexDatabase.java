@@ -69,6 +69,9 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 	protected Release readRelease(ResultSet rs) throws SQLException {
 		long id = rs.getLong("print_id");
+		if (id <= 0)
+			return null;
+
 		long audioId = rs.getLong("print_audio_id");
 
 		String title = rs.getString("print_or_res_title");
@@ -102,6 +105,9 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 	protected Series readSeries(ResultSet rs) throws SQLException {
 		long id = rs.getLong("edt_id");
+		if (id <= 0)
+			return null;
+
 		int editionStatus = rs.getInt("edt_status");
 		String title = rs.getString("edt_override_title");
 		String shortTitle = rs.getString("edt_abbrev");
@@ -115,6 +121,9 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 	protected Music readMusic(ResultSet rs) throws SQLException {
 		long id = rs.getLong("vers_id");
+		if (id <= 0)
+			return null;
+
 		int versionOrder = rs.getInt("vers_order");
 		String versionName = rs.getString("vers_name_full");
 		int year = rs.getInt("vers_year");
@@ -136,6 +145,9 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 	protected Genre readGenre(ResultSet rs) throws SQLException {
 		long id = rs.getLong("gen_id");
+		if (id <= 0)
+			return null;
+
 		int status = rs.getInt("gen_status");
 		String parentName = rs.getString("gen_hierar_parent_name");
 		String childName = rs.getString("gen_hierar_child_name");
@@ -144,10 +156,13 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 	}
 
 	protected Soundtrack readSoundtrack(ResultSet rs, boolean readRelease, boolean readMusic) throws SQLException {
+		long id = rs.getLong("stk_id");
+		if (id <= 0)
+			return null;
+
 		Release release = readRelease ? readRelease(rs) : null;
 		Music music = readMusic ? readMusic(rs) : null;
 
-		long id = rs.getLong("stk_id");
 		return new Soundtrack(id, release, music);
 	}
 

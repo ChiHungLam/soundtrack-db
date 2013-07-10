@@ -345,23 +345,76 @@ public abstract class AbstractDataController implements Controller {
 		closeButton.setFocus(true);
 	}
 
+	private Column<Entity, SafeHtml> createCompactReleaseColumn() {
+		final SafeHtmlCell releaseCell = new SafeHtmlCell();
+		Column<Entity, SafeHtml> releaseColumn = new Column<Entity, SafeHtml>(releaseCell) {
+			@Override public SafeHtml getValue(Entity entity) {
+				Release release = ((Soundtrack) entity).getRelease();
+				if (release == null)
+					return null;
+
+				SafeHtmlBuilder sb = new SafeHtmlBuilder();
+				sb.appendHtmlConstant("<b>" + release.getTitleInfo() + "</b>");
+				sb.appendHtmlConstant("<br>");
+				sb.appendHtmlConstant(release.getCatalogInfo());
+				sb.appendHtmlConstant("<br>");
+				sb.appendHtmlConstant("<i>" + release.getType() + " von " + release.getYearInfo() + "</i>");
+				return sb.toSafeHtml();
+			}
+		};
+		return releaseColumn;
+	}
+
+	private Column<Entity, SafeHtml> createCompactMusicColumn() {
+		final SafeHtmlCell musicCell = new SafeHtmlCell();
+		Column<Entity, SafeHtml> musicColumn = new Column<Entity, SafeHtml>(musicCell) {
+			@Override public SafeHtml getValue(Entity entity) {
+				Music music = ((Soundtrack) entity).getMusic();
+				if (music == null)
+					return null;
+
+				String authors = music.getAuthors();
+				String artist = music.getArtist();
+				if (artist != null)
+					artist += " (" + music.getYearInfo() + ")";
+
+				SafeHtmlBuilder sb = new SafeHtmlBuilder();
+				sb.appendHtmlConstant((artist == null) ? "&nbsp;" : artist);
+				sb.appendHtmlConstant("<br>");
+				sb.appendHtmlConstant("<b>" + music.getTitleInfo() + "</b>");
+				sb.appendHtmlConstant("<br>");
+				sb.appendHtmlConstant((authors == null) ? "&nbsp;" : ("<i>(" + authors + ")</i>"));
+				return sb.toSafeHtml();
+			}
+		};
+		return musicColumn;
+	}
+
 	public void addSoundtrackColumns(CellTable<Entity> table) {
-		TextColumn<Entity> column = new TextColumn<Entity>() {
+		TextColumn<Entity> soundtrackColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
-				return ((Soundtrack) entity).toString();
+				return "#" + ((Soundtrack) entity).getId();
 			}
 		};
 
+		Column<Entity, SafeHtml> releaseColumn = createCompactReleaseColumn();
+		Column<Entity, SafeHtml> musicColumn = createCompactMusicColumn();
+
 		// Make the columns sortable.
-		column.setSortable(true);
+		soundtrackColumn.setSortable(true);
 
 		// Add the columns.
-		table.addColumn(column, "Titel");
+		table.addColumn(soundtrackColumn, "Seq-ID");
+		table.setColumnWidth(soundtrackColumn, 10.0, Unit.PCT);
 
-		table.setColumnWidth(column, 100.0, Unit.PCT);
+		table.addColumn(releaseColumn, "Release");
+		table.setColumnWidth(releaseColumn, 45.0, Unit.PCT);
+
+		table.addColumn(musicColumn, "Musik");
+		table.setColumnWidth(musicColumn, 45.0, Unit.PCT);
 
 		// We know that the data is sorted alphabetically by default.
-		table.getColumnSortList().push(column);
+		table.getColumnSortList().push(soundtrackColumn);
 	}
 
 	public void addReleaseColumns(CellTable<Entity> table) {
@@ -383,15 +436,9 @@ public abstract class AbstractDataController implements Controller {
 			}
 		};
 
-		final SafeHtmlCell progressCell = new SafeHtmlCell();
-
-		Column<Entity, SafeHtml> titleColumn = new Column<Entity, SafeHtml>(progressCell) {
-			@Override public SafeHtml getValue(Entity entity) {
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				//				sb.appendHtmlConstant("<div style='width: 100px; height: 20px; position: relative;'>");
-				sb.appendHtmlConstant(((Release) entity).getTitleInfo());
-				//				sb.appendHtmlConstant("</div>");
-				return sb.toSafeHtml();
+		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Release) entity).getTitleInfo();
 			}
 		};
 
@@ -462,21 +509,24 @@ public abstract class AbstractDataController implements Controller {
 	}
 
 	public void addReleaseMusicColumns(CellTable<Entity> table) {
-		TextColumn<Entity> column = new TextColumn<Entity>() {
+		TextColumn<Entity> soundtrackColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
-				return ((Soundtrack) entity).toString();
+				return "#" + ((Soundtrack) entity).getId();
 			}
 		};
+		Column<Entity, SafeHtml> musicColumn = createCompactMusicColumn();
 
 		// Make the columns sortable.
-		column.setSortable(true);
+		soundtrackColumn.setSortable(true);
 
 		// Add the columns.
-		table.addColumn(column, "Titel");
+		table.addColumn(soundtrackColumn, "Titel");
+		table.setColumnWidth(soundtrackColumn, 10.0, Unit.PCT);
 
-		table.setColumnWidth(column, 100.0, Unit.PCT);
+		table.addColumn(musicColumn, "Musik");
+		table.setColumnWidth(musicColumn, 90.0, Unit.PCT);
 
 		// We know that the data is sorted alphabetically by default.
-		table.getColumnSortList().push(column);
+		table.getColumnSortList().push(soundtrackColumn);
 	}
 }
