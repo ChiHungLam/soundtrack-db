@@ -12,7 +12,7 @@ public class Music extends AbstractEntity {
 	private String artist;
 	@SuppressWarnings("unused") private int partOrder;
 	private int versionOrder;
-	@SuppressWarnings("unused") private int recStatus;
+	private int recStatus;
 	private int partStatus;
 	private int versionStatus;
 
@@ -42,8 +42,10 @@ public class Music extends AbstractEntity {
 
 	public String getTitleInfo() {
 		String info = this.title;
+		if (!hasKnownName())
+			info = "\"" + this.title + "\"";
 
-		if (this.versionOrder > 1 || !this.version.equals("Original Version"))
+		if ((this.versionOrder > 1 || !this.version.equals("Original Version")))
 			info += " [" + this.version + "]";
 
 		return info;
@@ -75,6 +77,12 @@ public class Music extends AbstractEntity {
 	 */
 	public int getYear() {
 		return this.year;
+	}
+
+	public String getYearInfo() {
+		if (this.year <= 0)
+			return "";
+		return (isApproximateYear() ? "ca." : "") + this.year;
 	}
 
 	/**
@@ -129,6 +137,14 @@ public class Music extends AbstractEntity {
 
 	public boolean isPerformedByOthers() {
 		return StatusChecker.isBitSet(this.partStatus, 12);
+	}
+
+	public boolean hasKnownName() {
+		return StatusChecker.isBitSet(this.recStatus, 0);
+	}
+
+	public boolean isPartOfMedley() {
+		return StatusChecker.isBitSet(this.recStatus, 8);
 	}
 
 	public boolean isPerformedByMiller() {
