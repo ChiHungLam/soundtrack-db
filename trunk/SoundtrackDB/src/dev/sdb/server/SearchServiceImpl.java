@@ -7,8 +7,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.client.service.SearchService;
-import dev.sdb.server.db.SdbManager;
+import dev.sdb.server.db.Database;
 import dev.sdb.server.db.SqlServer;
+import dev.sdb.server.db.impl.ComplexDatabase;
 import dev.sdb.shared.SearchTermVerifier;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
@@ -39,11 +40,15 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
+	private Database getDatabase() {
+		return new ComplexDatabase(sqlServer);
+	}
+
 	@Override public Entity get(Flavor flavor, long id) throws IllegalArgumentException, IOException {
 		assert (flavor != null);
 		assert (id > 0);
 
-		SdbManager manager = new SdbManager(sqlServer);
+		Database manager = getDatabase();
 		manager.open();
 
 		try {
@@ -57,7 +62,7 @@ import dev.sdb.shared.model.entity.Entity;
 		assert (id > 0);
 		assert (range != null);
 
-		SdbManager manager = new SdbManager(sqlServer);
+		Database manager = getDatabase();
 		manager.open();
 
 		try {
@@ -71,7 +76,7 @@ import dev.sdb.shared.model.entity.Entity;
 		assert (id > 0);
 		assert (range != null);
 
-		SdbManager manager = new SdbManager(sqlServer);
+		Database manager = getDatabase();
 		manager.open();
 
 		try {
@@ -95,7 +100,7 @@ import dev.sdb.shared.model.entity.Entity;
 		// Escape data from the client to avoid cross-site script vulnerabilities.
 		term = escapeHtml(term);
 
-		SdbManager manager = new SdbManager(sqlServer);
+		Database manager = getDatabase();
 		manager.open();
 
 		try {

@@ -1,0 +1,23 @@
+package dev.sdb.server.db;
+
+import java.io.IOException;
+
+import com.google.gwt.view.client.Range;
+
+import dev.sdb.shared.model.db.Flavor;
+import dev.sdb.shared.model.db.Result;
+import dev.sdb.shared.model.entity.Entity;
+
+public interface Database {
+
+	void open() throws IOException;
+	void close();
+
+	Entity getEntity(Flavor flavor, long id) throws IOException;
+
+	Result getMusicReleaseList(long versionId, Range range) throws IOException;
+
+	Result getReleaseSoundtrackList(long audioId, Range range) throws IOException;
+
+	Result query(Flavor flavor, String term, Range range, boolean ascending) throws IOException;
+}
