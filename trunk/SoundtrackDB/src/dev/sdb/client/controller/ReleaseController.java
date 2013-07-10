@@ -4,7 +4,6 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -71,7 +70,7 @@ public class ReleaseController extends AbstractDataController {
 				if (soundtrack != null) {
 					Music music = soundtrack.getMusic();
 					if (music != null) {
-						History.newItem(ControllerType.MUSIC.getToken() + "?id=" + music.getId());
+						addHistoryNavigation(ControllerType.MUSIC, music);
 					}
 				}
 			}

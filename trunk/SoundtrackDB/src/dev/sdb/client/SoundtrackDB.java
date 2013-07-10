@@ -26,6 +26,11 @@ public class SoundtrackDB implements EntryPoint {
 
 	private static final Map<ControllerType, Controller> CONTROLLER_MAP = new HashMap<ControllerType, Controller>();
 
+	private static boolean LOG_URLS_AND_TOKENS = false;
+
+	/**
+	 * This token represents the current state of the application. Its value is <i>not</i> url encoded.
+	 */
 	private String token;
 
 	public SoundtrackDB() {
@@ -36,12 +41,17 @@ public class SoundtrackDB implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		if (LOG_URLS_AND_TOKENS) {
+			String href = Window.Location.getHref();
+			System.out.println("Start up url: " + href);
+		}
+
 		//attaching navigator
 		Widget navigatorWidget = createNavigatorWidget();
 		RootPanel.get("navigator_area").add(navigatorWidget);
 
 		//attaching content
-		String startingToken = getStartingToken();
+		String startingToken = History.getToken();
 		setContentArea(startingToken);
 
 		//preparing history support
@@ -57,10 +67,25 @@ public class SoundtrackDB implements EntryPoint {
 		});
 	}
 
-	public String getToken() {
+	public void setHistory(String token, boolean issueEvent) {
+		if (LOG_URLS_AND_TOKENS) {
+			System.out.println("Adding to history" + (!issueEvent ? " (without events)" : "") + ": " + token);
+		}
+
+		History.newItem(token, issueEvent);
+		if (!issueEvent)
+			setToken(token);
+	}
+
+	private String getToken() {
 		return this.token;
 	}
-	public void setToken(String token) {
+
+	private void setToken(String token) {
+		if (LOG_URLS_AND_TOKENS) {
+			System.out.println("Setting token to: " + token);
+		}
+
 		this.token = token;
 	}
 
@@ -77,25 +102,6 @@ public class SoundtrackDB implements EntryPoint {
 			return;
 
 		contentArea.add(contentWidget);
-	}
-
-	private String getStartingToken() {
-		String href = Window.Location.getHref();
-		System.out.println("Starting href: " + href);
-		int pos = href.indexOf("#");
-
-		String token;
-		if (pos == -1)
-			token = "";
-		else
-			token = href.substring(pos + 1);
-
-		//		if (token.isEmpty()) {
-		//			token = ControllerType.HOME.getToken();
-		//			History.newItem(token, false);
-		//		}
-
-		return token;
 	}
 
 	protected Widget getContentWidget(String historyToken) {
@@ -186,6 +192,5 @@ public class SoundtrackDB implements EntryPoint {
 	private Widget createNavigatorWidget() {
 		return new NavigatorWidget();
 	}
-
 
 }
