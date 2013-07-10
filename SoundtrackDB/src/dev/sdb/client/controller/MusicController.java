@@ -4,7 +4,6 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -73,7 +72,7 @@ public class MusicController extends AbstractDataController {
 			@Override public void onDoubleClick(final DoubleClickEvent event) {
 				Entity entity = selectionModel.getSelectedObject();
 				if (entity != null) {
-					History.newItem(ControllerType.RELEASE.getToken() + "?id=" + entity.getId());
+					addHistoryNavigation(ControllerType.RELEASE, entity);
 				}
 			}
 		}, DoubleClickEvent.getType());

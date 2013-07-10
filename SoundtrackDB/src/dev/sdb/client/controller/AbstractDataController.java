@@ -13,7 +13,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -145,12 +144,20 @@ public abstract class AbstractDataController implements Controller {
 			@Override public void onDoubleClick(final DoubleClickEvent event) {
 				Entity entity = selectionModel.getSelectedObject();
 				if (entity != null) {
-					History.newItem(AbstractDataController.this.type.getToken() + "?id=" + entity.getId());
+					addHistoryNavigation(getType(), entity);
 				}
 			}
 		}, DoubleClickEvent.getType());
 
 		return queryWidget;
+	}
+
+	protected String getEntityToken(ControllerType type, Entity entity) {
+		return type.getToken() + "?id=" + entity.getId();
+	}
+
+	protected String getSearchToken(String term) {
+		return getType().getToken() + "?search=" + term;
 	}
 
 	protected abstract void addSearchResultColumns(CellTable<Entity> table);
@@ -277,9 +284,7 @@ public abstract class AbstractDataController implements Controller {
 		SEARCH_SERVICE.search(this.flavor, term, range, ascending, new AsyncCallback<Result>() {
 
 			public void onSuccess(Result searchResult) {
-				String token = getType().getToken() + "?search=" + term;
-				History.newItem(token, false);
-				AbstractDataController.this.sdb.setToken(token);
+				addHistorySearch(term);
 
 				int total = searchResult.getTotalLength();
 
@@ -301,6 +306,16 @@ public abstract class AbstractDataController implements Controller {
 			}
 		});
 
+	}
+
+	protected void addHistorySearch(String term) {
+		String token = getSearchToken(term);
+		this.sdb.setHistory(token, false);
+	}
+
+	protected void addHistoryNavigation(ControllerType type, Entity entity) {
+		String token = getEntityToken(type, entity);
+		this.sdb.setHistory(token, true);
 	}
 
 	protected void showRpcError(Throwable caught, String msg, final HasEnabled hasEnabled) {
