@@ -43,8 +43,6 @@ public class ResultField extends Composite implements HasText {
 		return this.cellTable;
 	}
 
-
-
 	@Override public String getText() {
 		return this.infoLabel.getText();
 	}

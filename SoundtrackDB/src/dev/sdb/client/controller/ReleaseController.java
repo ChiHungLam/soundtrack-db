@@ -1,11 +1,15 @@
 package dev.sdb.client.controller;
 
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.ui.detail.DetailWidget;
@@ -14,7 +18,9 @@ import dev.sdb.client.ui.detail.sublist.SequenceList;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
+import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
+import dev.sdb.shared.model.entity.Soundtrack;
 
 public class ReleaseController extends AbstractDataController {
 
@@ -55,6 +61,21 @@ public class ReleaseController extends AbstractDataController {
 		// AsyncDataPRrovider.
 		AsyncHandler columnSortHandler = new AsyncHandler(table);
 		table.addColumnSortHandler(columnSortHandler);
+
+		final SingleSelectionModel<Entity> selectionModel = new SingleSelectionModel<Entity>();
+		table.setSelectionModel(selectionModel);
+
+		table.addDomHandler(new DoubleClickHandler() {
+			@Override public void onDoubleClick(final DoubleClickEvent event) {
+				Soundtrack soundtrack = (Soundtrack) selectionModel.getSelectedObject();
+				if (soundtrack != null) {
+					Music music = soundtrack.getMusic();
+					if (music != null) {
+						History.newItem(ControllerType.MUSIC.getToken() + "?id=" + music.getId());
+					}
+				}
+			}
+		}, DoubleClickEvent.getType());
 
 		return widget;
 	}
