@@ -32,7 +32,7 @@ public class ReleaseController extends AbstractDataController {
 	}
 
 	@Override protected DetailWidget createDetailWidget() {
-		final ReleaseDetailWidget widget = new ReleaseDetailWidget();
+		final ReleaseDetailWidget widget = new ReleaseDetailWidget(this);
 		CellTable<Entity> table = widget.getSequenceList().getTable();
 
 		addReleaseMusicColumns(table);
@@ -84,7 +84,7 @@ public class ReleaseController extends AbstractDataController {
 
 		Release release = (Release) detailWidget.getCurrentEntity();
 		if (release == null) {
-			list.clearTable();
+			list.setElementVisibility(-1);
 			return;
 		}
 
@@ -92,7 +92,7 @@ public class ReleaseController extends AbstractDataController {
 
 		//if there's no id, cancel the action
 		if (audioId <= 0) {
-			list.clearTable();
+			list.setElementVisibility(-1);
 			return;
 		}
 
@@ -105,16 +105,25 @@ public class ReleaseController extends AbstractDataController {
 			public void onSuccess(Result searchResult) {
 				int total = searchResult.getTotalLength();
 
+				String resultInfo = "";
+				if (total == 0) {
+					resultInfo = "Für diese Veröffentlichung existieren keine Sequenzen.";
+				} else if (total > 0) {
+					resultInfo = "Für diese Veröffentlichung " + (total == 1 ? "existiert 1 Sequenz" : ("existieren " + total + " Sequenzen")) + ".";
+				}
+
 				table.setRowCount(total, true);
 				table.setRowData(range.getStart(), searchResult.getResultChunk());
+
+				list.setResultInfoText(resultInfo);
+				list.setElementVisibility(total);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-
-				list.clearTable();
-
 				showRpcError(caught, "Sequence list for [" + Flavor.RELEASES.name() + "] audioId=" + audioId, null);
+
+				list.setElementVisibility(-1);
 			}
 		});
 	}

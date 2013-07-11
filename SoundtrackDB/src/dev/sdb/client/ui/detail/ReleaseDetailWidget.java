@@ -5,7 +5,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.controller.AbstractDataController;
 import dev.sdb.client.controller.ReleaseController;
 import dev.sdb.client.ui.detail.master.MasterDataWidget;
 import dev.sdb.client.ui.detail.master.ReleaseMasterData;
@@ -21,8 +20,8 @@ public class ReleaseDetailWidget extends DetailWidget {
 	@UiField ReleaseMasterData releaseMasterData;
 	@UiField SequenceList sequenceList;
 
-	public ReleaseDetailWidget() {
-		super();
+	public ReleaseDetailWidget(ReleaseController controller) {
+		super(controller);
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -34,15 +33,14 @@ public class ReleaseDetailWidget extends DetailWidget {
 		return this.sequenceList;
 	}
 
-	public void initEntity(Entity entity, AbstractDataController controller) {
-		this.sequenceList.clearTable();
-
+	public void initEntity(Entity entity) {
 		if (entity == null) {
 			this.releaseMasterData.initEntity(null);
+			this.sequenceList.setElementVisibility(-1);
 		} else {
 			Release release = (Release) entity;
 			this.releaseMasterData.initEntity(release);
-			((ReleaseController) controller).getSequenceListFromServer(this);
+			((ReleaseController) getController()).getSequenceListFromServer(this);
 		}
 	}
 }

@@ -241,6 +241,8 @@ public abstract class AbstractDataController implements Controller {
 	}
 
 	protected void getDetailsFromServer(final DetailWidget detailWidget) {
+		detailWidget.initEntity(null);
+
 		//if there's no id, cancel the action
 		if (this.lastId <= 0)
 			return;
@@ -250,13 +252,12 @@ public abstract class AbstractDataController implements Controller {
 		SEARCH_SERVICE.get(this.flavor, this.lastId, new AsyncCallback<Entity>() {
 
 			public void onSuccess(Entity entity) {
-				detailWidget.initEntity(entity, AbstractDataController.this);
+				detailWidget.initEntity(entity);
 				detailWidget.setEnabled(true);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				detailWidget.initEntity(null, AbstractDataController.this);
 				showRpcError(caught, "[" + AbstractDataController.this.flavor.name() + "] id=" + AbstractDataController.this.lastId, detailWidget);
 			}
 		});
@@ -267,8 +268,10 @@ public abstract class AbstractDataController implements Controller {
 		final ResultField result = queryWidget.getResultField();
 
 		//if there hasn't been a search before, cancel the action
-		if (this.lastSearchTerm == null)
+		if (this.lastSearchTerm == null) {
+			result.setElementVisibility(-1);
 			return;
+		}
 
 		final CellTable<Entity> table = result.getTable();
 		final Range range = table.getVisibleRange();
@@ -288,21 +291,28 @@ public abstract class AbstractDataController implements Controller {
 
 				int total = searchResult.getTotalLength();
 
-				String info = "Suchergebnis für: '" + term + "'.";
-				if (total > 0)
-					info += " Gefundene Einträge: " + total;
+				String lastSearch = "Suchergebnis für: '" + term + "'.";
+
+				String resultInfo = "";
+				if (total == 0) {
+					resultInfo = "Es wurden keine Einträge gefunden.";
+				} else if (total > 0) {
+					resultInfo = "Es " + (total == 1 ? "wurde 1 Eintrag" : ("wurden " + total + " Einträge")) + " gefunden.";
+				}
 
 				table.setRowCount(total, true);
 				table.setRowData(range.getStart(), searchResult.getResultChunk());
-				result.setText(info);
+				result.setLastSearchText(lastSearch);
+				result.setResultInfoText(resultInfo);
 				result.setElementVisibility(total);
 				search.setEnabled(true);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				result.setElementVisibility(-1);
 				showRpcError(caught, "[" + AbstractDataController.this.flavor.name() + "] " + AbstractDataController.this.lastSearchTerm, search);
+
+				result.setElementVisibility(-1);
 			}
 		});
 

@@ -19,6 +19,6 @@ public class SoundtrackController extends AbstractDataController {
 	}
 
 	@Override protected DetailWidget createDetailWidget() {
-		return new SoundtrackDetailWidget();
+		return new SoundtrackDetailWidget(this);
 	}
 }
