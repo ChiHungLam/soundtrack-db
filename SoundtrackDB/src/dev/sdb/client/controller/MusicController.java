@@ -2,8 +2,8 @@ package dev.sdb.client.controller;
 
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -13,7 +13,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.ui.detail.DetailWidget;
 import dev.sdb.client.ui.detail.MusicDetailWidget;
-import dev.sdb.client.ui.detail.sublist.ReleaseList;
+import dev.sdb.client.ui.detail.sublist.SublistWidget;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
@@ -25,8 +25,8 @@ public class MusicController extends AbstractDataController {
 		super(sdb, ControllerType.MUSIC, Flavor.MUSIC);
 	}
 
-	@Override protected void addSearchResultColumns(CellTable<Entity> table) {
-		addMusicColumns(table);
+	@Override protected void addSearchResultColumns(DataGrid<Entity> table) {
+		addMusicColumns(table, isSearchResultCompactView(), true);
 	}
 
 
@@ -37,11 +37,11 @@ public class MusicController extends AbstractDataController {
 	}
 
 	private void initMusicReleaseListTable(final MusicDetailWidget widget) {
-		CellTable<Entity> table = widget.getReleaseList().getTable();
+		DataGrid<Entity> table = widget.getSublist().getTable();
 
-		addReleaseColumns(table);
+		addReleaseColumns(table, true, true);
 
-		table.setWidth("100%", true);
+		table.setWidth("100%");
 
 		// Set the total row count. You might send an RPC request to determine the
 		// total row count.
@@ -79,7 +79,7 @@ public class MusicController extends AbstractDataController {
 	}
 
 	public void getMusicReleaseListFromServer(MusicDetailWidget detailWidget) {
-		final ReleaseList list = detailWidget.getReleaseList();
+		final SublistWidget list = detailWidget.getSublist();
 
 		Music music = (Music) detailWidget.getCurrentEntity();
 		if (music == null) {
@@ -95,7 +95,7 @@ public class MusicController extends AbstractDataController {
 			return;
 		}
 
-		final CellTable<Entity> table = list.getTable();
+		final DataGrid<Entity> table = list.getTable();
 		final Range range = table.getVisibleRange();
 
 		// Then, we send the input to the server.
@@ -114,7 +114,7 @@ public class MusicController extends AbstractDataController {
 				table.setRowCount(total, true);
 				table.setRowData(range.getStart(), searchResult.getResultChunk());
 
-				list.setResultInfoText(resultInfo);
+				list.setSelectionInfoText(resultInfo);
 				list.setElementVisibility(total);
 			}
 

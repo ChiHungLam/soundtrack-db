@@ -9,7 +9,7 @@
 	</ui:style>
 
 	<g:HTMLPanel>
-		<g:VerticalPanel>
+		<g:VerticalPanel width="100%">
 			<g:Label text="Soundtrack-Details"/>
 			<s:SoundtrackMasterData ui:field="soundtrackMasterData"/>
 			<g:Label text="Veröffentlichungs-Details"/>
