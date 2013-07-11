@@ -7,14 +7,13 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.shared.model.entity.Entity;
 
-public class ResultField extends Composite implements HasText {
+public class ResultField extends Composite {
 
 	interface ResultFieldUiBinder extends UiBinder<Widget, ResultField> {}
 	private static ResultFieldUiBinder uiBinder = GWT.create(ResultFieldUiBinder.class);
@@ -22,9 +21,9 @@ public class ResultField extends Composite implements HasText {
 	@UiField(provided = true) CellTable<Entity> cellTable;
 	@UiField(provided = true) SimplePager pager;
 
-	@UiField Label infoLabel;
+	@UiField Label lastSearchLabel;
+	@UiField Label resultInfoLabel;
 	@UiField VerticalPanel tablePanel;
-	@UiField Label emptyResultLabel;
 
 	public ResultField() {
 		super();
@@ -43,18 +42,17 @@ public class ResultField extends Composite implements HasText {
 		return this.cellTable;
 	}
 
-	@Override public String getText() {
-		return this.infoLabel.getText();
+	public void setLastSearchText(String text) {
+		this.lastSearchLabel.setText(text);
 	}
 
-	@Override public void setText(String text) {
-		this.infoLabel.setText(text);
+	public void setResultInfoText(String text) {
+		this.resultInfoLabel.setText(text);
 	}
 
-	public void setElementVisibility(int numRows) {
-		this.tablePanel.setVisible(numRows > 0);
-		this.emptyResultLabel.setVisible(numRows == 0);
-		if (numRows < 0)
-			setText("");
+	public void setElementVisibility(int total) {
+		this.tablePanel.setVisible(total > 0);
+		this.lastSearchLabel.setVisible(total >= 0);
+		this.resultInfoLabel.setVisible(total >= 0);
 	}
 }

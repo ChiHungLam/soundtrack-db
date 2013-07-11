@@ -31,7 +31,7 @@ public class MusicController extends AbstractDataController {
 
 
 	@Override protected DetailWidget createDetailWidget() {
-		final MusicDetailWidget widget = new MusicDetailWidget();
+		final MusicDetailWidget widget = new MusicDetailWidget(this);
 		initMusicReleaseListTable(widget);
 		return widget;
 	}
@@ -83,15 +83,15 @@ public class MusicController extends AbstractDataController {
 
 		Music music = (Music) detailWidget.getCurrentEntity();
 		if (music == null) {
-			list.clearTable();
+			list.setElementVisibility(-1);
 			return;
 		}
 
-		final long versionId = music.getId();
+		final long id = music.getId();
 
 		//if there's no id, cancel the action
-		if (versionId <= 0) {
-			list.clearTable();
+		if (id <= 0) {
+			list.setElementVisibility(-1);
 			return;
 		}
 
@@ -99,21 +99,30 @@ public class MusicController extends AbstractDataController {
 		final Range range = table.getVisibleRange();
 
 		// Then, we send the input to the server.
-		SEARCH_SERVICE.getMusicReleaseList(versionId, range, new AsyncCallback<Result>() {
+		SEARCH_SERVICE.getMusicReleaseList(id, range, new AsyncCallback<Result>() {
 
 			public void onSuccess(Result searchResult) {
 				int total = searchResult.getTotalLength();
 
+				String resultInfo = "";
+				if (total == 0) {
+					resultInfo = "Für diese Musik sind keine Veröffentlichungen bekannt.";
+				} else if (total > 0) {
+					resultInfo = "Für diese Musik " + (total == 1 ? "ist 1 Veröffentlichung" : ("sind " + total + " Veröffentlichungen")) + " bekannt.";
+				}
+
 				table.setRowCount(total, true);
 				table.setRowData(range.getStart(), searchResult.getResultChunk());
+
+				list.setResultInfoText(resultInfo);
+				list.setElementVisibility(total);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
+				showRpcError(caught, "Release list for [" + Flavor.MUSIC.name() + "] id=" + id, null);
 
-				list.clearTable();
-
-				showRpcError(caught, "Release list for [" + Flavor.MUSIC.name() + "] id=" + versionId, null);
+				list.setElementVisibility(-1);
 			}
 		});
 

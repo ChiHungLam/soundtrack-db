@@ -10,10 +10,13 @@
 	
 	<g:HTMLPanel>
 		<g:VerticalPanel>
-			<c:CellTable ui:field="cellTable"/>
-			<g:Cell horizontalAlignment="ALIGN_CENTER">
-				<c:SimplePager ui:field="pager"/>
-			</g:Cell>
+			<g:Label ui:field="resultInfoLabel"/>
+			<g:VerticalPanel ui:field="tablePanel">
+				<c:CellTable ui:field="cellTable"/>
+				<g:Cell horizontalAlignment="ALIGN_CENTER">
+					<c:SimplePager ui:field="pager"/>
+				</g:Cell>
+			</g:VerticalPanel>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

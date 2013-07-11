@@ -9,17 +9,23 @@ import dev.sdb.shared.model.entity.Entity;
 
 public abstract class DetailWidget extends Composite implements HasEnabled {
 
-	public DetailWidget() {
+	private AbstractDataController controller;
+
+	public DetailWidget(AbstractDataController controller) {
 		super();
+		this.controller = controller;
 	}
 
+	protected AbstractDataController getController() {
+		return this.controller;
+	}
 	public Entity getCurrentEntity() {
 		return getMasterDataWidget().getCurrentEntity();
 	}
 
 	protected abstract MasterDataWidget getMasterDataWidget();
 
-	public abstract void initEntity(Entity entity, AbstractDataController controller);
+	public abstract void initEntity(Entity entity);
 
 	@Override public boolean isEnabled() {
 		// TODO Auto-generated method stub

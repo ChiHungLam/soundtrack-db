@@ -5,7 +5,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.controller.AbstractDataController;
 import dev.sdb.client.controller.MusicController;
 import dev.sdb.client.ui.detail.master.MasterDataWidget;
 import dev.sdb.client.ui.detail.master.MusicMasterData;
@@ -21,8 +20,8 @@ public class MusicDetailWidget extends DetailWidget {
 	@UiField MusicMasterData musicMasterData;
 	@UiField ReleaseList releaseList;
 
-	public MusicDetailWidget() {
-		super();
+	public MusicDetailWidget(MusicController controller) {
+		super(controller);
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -34,15 +33,14 @@ public class MusicDetailWidget extends DetailWidget {
 		return this.releaseList;
 	}
 
-	public void initEntity(Entity entity, AbstractDataController controller) {
-		this.releaseList.clearTable();
-
+	public void initEntity(Entity entity) {
 		if (entity == null) {
 			this.musicMasterData.initEntity(null);
+			this.releaseList.setElementVisibility(-1);
 		} else {
 			Music music = (Music) entity;
 			this.musicMasterData.initEntity(music);
-			((MusicController) controller).getMusicReleaseListFromServer(this);
+			((MusicController) getController()).getMusicReleaseListFromServer(this);
 		}
 	}
 }
