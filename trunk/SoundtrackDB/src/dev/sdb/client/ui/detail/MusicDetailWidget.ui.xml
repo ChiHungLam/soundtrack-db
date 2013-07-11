@@ -10,11 +10,11 @@
 	</ui:style>
 
 	<g:HTMLPanel>
-		<g:VerticalPanel>
+		<g:VerticalPanel width="100%">
 			<g:Label text="Musik-Details"/>
 			<m:MusicMasterData ui:field="musicMasterData"/>
 			<g:Label text="Veröffentlichungen mit dieser Musik"/>
-			<s:ReleaseList ui:field="releaseList"/>
+			<s:SublistWidget ui:field="musicReleaseList"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

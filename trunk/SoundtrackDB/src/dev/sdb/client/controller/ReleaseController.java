@@ -2,8 +2,8 @@ package dev.sdb.client.controller;
 
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -13,7 +13,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.ui.detail.DetailWidget;
 import dev.sdb.client.ui.detail.ReleaseDetailWidget;
-import dev.sdb.client.ui.detail.sublist.SequenceList;
+import dev.sdb.client.ui.detail.sublist.SublistWidget;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
@@ -27,17 +27,17 @@ public class ReleaseController extends AbstractDataController {
 		super(sdb, ControllerType.RELEASE, Flavor.RELEASES);
 	}
 
-	@Override protected void addSearchResultColumns(CellTable<Entity> table) {
-		addReleaseColumns(table);
+	@Override protected void addSearchResultColumns(DataGrid<Entity> table) {
+		addReleaseColumns(table, isSearchResultCompactView(), true);
 	}
 
 	@Override protected DetailWidget createDetailWidget() {
 		final ReleaseDetailWidget widget = new ReleaseDetailWidget(this);
-		CellTable<Entity> table = widget.getSequenceList().getTable();
+		DataGrid<Entity> table = widget.getSublist().getTable();
 
-		addReleaseMusicColumns(table);
+		addReleaseMusicColumns(table, true, true);
 
-		table.setWidth("100%", true);
+		table.setWidth("100%");
 
 		// Set the total row count. You might send an RPC request to determine the
 		// total row count.
@@ -80,7 +80,7 @@ public class ReleaseController extends AbstractDataController {
 	}
 
 	public void getSequenceListFromServer(final ReleaseDetailWidget detailWidget) {
-		final SequenceList list = detailWidget.getSequenceList();
+		final SublistWidget list = detailWidget.getSublist();
 
 		Release release = (Release) detailWidget.getCurrentEntity();
 		if (release == null) {
@@ -96,7 +96,7 @@ public class ReleaseController extends AbstractDataController {
 			return;
 		}
 
-		final CellTable<Entity> table = list.getTable();
+		final DataGrid<Entity> table = list.getTable();
 		final Range range = table.getVisibleRange();
 
 		// Then, we send the input to the server.
@@ -115,7 +115,7 @@ public class ReleaseController extends AbstractDataController {
 				table.setRowCount(total, true);
 				table.setRowData(range.getStart(), searchResult.getResultChunk());
 
-				list.setResultInfoText(resultInfo);
+				list.setSelectionInfoText(resultInfo);
 				list.setElementVisibility(total);
 			}
 

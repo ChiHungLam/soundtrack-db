@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 import dev.sdb.client.controller.MusicController;
 import dev.sdb.client.ui.detail.master.MasterDataWidget;
 import dev.sdb.client.ui.detail.master.MusicMasterData;
-import dev.sdb.client.ui.detail.sublist.ReleaseList;
+import dev.sdb.client.ui.detail.sublist.SublistWidget;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 
@@ -18,7 +18,7 @@ public class MusicDetailWidget extends DetailWidget {
 	private static MusicDetailWidgetUiBinder uiBinder = GWT.create(MusicDetailWidgetUiBinder.class);
 
 	@UiField MusicMasterData musicMasterData;
-	@UiField ReleaseList releaseList;
+	@UiField SublistWidget musicReleaseList;
 
 	public MusicDetailWidget(MusicController controller) {
 		super(controller);
@@ -29,14 +29,14 @@ public class MusicDetailWidget extends DetailWidget {
 		return this.musicMasterData;
 	}
 
-	public ReleaseList getReleaseList() {
-		return this.releaseList;
+	public SublistWidget getSublist() {
+		return this.musicReleaseList;
 	}
 
 	public void initEntity(Entity entity) {
 		if (entity == null) {
 			this.musicMasterData.initEntity(null);
-			this.releaseList.setElementVisibility(-1);
+			this.musicReleaseList.setElementVisibility(-1);
 		} else {
 			Music music = (Music) entity;
 			this.musicMasterData.initEntity(music);

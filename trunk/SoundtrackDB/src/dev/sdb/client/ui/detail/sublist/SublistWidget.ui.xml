@@ -7,16 +7,22 @@
 	<ui:style>
 		
 	</ui:style>
-	
+
 	<g:HTMLPanel>
-		<g:VerticalPanel>
-			<g:Label ui:field="resultInfoLabel"/>
-			<g:VerticalPanel ui:field="tablePanel">
-				<c:CellTable ui:field="cellTable"/>
+		<g:VerticalPanel width="100%" height="100%" spacing="10">
+			<g:Label ui:field="selectionInfoLabel"/>
+			<g:Cell>
+				<g:VerticalPanel ui:field="tablePanel" width="100%">
+				<g:Cell height="600">
+					<g:ResizeLayoutPanel height="100%">
+						<c:DataGrid ui:field='dataGrid'/>
+					</g:ResizeLayoutPanel>
+				</g:Cell>
 				<g:Cell horizontalAlignment="ALIGN_CENTER">
 					<c:SimplePager ui:field="pager"/>
 				</g:Cell>
 			</g:VerticalPanel>
+			</g:Cell>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

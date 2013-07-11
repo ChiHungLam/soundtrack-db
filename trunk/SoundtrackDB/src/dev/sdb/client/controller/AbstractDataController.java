@@ -9,9 +9,9 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -55,8 +55,10 @@ public abstract class AbstractDataController implements Controller {
 
 	private String lastSearchTerm;
 	private long lastId;
+
 	private DetailWidget detailWidget;
 	private QueryWidget queryWidget;
+
 
 	public AbstractDataController(SoundtrackDB sdb, ControllerType type, Flavor flavor) {
 		super();
@@ -72,6 +74,10 @@ public abstract class AbstractDataController implements Controller {
 	 */
 	@Override public ControllerType getType() {
 		return this.type;
+	}
+
+	protected boolean isSearchResultCompactView() {
+		return true;
 	}
 
 	protected void setLastSearchTerm(String lastSearchTerm) {
@@ -92,15 +98,15 @@ public abstract class AbstractDataController implements Controller {
 		search.setText(term);
 
 		// Get the result table
-		final CellTable<Entity> table = result.getTable();
+		final DataGrid<Entity> table = result.getDataGrid();
 
 		// Add the columns.
 		addSearchResultColumns(table);
 
-		table.setWidth("100%", true);
+		table.setWidth("100%");
 
 		// Set the total row count. You might send an RPC request to determine the
-		// total row count.
+		//		 total row count.
 		table.setRowCount(0, true);
 
 		// Set the range to display. In this case, our visible range is smaller than
@@ -160,7 +166,7 @@ public abstract class AbstractDataController implements Controller {
 		return getType().getToken() + "?search=" + term;
 	}
 
-	protected abstract void addSearchResultColumns(CellTable<Entity> table);
+	protected abstract void addSearchResultColumns(DataGrid<Entity> table);
 
 	public Widget getWidget(String state) {
 		assert (state != null);
@@ -273,7 +279,7 @@ public abstract class AbstractDataController implements Controller {
 			return;
 		}
 
-		final CellTable<Entity> table = result.getTable();
+		final DataGrid<Entity> table = result.getDataGrid();
 		final Range range = table.getVisibleRange();
 		//		final ColumnSortInfo sortInfo = table.getColumnSortList().get(0);
 		final boolean ascending = true; //sortInfo.isAscending();
@@ -300,10 +306,13 @@ public abstract class AbstractDataController implements Controller {
 					resultInfo = "Es " + (total == 1 ? "wurde 1 Eintrag" : ("wurden " + total + " Einträge")) + " gefunden.";
 				}
 
+				//				table.setPageSize(10);
+				//				table.setPageStart(0);
 				table.setRowCount(total, true);
 				table.setRowData(range.getStart(), searchResult.getResultChunk());
+
 				result.setLastSearchText(lastSearch);
-				result.setResultInfoText(resultInfo);
+				result.setSelectionInfoText(resultInfo);
 				result.setElementVisibility(total);
 				search.setEnabled(true);
 			}
@@ -374,9 +383,14 @@ public abstract class AbstractDataController implements Controller {
 		final SafeHtmlCell releaseCell = new SafeHtmlCell();
 		Column<Entity, SafeHtml> releaseColumn = new Column<Entity, SafeHtml>(releaseCell) {
 			@Override public SafeHtml getValue(Entity entity) {
-				Release release = ((Soundtrack) entity).getRelease();
-				if (release == null)
+				if (entity == null)
 					return null;
+
+				Release release;
+				if (entity instanceof Soundtrack)
+					release = ((Soundtrack) entity).getRelease();
+				else
+					release = (Release) entity;
 
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
 				sb.appendHtmlConstant("<b>" + release.getTitleInfo() + "</b>");
@@ -394,9 +408,14 @@ public abstract class AbstractDataController implements Controller {
 		final SafeHtmlCell musicCell = new SafeHtmlCell();
 		Column<Entity, SafeHtml> musicColumn = new Column<Entity, SafeHtml>(musicCell) {
 			@Override public SafeHtml getValue(Entity entity) {
-				Music music = ((Soundtrack) entity).getMusic();
-				if (music == null)
+				if (entity == null)
 					return null;
+
+				Music music;
+				if (entity instanceof Soundtrack)
+					music = ((Soundtrack) entity).getMusic();
+				else
+					music = (Music) entity;
 
 				String authors = music.getAuthors();
 				String artist = music.getArtist();
@@ -415,34 +434,43 @@ public abstract class AbstractDataController implements Controller {
 		return musicColumn;
 	}
 
-	public void addSoundtrackColumns(CellTable<Entity> table) {
+	public void addSoundtrackColumns(DataGrid<Entity> table, boolean compact, boolean push) {
 		TextColumn<Entity> soundtrackColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
 				return "#" + ((Soundtrack) entity).getId();
 			}
 		};
-
-		Column<Entity, SafeHtml> releaseColumn = createCompactReleaseColumn();
-		Column<Entity, SafeHtml> musicColumn = createCompactMusicColumn();
-
 		// Make the columns sortable.
 		soundtrackColumn.setSortable(true);
 
-		// Add the columns.
-		table.addColumn(soundtrackColumn, "Seq-ID");
-		table.setColumnWidth(soundtrackColumn, 10.0, Unit.PCT);
+		// Add the column.
+		table.addColumn(soundtrackColumn, "ID");
+		table.setColumnWidth(soundtrackColumn, 30.0, Unit.PX);
 
-		table.addColumn(releaseColumn, "Release");
-		table.setColumnWidth(releaseColumn, 45.0, Unit.PCT);
+		// Add the release column(s)
+		addReleaseColumns(table, compact, false);
 
-		table.addColumn(musicColumn, "Musik");
-		table.setColumnWidth(musicColumn, 45.0, Unit.PCT);
+		// Add the music column(s)
+		addMusicColumns(table, compact, false);
 
-		// We know that the data is sorted alphabetically by default.
-		table.getColumnSortList().push(soundtrackColumn);
+		if (push)
+			table.getColumnSortList().push(soundtrackColumn);
 	}
 
-	public void addReleaseColumns(CellTable<Entity> table) {
+	public void addReleaseColumns(DataGrid<Entity> table, boolean compact, boolean push) {
+		if (compact) {
+			Column<Entity, SafeHtml> releaseColumn = createCompactReleaseColumn();
+			// Make the columns sortable.
+			releaseColumn.setSortable(true);
+
+			table.addColumn(releaseColumn, "Veröffentlichung");
+			table.setColumnWidth(releaseColumn, 300.0, Unit.PX);
+
+			if (push)
+				table.getColumnSortList().push(releaseColumn);
+			return;
+		}
+
 		TextColumn<Entity> typeColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
 				return ((Release) entity).getType();
@@ -467,28 +495,41 @@ public abstract class AbstractDataController implements Controller {
 			}
 		};
 
-		// Make the columns sortable.
-		//		titleColumn.setSortable(true);
+		//		 Make the columns sortable.
+		titleColumn.setSortable(true);
 
 		// Add the columns.
 		table.addColumn(typeColumn, "Typ");
-		table.setColumnWidth(typeColumn, 10.0, Unit.PCT);
+		table.setColumnWidth(typeColumn, 50.0, Unit.PX);
 
 		table.addColumn(catColumn, "Kat.-Nr.");
-		table.setColumnWidth(catColumn, 20.0, Unit.PCT);
+		table.setColumnWidth(catColumn, 150.0, Unit.PX);
 
 		table.addColumn(yearColumn, "Jahr");
-		table.setColumnWidth(yearColumn, 10.0, Unit.PCT);
+		table.setColumnWidth(yearColumn, 50.0, Unit.PX);
 
 		table.addColumn(titleColumn, "Titel");
-		table.setColumnWidth(titleColumn, 60.0, Unit.PCT);
+		table.setColumnWidth(titleColumn, 150.0, Unit.PX);
 
-		// We know that the data is sorted alphabetically by default.
-		//		table.getColumnSortList().push(titleColumn);
+		if (push)
+			table.getColumnSortList().push(titleColumn);
 
 	}
 
-	public void addMusicColumns(CellTable<Entity> table) {
+	public void addMusicColumns(DataGrid<Entity> table, boolean compact, boolean push) {
+		if (compact) {
+			Column<Entity, SafeHtml> musicColumn = createCompactMusicColumn();
+			// Make the columns sortable.
+			musicColumn.setSortable(true);
+
+			table.addColumn(musicColumn, "Musik");
+			table.setColumnWidth(musicColumn, 300.0, Unit.PX);
+
+			if (push)
+				table.getColumnSortList().push(musicColumn);
+			return;
+		}
+
 		TextColumn<Entity> genreColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
 				return ((Music) entity).getGenre().getChildName();
@@ -518,40 +559,38 @@ public abstract class AbstractDataController implements Controller {
 
 		// Add the columns.
 		table.addColumn(genreColumn, "Genre");
-		table.setColumnWidth(genreColumn, 10.0, Unit.PCT);
+		table.setColumnWidth(genreColumn, 50.0, Unit.PX);
 
 		table.addColumn(yearColumn, "Jahr");
-		table.setColumnWidth(yearColumn, 10.0, Unit.PCT);
+		table.setColumnWidth(yearColumn, 50.0, Unit.PX);
 
 		table.addColumn(artistColumn, "Interpret");
-		table.setColumnWidth(artistColumn, 30.0, Unit.PCT);
+		table.setColumnWidth(artistColumn, 150.0, Unit.PX);
 
 		table.addColumn(titleColumn, "Titel");
-		table.setColumnWidth(titleColumn, 50.0, Unit.PCT);
+		table.setColumnWidth(titleColumn, 200.0, Unit.PX);
 
-		// We know that the data is sorted alphabetically by default.
-		table.getColumnSortList().push(titleColumn);
+		if (push)
+			table.getColumnSortList().push(titleColumn);
 	}
 
-	public void addReleaseMusicColumns(CellTable<Entity> table) {
+	public void addReleaseMusicColumns(DataGrid<Entity> table, boolean compact, boolean push) {
 		TextColumn<Entity> soundtrackColumn = new TextColumn<Entity>() {
 			@Override public String getValue(Entity entity) {
 				return "#" + ((Soundtrack) entity).getId();
 			}
 		};
-		Column<Entity, SafeHtml> musicColumn = createCompactMusicColumn();
-
 		// Make the columns sortable.
 		soundtrackColumn.setSortable(true);
 
-		// Add the columns.
-		table.addColumn(soundtrackColumn, "Titel");
-		table.setColumnWidth(soundtrackColumn, 10.0, Unit.PCT);
+		// Add the column.
+		table.addColumn(soundtrackColumn, "ID");
+		table.setColumnWidth(soundtrackColumn, 30.0, Unit.PX);
 
-		table.addColumn(musicColumn, "Musik");
-		table.setColumnWidth(musicColumn, 90.0, Unit.PCT);
+		// Add the music column(s)
+		addMusicColumns(table, compact, false);
 
-		// We know that the data is sorted alphabetically by default.
-		table.getColumnSortList().push(soundtrackColumn);
+		if (push)
+			table.getColumnSortList().push(soundtrackColumn);
 	}
 }
