@@ -1,0 +1,20 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+	xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:dev.sdb.client.view.desktop.detail.master"
+	xmlns:s="urn:import:dev.sdb.client.view.desktop.detail.sublist">
+	
+	<ui:style>
+		
+	</ui:style>
+
+	<g:HTMLPanel>
+		<g:VerticalPanel width="100%">
+			<g:Label text="Musik-Details"/>
+			<m:MusicMasterData ui:field="musicMasterData"/>
+			<g:Label text="Veröffentlichungen mit dieser Musik"/>
+			<s:SublistWidget ui:field="musicReleaseList"/>
+		</g:VerticalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 
