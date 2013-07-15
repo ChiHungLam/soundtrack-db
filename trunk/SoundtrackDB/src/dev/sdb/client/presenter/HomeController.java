@@ -3,7 +3,7 @@ package dev.sdb.client.presenter;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.SoundtrackDB;
-import dev.sdb.client.ui.HomeWidget;
+import dev.sdb.client.view.desktop.HomeWidget;
 
 public class HomeController implements Controller {
 

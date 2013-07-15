@@ -17,7 +17,7 @@ import dev.sdb.client.presenter.HomeController;
 import dev.sdb.client.presenter.MusicController;
 import dev.sdb.client.presenter.ReleaseController;
 import dev.sdb.client.presenter.SoundtrackController;
-import dev.sdb.client.ui.NavigatorWidget;
+import dev.sdb.client.view.desktop.NavigatorWidget;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
