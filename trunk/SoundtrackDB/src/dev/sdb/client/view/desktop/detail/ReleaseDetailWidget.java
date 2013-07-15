@@ -5,7 +5,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.presenter.ReleaseController;
+import dev.sdb.client.presenter.ReleasePresenter;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.client.view.desktop.detail.master.ReleaseMasterData;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
@@ -20,7 +20,7 @@ public class ReleaseDetailWidget extends DetailWidget {
 	@UiField ReleaseMasterData releaseMasterData;
 	@UiField SublistWidget releaseSoundtrackList;
 
-	public ReleaseDetailWidget(ReleaseController controller) {
+	public ReleaseDetailWidget(ReleasePresenter controller) {
 		super(controller);
 		initWidget(uiBinder.createAndBindUi(this));
 	}
@@ -40,7 +40,7 @@ public class ReleaseDetailWidget extends DetailWidget {
 		} else {
 			Release release = (Release) entity;
 			this.releaseMasterData.initEntity(release);
-			((ReleaseController) getController()).getSequenceListFromServer(this);
+			((ReleasePresenter) getController()).getSequenceListFromServer(this);
 		}
 	}
 }

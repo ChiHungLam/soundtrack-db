@@ -1,6 +1,6 @@
 package dev.sdb.client.presenter;
 
-public enum ControllerType {
+public enum ContentPresenterType {
 	HOME("home"),
 	RELEASE("release"),
 	MUSIC("music"),
@@ -9,7 +9,7 @@ public enum ControllerType {
 
 	private String token = "";
 
-	private ControllerType(String token) {
+	private ContentPresenterType(String token) {
 		if (token.contains("?"))
 			throw new IllegalArgumentException("token must not contain the question mark");
 		this.token = token.toLowerCase();
@@ -19,7 +19,7 @@ public enum ControllerType {
 		return this.token;
 	}
 
-	public static ControllerType getByToken(String token) {
+	public static ContentPresenterType getByToken(String token) {
 		if (token == null) {
 			System.err.println("ControllerType.getByToken() - null token");
 			return null;
@@ -29,7 +29,7 @@ public enum ControllerType {
 		}
 		token = token.toLowerCase();
 
-		for (ControllerType controllerType : values()) {
+		for (ContentPresenterType controllerType : values()) {
 			if (token.startsWith(controllerType.getToken()))
 				return controllerType;
 		}

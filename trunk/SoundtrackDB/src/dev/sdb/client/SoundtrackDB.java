@@ -12,12 +12,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import dev.sdb.client.presenter.Controller;
-import dev.sdb.client.presenter.ControllerType;
+import dev.sdb.client.presenter.ContentPresenter;
+import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.presenter.HomePresenter;
-import dev.sdb.client.presenter.MusicController;
-import dev.sdb.client.presenter.ReleaseController;
-import dev.sdb.client.presenter.SoundtrackController;
+import dev.sdb.client.presenter.MusicPresenter;
+import dev.sdb.client.presenter.ReleasePresenter;
+import dev.sdb.client.presenter.SoundtrackPresenter;
 import dev.sdb.client.view.UiFactory;
 
 /**
@@ -25,7 +25,7 @@ import dev.sdb.client.view.UiFactory;
  */
 public class SoundtrackDB implements EntryPoint {
 
-	private static final Map<ControllerType, Controller> CONTROLLER_MAP = new HashMap<ControllerType, Controller>();
+	private static final Map<ContentPresenterType, ContentPresenter> PRESENTER_MAP = new HashMap<ContentPresenterType, ContentPresenter>();
 
 	private ClientFactory clientFactory;
 
@@ -46,7 +46,6 @@ public class SoundtrackDB implements EntryPoint {
 
 		// Create ClientFactory using deferred binding so we can replace with different
 		// impls in gwt.xml
-
 		UiFactory uiFactory = GWT.create(UiFactory.class);
 		this.clientFactory = new ClientFactory(uiFactory);
 
@@ -88,19 +87,19 @@ public class SoundtrackDB implements EntryPoint {
 	}
 
 	protected IsWidget getContentWidget(String historyToken) {
-		ControllerType type = getControllerType(historyToken);
+		ContentPresenterType type = getContentPresenterType(historyToken);
 
-		Controller controller = getController(type);
+		ContentPresenter controller = getContentPresenter(type);
 		if (controller == null)
 			return null;
 
-		String state = getControllerState(type, historyToken);
+		String state = getContentPresenterState(type, historyToken);
 		IsWidget widget = controller.getWidget(state);
 
 		return widget;
 	}
 
-	private String getControllerState(ControllerType type, String historyToken) {
+	private String getContentPresenterState(ContentPresenterType type, String historyToken) {
 		assert (type != null);
 
 		if (historyToken == null || historyToken.isEmpty())
@@ -128,47 +127,47 @@ public class SoundtrackDB implements EntryPoint {
 		return historyToken.substring(pos + 1);
 	}
 
-	private ControllerType getControllerType(String historyToken) {
-		ControllerType type = ControllerType.getByToken(historyToken);
+	private ContentPresenterType getContentPresenterType(String historyToken) {
+		ContentPresenterType type = ContentPresenterType.getByToken(historyToken);
 		if (type == null)
-			type = ControllerType.HOME;
+			type = ContentPresenterType.HOME;
 		return type;
 	}
 
-	protected Controller getController(ControllerType type) {
+	protected ContentPresenter getContentPresenter(ContentPresenterType type) {
 		assert (type != null);
 
-		Controller controller = CONTROLLER_MAP.get(type);
-		if (controller != null)
-			return controller;
+		ContentPresenter presenter = PRESENTER_MAP.get(type);
+		if (presenter != null)
+			return presenter;
 
 		switch (type) {
 		case HOME:
-			controller = new HomePresenter(this.clientFactory);
+			presenter = new HomePresenter(this.clientFactory);
 			break;
 		case RELEASE:
-			controller = new ReleaseController(this.clientFactory);
+			presenter = new ReleasePresenter(this.clientFactory);
 			break;
 		case MUSIC:
-			controller = new MusicController(this.clientFactory);
+			presenter = new MusicPresenter(this.clientFactory);
 			break;
 		case SOUNDTRACK:
-			controller = new SoundtrackController(this.clientFactory);
+			presenter = new SoundtrackPresenter(this.clientFactory);
 			break;
 		case SERIES:
-			controller = null; // not yet
+			presenter = null; // not yet
 			break;
 
 		default:
-			System.err.println("unknown ControllerType: " + type);
+			System.err.println("unknown ContentPresenterType: " + type);
 			// load the home page
-			return getController(ControllerType.HOME);
+			return getContentPresenter(ContentPresenterType.HOME);
 		}
 
-		if (controller == null)
+		if (presenter == null)
 			return null;
 
-		CONTROLLER_MAP.put(type, controller);
-		return controller;
+		PRESENTER_MAP.put(type, presenter);
+		return presenter;
 	}
 }
