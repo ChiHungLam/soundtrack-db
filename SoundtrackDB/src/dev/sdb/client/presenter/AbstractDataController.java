@@ -1,4 +1,4 @@
-package dev.sdb.client.controller;
+package dev.sdb.client.presenter;
 
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;

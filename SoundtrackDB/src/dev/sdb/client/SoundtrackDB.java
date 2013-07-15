@@ -11,12 +11,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.controller.Controller;
-import dev.sdb.client.controller.ControllerType;
-import dev.sdb.client.controller.HomeController;
-import dev.sdb.client.controller.MusicController;
-import dev.sdb.client.controller.ReleaseController;
-import dev.sdb.client.controller.SoundtrackController;
+import dev.sdb.client.presenter.Controller;
+import dev.sdb.client.presenter.ControllerType;
+import dev.sdb.client.presenter.HomeController;
+import dev.sdb.client.presenter.MusicController;
+import dev.sdb.client.presenter.ReleaseController;
+import dev.sdb.client.presenter.SoundtrackController;
 import dev.sdb.client.ui.NavigatorWidget;
 
 /**

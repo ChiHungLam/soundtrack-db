@@ -5,7 +5,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.controller.SoundtrackController;
+import dev.sdb.client.presenter.SoundtrackController;
 import dev.sdb.client.ui.detail.master.MasterDataWidget;
 import dev.sdb.client.ui.detail.master.MusicMasterData;
 import dev.sdb.client.ui.detail.master.ReleaseMasterData;

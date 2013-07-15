@@ -1,4 +1,4 @@
-package dev.sdb.client.controller;
+package dev.sdb.client.presenter;
 
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
@@ -12,34 +12,30 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.ui.detail.DetailWidget;
-import dev.sdb.client.ui.detail.MusicDetailWidget;
+import dev.sdb.client.ui.detail.ReleaseDetailWidget;
 import dev.sdb.client.ui.detail.sublist.SublistWidget;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
+import dev.sdb.shared.model.entity.Release;
+import dev.sdb.shared.model.entity.Soundtrack;
 
-public class MusicController extends AbstractDataController {
+public class ReleaseController extends AbstractDataController {
 
-	public MusicController(SoundtrackDB sdb) {
-		super(sdb, ControllerType.MUSIC, Flavor.MUSIC);
+	public ReleaseController(SoundtrackDB sdb) {
+		super(sdb, ControllerType.RELEASE, Flavor.RELEASES);
 	}
 
 	@Override protected void addSearchResultColumns(DataGrid<Entity> table) {
-		addMusicColumns(table, isSearchResultCompactView(), true);
+		addReleaseColumns(table, isSearchResultCompactView(), true);
 	}
-
 
 	@Override protected DetailWidget createDetailWidget() {
-		final MusicDetailWidget widget = new MusicDetailWidget(this);
-		initMusicReleaseListTable(widget);
-		return widget;
-	}
-
-	private void initMusicReleaseListTable(final MusicDetailWidget widget) {
+		final ReleaseDetailWidget widget = new ReleaseDetailWidget(this);
 		DataGrid<Entity> table = widget.getSublist().getTable();
 
-		addReleaseColumns(table, true, true);
+		addReleaseMusicColumns(table, true, true);
 
 		table.setWidth("100%");
 
@@ -55,7 +51,7 @@ public class MusicController extends AbstractDataController {
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
 			@Override protected void onRangeChanged(HasData<Entity> display) {
-				getMusicReleaseListFromServer(widget);
+				getSequenceListFromServer(widget);
 			}
 		};
 		dataProvider.addDataDisplay(table);
@@ -70,27 +66,32 @@ public class MusicController extends AbstractDataController {
 
 		table.addDomHandler(new DoubleClickHandler() {
 			@Override public void onDoubleClick(final DoubleClickEvent event) {
-				Entity entity = selectionModel.getSelectedObject();
-				if (entity != null) {
-					addHistoryNavigation(ControllerType.RELEASE, entity);
+				Soundtrack soundtrack = (Soundtrack) selectionModel.getSelectedObject();
+				if (soundtrack != null) {
+					Music music = soundtrack.getMusic();
+					if (music != null) {
+						addHistoryNavigation(ControllerType.MUSIC, music);
+					}
 				}
 			}
 		}, DoubleClickEvent.getType());
+
+		return widget;
 	}
 
-	public void getMusicReleaseListFromServer(MusicDetailWidget detailWidget) {
+	public void getSequenceListFromServer(final ReleaseDetailWidget detailWidget) {
 		final SublistWidget list = detailWidget.getSublist();
 
-		Music music = (Music) detailWidget.getCurrentEntity();
-		if (music == null) {
+		Release release = (Release) detailWidget.getCurrentEntity();
+		if (release == null) {
 			list.setElementVisibility(-1);
 			return;
 		}
 
-		final long id = music.getId();
+		final long audioId = release.getAudioId();
 
 		//if there's no id, cancel the action
-		if (id <= 0) {
+		if (audioId <= 0) {
 			list.setElementVisibility(-1);
 			return;
 		}
@@ -99,16 +100,16 @@ public class MusicController extends AbstractDataController {
 		final Range range = table.getVisibleRange();
 
 		// Then, we send the input to the server.
-		SEARCH_SERVICE.getMusicReleaseList(id, range, new AsyncCallback<Result>() {
+		SEARCH_SERVICE.getReleaseSoundtrackList(audioId, range, new AsyncCallback<Result>() {
 
 			public void onSuccess(Result searchResult) {
 				int total = searchResult.getTotalLength();
 
 				String resultInfo = "";
 				if (total == 0) {
-					resultInfo = "Für diese Musik sind keine Veröffentlichungen bekannt.";
+					resultInfo = "Für diese Veröffentlichung existieren keine Sequenzen.";
 				} else if (total > 0) {
-					resultInfo = "Für diese Musik " + (total == 1 ? "ist 1 Veröffentlichung" : ("sind " + total + " Veröffentlichungen")) + " bekannt.";
+					resultInfo = "Für diese Veröffentlichung " + (total == 1 ? "existiert 1 Sequenz" : ("existieren " + total + " Sequenzen")) + ".";
 				}
 
 				table.setRowCount(total, true);
@@ -120,13 +121,11 @@ public class MusicController extends AbstractDataController {
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				showRpcError(caught, "Release list for [" + Flavor.MUSIC.name() + "] id=" + id, null);
+				showRpcError(caught, "Sequence list for [" + Flavor.RELEASES.name() + "] audioId=" + audioId, null);
 
 				list.setElementVisibility(-1);
 			}
 		});
-
 	}
-
 
 }
