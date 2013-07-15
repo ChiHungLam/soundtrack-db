@@ -5,7 +5,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.controller.ReleaseController;
+import dev.sdb.client.presenter.ReleaseController;
 import dev.sdb.client.ui.detail.master.MasterDataWidget;
 import dev.sdb.client.ui.detail.master.ReleaseMasterData;
 import dev.sdb.client.ui.detail.sublist.SublistWidget;

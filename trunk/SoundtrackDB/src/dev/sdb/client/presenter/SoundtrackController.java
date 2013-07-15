@@ -1,4 +1,4 @@
-package dev.sdb.client.controller;
+package dev.sdb.client.presenter;
 
 import com.google.gwt.user.cellview.client.DataGrid;
 

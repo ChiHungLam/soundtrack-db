@@ -1,4 +1,4 @@
-package dev.sdb.client.controller;
+package dev.sdb.client.presenter;
 
 public enum ControllerType {
 	HOME("home"),

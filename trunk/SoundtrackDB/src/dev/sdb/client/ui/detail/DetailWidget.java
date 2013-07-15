@@ -3,7 +3,7 @@ package dev.sdb.client.ui.detail;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
 
-import dev.sdb.client.controller.AbstractDataController;
+import dev.sdb.client.presenter.AbstractDataController;
 import dev.sdb.client.ui.detail.master.MasterDataWidget;
 import dev.sdb.shared.model.entity.Entity;
 
