@@ -26,7 +26,7 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import dev.sdb.client.SoundtrackDB;
+import dev.sdb.client.ClientFactory;
 import dev.sdb.client.service.SearchService;
 import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.view.desktop.detail.DetailWidget;
@@ -49,7 +49,7 @@ public abstract class AbstractDataController implements Controller {
 	 */
 	protected static final SearchServiceAsync SEARCH_SERVICE = GWT.create(SearchService.class);
 
-	private final SoundtrackDB sdb;
+	private final ClientFactory clientFactory;
 	private final ControllerType type;
 	private final Flavor flavor;
 
@@ -60,9 +60,9 @@ public abstract class AbstractDataController implements Controller {
 	private QueryWidget queryWidget;
 
 
-	public AbstractDataController(SoundtrackDB sdb, ControllerType type, Flavor flavor) {
+	public AbstractDataController(ClientFactory clientFactory, ControllerType type, Flavor flavor) {
 		super();
-		this.sdb = sdb;
+		this.clientFactory = clientFactory;
 		this.type = type;
 		this.flavor = flavor;
 	}
@@ -329,12 +329,12 @@ public abstract class AbstractDataController implements Controller {
 
 	protected void addHistorySearch(String term) {
 		String token = getSearchToken(term);
-		this.sdb.setHistory(token, false);
+		this.clientFactory.getHistoryManager().setHistory(token, false);
 	}
 
 	protected void addHistoryNavigation(ControllerType type, Entity entity) {
 		String token = getEntityToken(type, entity);
-		this.sdb.setHistory(token, true);
+		this.clientFactory.getHistoryManager().setHistory(token, true);
 	}
 
 	protected void showRpcError(Throwable caught, String msg, final HasEnabled hasEnabled) {

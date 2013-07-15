@@ -2,18 +2,18 @@ package dev.sdb.client.presenter;
 
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.SoundtrackDB;
+import dev.sdb.client.ClientFactory;
 import dev.sdb.client.view.desktop.HomeWidget;
 
 public class HomeController implements Controller {
 
-	@SuppressWarnings("unused") private SoundtrackDB sdb;
+	@SuppressWarnings("unused") private ClientFactory clientFactory;
 
 	private HomeWidget homeWidget;
 
-	public HomeController(SoundtrackDB sdb) {
+	public HomeController(ClientFactory clientFactory) {
 		super();
-		this.sdb = sdb;
+		this.clientFactory = clientFactory;
 	}
 
 	@Override public ControllerType getType() {
