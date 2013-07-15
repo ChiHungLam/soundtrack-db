@@ -43,25 +43,35 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 	protected abstract String composeSoundtrackGet();
 
-	protected abstract String composeMusicReleaseList(Range range);
+	protected abstract String composeSeriesGet();
 
-	protected abstract String composeMusicReleaseListCount();
-
-	protected abstract String composeMusicCount();
+	protected abstract String composeReleaseList(Range range, boolean ascending);
 
 	protected abstract String composeMusicList(Range range, boolean ascending);
 
 	protected abstract String composeSoundtrackList(Range range, boolean ascending);
 
-	protected abstract String composeReleaseSoundtrackList(Range range);
+	protected abstract String composeSeriesList(Range range, boolean ascending);
 
 	protected abstract String composeReleaseCount();
 
+	protected abstract String composeMusicCount();
+
 	protected abstract String composeSoundtrackCount();
+
+	protected abstract String composeSeriesCount();
+
+	protected abstract String composeReleaseSoundtrackList(Range range);
+
+	protected abstract String composeMusicReleaseList(Range range);
+
+	protected abstract String composeSeriesReleaseList(Range range);
 
 	protected abstract String composeReleaseSoundtrackListCount();
 
-	protected abstract String composeReleaseList(Range range, boolean ascending);
+	protected abstract String composeMusicReleaseListCount();
+
+	protected abstract String composeSeriesReleaseListCount();
 
 	@Override public void open() throws IOException {
 		openConnection();
@@ -94,6 +104,32 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 			closeStatement(countPS);
 		}
 	}
+
+	@Override public Result getSeriesReleaseList(long seriesId, Range range) throws IOException {
+		PreparedStatement listPS = null;
+		PreparedStatement countPS = null;
+
+		List<Entity> result = new Vector<Entity>();
+
+		try {
+
+			listPS = getStatement(composeSeriesReleaseList(range));
+			countPS = getStatement(composeSeriesReleaseListCount());
+
+			int count = count(countPS, Long.valueOf(seriesId));
+			selectSeriesReleaseList(listPS, result, seriesId, range);
+
+			return new Result(result, range.getStart(), count);
+
+		} catch (SQLException e) {
+			result.clear();
+			throw new IOException(e);
+		} finally {
+			closeStatement(listPS);
+			closeStatement(countPS);
+		}
+	}
+
 
 	public Result getReleaseSoundtrackList(long audioId, Range range) throws IOException {
 		PreparedStatement listPS = null;
@@ -154,6 +190,14 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 				break;
 
+			case SERIES:
+				listPS = getStatement(composeSeriesList(range, ascending));
+				countPS = getStatement(composeSeriesCount());
+				count = count(countPS, wildcardedTerm);
+				querySeries(listPS, result, wildcardedTerm, range, ascending);
+
+				break;
+
 			default:
 				result.clear();
 				throw new IllegalArgumentException("illegal flavor: " + flavor);
@@ -203,6 +247,15 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 				if (!rs.next())
 					return null;
 				return readSoundtrack(rs);
+
+			case SERIES:
+				ps = getStatement(composeSeriesGet());
+				ps.setLong(1, id);
+
+				rs = ps.executeQuery();
+				if (!rs.next())
+					return null;
+				return readSeries(rs);
 
 			default:
 				throw new IllegalArgumentException("unknown flavor: " + flavor.name());
@@ -263,6 +316,27 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		}
 	}
 
+	protected void querySeries(final PreparedStatement ps, List<Entity> result, String term, Range range, boolean ascending) throws IOException {
+		ResultSet rs = null;
+
+		try {
+
+			ps.clearParameters();
+			ps.setString(1, term);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Series series = readSeries(rs);
+				result.add(series);
+			}
+
+		} catch (SQLException e) {
+			throw new IOException(e);
+		} finally {
+			closeResultSet(rs);
+		}
+	}
 	protected void queryMusic(final PreparedStatement ps, List<Entity> result, String term, Range range, boolean ascending) throws IOException {
 		ResultSet rs = null;
 
@@ -307,6 +381,27 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		}
 	}
 
+	protected void selectSeriesReleaseList(PreparedStatement ps, List<Entity> result, long editionId, Range range) throws IOException {
+		ResultSet rs = null;
+
+		try {
+
+			ps.clearParameters();
+			ps.setLong(1, editionId);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Release release = readRelease(rs);
+				result.add(release);
+			}
+
+		} catch (SQLException e) {
+			throw new IOException(e);
+		} finally {
+			closeResultSet(rs);
+		}
+	}
 	protected void selectMusicReleaseList(PreparedStatement ps, List<Entity> result, long versionId, Range range) throws IOException {
 		ResultSet rs = null;
 

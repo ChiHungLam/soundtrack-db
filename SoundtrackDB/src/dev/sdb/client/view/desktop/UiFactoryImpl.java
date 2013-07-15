@@ -22,15 +22,19 @@ import dev.sdb.client.view.MusicQueryView;
 import dev.sdb.client.view.NavigatorView;
 import dev.sdb.client.view.ReleaseDetailView;
 import dev.sdb.client.view.ReleaseQueryView;
+import dev.sdb.client.view.SeriesDetailView;
+import dev.sdb.client.view.SeriesQueryView;
 import dev.sdb.client.view.SoundtrackDetailView;
 import dev.sdb.client.view.SoundtrackQueryView;
 import dev.sdb.client.view.UiFactory;
 import dev.sdb.client.view.desktop.detail.MusicDetailWidget;
 import dev.sdb.client.view.desktop.detail.ReleaseDetailWidget;
+import dev.sdb.client.view.desktop.detail.SeriesDetailWidget;
 import dev.sdb.client.view.desktop.detail.SoundtrackDetailWidget;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
+import dev.sdb.shared.model.entity.Series;
 import dev.sdb.shared.model.entity.Soundtrack;
 
 public class UiFactoryImpl implements UiFactory {
@@ -47,10 +51,12 @@ public class UiFactoryImpl implements UiFactory {
 	private ReleaseQueryView releaseQueryView;
 	private MusicQueryView musicQueryView;
 	private SoundtrackQueryView soundtrackQueryView;
+	private SeriesQueryView seriesQueryView;
 
 	private ReleaseDetailView releaseDetailView;
 	private MusicDetailView musicDetailView;
 	private SoundtrackDetailView soundtrackDetailView;
+	private SeriesDetailView seriesDetailView;
 
 	public UiFactoryImpl() {
 		super();
@@ -128,6 +134,12 @@ public class UiFactoryImpl implements UiFactory {
 		return this.soundtrackQueryView;
 	}
 
+	@Override public SeriesQueryView getSeriesQueryView() {
+		if (this.seriesQueryView == null)
+			this.seriesQueryView = new SeriesQueryWidget();
+		return this.seriesQueryView;
+	}
+
 	@Override public ReleaseDetailView getReleaseDetailView() {
 		if (this.releaseDetailView == null)
 			this.releaseDetailView = new ReleaseDetailWidget();
@@ -144,6 +156,12 @@ public class UiFactoryImpl implements UiFactory {
 		if (this.soundtrackDetailView == null)
 			this.soundtrackDetailView = new SoundtrackDetailWidget();
 		return this.soundtrackDetailView;
+	}
+
+	@Override public SeriesDetailView getSeriesDetailView() {
+		if (this.seriesDetailView == null)
+			this.seriesDetailView = new SeriesDetailWidget();
+		return this.seriesDetailView;
 	}
 
 	public static Column<Entity, SafeHtml> createCompactReleaseColumn() {
@@ -199,6 +217,23 @@ public class UiFactoryImpl implements UiFactory {
 			}
 		};
 		return musicColumn;
+	}
+
+	public static Column<Entity, SafeHtml> createCompactSeriesColumn() {
+		final SafeHtmlCell seriesCell = new SafeHtmlCell();
+		Column<Entity, SafeHtml> seriesColumn = new Column<Entity, SafeHtml>(seriesCell) {
+			@Override public SafeHtml getValue(Entity entity) {
+				if (entity == null)
+					return null;
+
+				Series series = (Series) entity;
+
+				SafeHtmlBuilder sb = new SafeHtmlBuilder();
+				sb.appendHtmlConstant("<b>" + series.getTitle() + "</b>");
+				return sb.toSafeHtml();
+			}
+		};
+		return seriesColumn;
 	}
 
 	public static void addSoundtrackColumns(DataGrid<Entity> table, boolean compact, boolean push) {
@@ -359,5 +394,35 @@ public class UiFactoryImpl implements UiFactory {
 
 		if (push)
 			table.getColumnSortList().push(soundtrackColumn);
+	}
+
+	public static void addSeriesColumns(DataGrid<Entity> table, boolean compact, boolean push) {
+		if (compact) {
+			Column<Entity, SafeHtml> seriesColumn = createCompactSeriesColumn();
+			// Make the columns sortable.
+			seriesColumn.setSortable(true);
+
+			table.addColumn(seriesColumn, "Serien");
+			table.setColumnWidth(seriesColumn, 300.0, Unit.PX);
+
+			if (push)
+				table.getColumnSortList().push(seriesColumn);
+			return;
+		}
+
+		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
+			@Override public String getValue(Entity entity) {
+				return ((Series) entity).getTitle();
+			}
+		};
+
+		// Make the columns sortable.
+		titleColumn.setSortable(true);
+
+		table.addColumn(titleColumn, "Titel");
+		table.setColumnWidth(titleColumn, 200.0, Unit.PX);
+
+		if (push)
+			table.getColumnSortList().push(titleColumn);
 	}
 }

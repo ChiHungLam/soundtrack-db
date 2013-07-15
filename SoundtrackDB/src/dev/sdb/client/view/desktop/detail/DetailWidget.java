@@ -103,6 +103,5 @@ public abstract class DetailWidget extends Composite implements DetailView {
 
 	@Override public void setEnabled(boolean enabled) {
 		// TODO Auto-generated method stub
-
 	}
 }

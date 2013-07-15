@@ -103,7 +103,7 @@ public abstract class QueryWidget extends Composite implements QueryView {
 	}
 
 	@Override public void lockForSearch() {
-		this.resultField.setElementVisibility(-1);
+		//		this.resultField.setElementVisibility(-1);
 		//Disable search
 		this.searchField.setEnabled(false);
 	}
