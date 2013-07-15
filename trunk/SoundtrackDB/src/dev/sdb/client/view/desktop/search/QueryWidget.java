@@ -13,11 +13,12 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import dev.sdb.client.view.SearchView;
+import dev.sdb.client.presenter.ContentPresenterType;
+import dev.sdb.client.view.QueryView;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 
-public abstract class QueryWidget extends Composite implements SearchView {
+public abstract class QueryWidget extends Composite implements QueryView {
 
 	interface QueryWidgetUiBinder extends UiBinder<Widget, QueryWidget> {}
 	private static QueryWidgetUiBinder uiBinder = GWT.create(QueryWidgetUiBinder.class);
@@ -27,7 +28,7 @@ public abstract class QueryWidget extends Composite implements SearchView {
 	@UiField SearchField searchField;
 	@UiField ResultField resultField;
 
-	private SearchView.Presenter presenter;
+	private QueryView.Presenter presenter;
 
 	public QueryWidget() {
 		super();
@@ -60,7 +61,7 @@ public abstract class QueryWidget extends Composite implements SearchView {
 			@Override public void onDoubleClick(final DoubleClickEvent event) {
 				Entity entity = selectionModel.getSelectedObject();
 				if (entity != null) {
-					QueryWidget.this.presenter.onBrowse(entity);
+					QueryWidget.this.presenter.onBrowse(getContentPresenterType(), entity);
 				}
 			}
 		}, DoubleClickEvent.getType());
@@ -77,6 +78,8 @@ public abstract class QueryWidget extends Composite implements SearchView {
 			}
 		});
 	}
+
+	protected abstract ContentPresenterType getContentPresenterType();
 
 	@Override public void setEnabled(boolean enabled) {
 		this.searchField.setEnabled(enabled);
@@ -114,7 +117,7 @@ public abstract class QueryWidget extends Composite implements SearchView {
 
 	protected abstract void addSearchResultColumns(DataGrid<Entity> table);
 
-	@Override public void setPresenter(SearchView.Presenter presenter) {
+	@Override public void setPresenter(QueryView.Presenter presenter) {
 		this.presenter = presenter;
 	}
 

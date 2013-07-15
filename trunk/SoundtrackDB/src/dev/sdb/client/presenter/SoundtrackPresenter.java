@@ -4,40 +4,44 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 
 import dev.sdb.client.ClientFactory;
-import dev.sdb.client.view.SearchView;
-import dev.sdb.client.view.SoundtrackSearchView;
-import dev.sdb.client.view.desktop.detail.DetailWidget;
-import dev.sdb.client.view.desktop.detail.SoundtrackDetailWidget;
+import dev.sdb.client.view.DetailView;
+import dev.sdb.client.view.QueryView;
+import dev.sdb.client.view.SoundtrackDetailView;
+import dev.sdb.client.view.SoundtrackQueryView;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.entity.Entity;
 
-public class SoundtrackPresenter extends AbstractBrowsePresenter implements SoundtrackSearchView.Presenter {
+public class SoundtrackPresenter extends AbstractBrowsePresenter implements SoundtrackQueryView.Presenter,
+		SoundtrackDetailView.Presenter {
 
 	public SoundtrackPresenter(ClientFactory clientFactory) {
 		super(clientFactory, ContentPresenterType.SOUNDTRACK, Flavor.SOUNDTRACK);
 	}
 
-	@Override protected DetailWidget createDetailWidget() {
-		return new SoundtrackDetailWidget(this);
+	@Override protected DetailView createDetailWidget() {
+		// Create the query widget instance
+		final SoundtrackDetailView view = getClientFactory().getUi().getSoundtrackDetailView();
+		view.setPresenter(this);
+		return view;
 	}
 
-	protected SearchView createQueryWidget(String term) {
+	protected QueryView createQueryWidget(String term) {
 		// Create the query widget instance
-		final SoundtrackSearchView queryWidget = getClientFactory().getUi().getSoundtrackSearchView();
-		queryWidget.setPresenter(this);
+		final SoundtrackQueryView view = getClientFactory().getUi().getSoundtrackQueryView();
+		view.setPresenter(this);
 
 		// Set the search term
-		queryWidget.setText(term);
+		view.setText(term);
 
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
 			@Override protected void onRangeChanged(HasData<Entity> display) {
-				getSearchFromServer(queryWidget);
+				getSearchFromServer(view);
 			}
 		};
 
-		queryWidget.setDataProvider(dataProvider);
+		view.setDataProvider(dataProvider);
 
-		return queryWidget;
+		return view;
 	}
 }

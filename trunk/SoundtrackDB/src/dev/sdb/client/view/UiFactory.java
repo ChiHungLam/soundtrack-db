@@ -7,7 +7,12 @@ public interface UiFactory {
 
 	HomeView getHomeView();
 
-	ReleaseSearchView getReleaseSearchView();
-	MusicSearchView getMusicSearchView();
-	SoundtrackSearchView getSoundtrackSearchView();
+	ReleaseQueryView getReleaseQueryView();
+	MusicQueryView getMusicQueryView();
+	SoundtrackQueryView getSoundtrackQueryView();
+
+	ReleaseDetailView getReleaseDetailView();
+	MusicDetailView getMusicDetailView();
+	SoundtrackDetailView getSoundtrackDetailView();
+
 }
