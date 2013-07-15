@@ -16,9 +16,11 @@ public class ClientFactory {
 	private HistoryManager historyManager;
 	private SearchServiceAsync searchService;
 
-	public ClientFactory(UiFactory uiFactory) {
+	public ClientFactory() {
 		super();
-		this.uiFactory = uiFactory;
+		// Create UiFactory using deferred binding so we can replace with different
+		// impls in gwt.xml
+		this.uiFactory = GWT.create(UiFactory.class);
 	}
 
 	public UiFactory getUi() {

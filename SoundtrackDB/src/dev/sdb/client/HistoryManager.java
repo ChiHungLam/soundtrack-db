@@ -36,11 +36,7 @@ public class HistoryManager {
 	}
 
 	public void setUp() {
-		//attaching content
-		String startingToken = History.getToken();
-		setContentArea(startingToken);
-
-		//preparing history support
+		//Prepare history event handler
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				String historyToken = event.getValue();
@@ -51,6 +47,10 @@ public class HistoryManager {
 				setContentArea(historyToken);
 			}
 		});
+
+		//Show current content
+		String startingToken = History.getToken();
+		setContentArea(startingToken);
 	}
 
 	protected ContentPresenter getContentPresenter(ContentPresenterType type) {
