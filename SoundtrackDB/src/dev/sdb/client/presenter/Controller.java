@@ -1,6 +1,6 @@
 package dev.sdb.client.presenter;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.IsWidget;
 
 public interface Controller {
 	/**
@@ -12,7 +12,7 @@ public interface Controller {
 
 	public static final int VISIBLE_RANGE_LENGTH = 20;
 
-	Widget getWidget(String state);
+	IsWidget getWidget(String state);
 
 	/**
 	 * @return the type

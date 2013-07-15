@@ -11,11 +11,10 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.presenter.Controller;
 import dev.sdb.client.presenter.ControllerType;
-import dev.sdb.client.presenter.HomeController;
+import dev.sdb.client.presenter.HomePresenter;
 import dev.sdb.client.presenter.MusicController;
 import dev.sdb.client.presenter.ReleaseController;
 import dev.sdb.client.presenter.SoundtrackController;
@@ -81,14 +80,14 @@ public class SoundtrackDB implements EntryPoint {
 		while (contentArea.getWidgetCount() > 0)
 			contentArea.remove(0);
 
-		Widget contentWidget = getContentWidget(token);
+		IsWidget contentWidget = getContentWidget(token);
 		if (contentWidget == null)
 			return;
 
 		contentArea.add(contentWidget);
 	}
 
-	protected Widget getContentWidget(String historyToken) {
+	protected IsWidget getContentWidget(String historyToken) {
 		ControllerType type = getControllerType(historyToken);
 
 		Controller controller = getController(type);
@@ -96,7 +95,7 @@ public class SoundtrackDB implements EntryPoint {
 			return null;
 
 		String state = getControllerState(type, historyToken);
-		Widget widget = controller.getWidget(state);
+		IsWidget widget = controller.getWidget(state);
 
 		return widget;
 	}
@@ -145,7 +144,7 @@ public class SoundtrackDB implements EntryPoint {
 
 		switch (type) {
 		case HOME:
-			controller = new HomeController(this.clientFactory);
+			controller = new HomePresenter(this.clientFactory);
 			break;
 		case RELEASE:
 			controller = new ReleaseController(this.clientFactory);
