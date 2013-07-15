@@ -2,7 +2,7 @@ package dev.sdb.client.presenter;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
-public interface Controller {
+public interface ContentPresenter {
 	/**
 	 * The message displayed to the user when the server cannot be reached or returns an error.
 	 */
@@ -17,5 +17,5 @@ public interface Controller {
 	/**
 	 * @return the type
 	 */
-	ControllerType getType();
+	ContentPresenterType getType();
 }

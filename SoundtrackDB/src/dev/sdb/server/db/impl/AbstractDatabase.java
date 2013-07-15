@@ -84,7 +84,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 			int count = count(countPS, Long.valueOf(versionId));
 			selectMusicReleaseList(listPS, result, versionId, range);
 
-			return new Result(result, count);
+			return new Result(result, range.getStart(), count);
 
 		} catch (SQLException e) {
 			result.clear();
@@ -108,7 +108,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 			int count = count(countPS, Long.valueOf(audioId));
 			selectReleaseSoundtrackList(listPS, result, audioId, range);
 
-			return new Result(result, count);
+			return new Result(result, range.getStart(), count);
 
 		} catch (SQLException e) {
 			result.clear();
@@ -159,7 +159,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 				throw new IllegalArgumentException("illegal flavor: " + flavor);
 			}
 
-			return new Result(result, count);
+			return new Result(result, range.getStart(), count);
 
 		} catch (SQLException e) {
 			result.clear();

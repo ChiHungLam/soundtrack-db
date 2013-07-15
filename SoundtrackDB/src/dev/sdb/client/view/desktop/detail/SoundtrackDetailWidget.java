@@ -5,7 +5,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.presenter.SoundtrackController;
+import dev.sdb.client.presenter.SoundtrackPresenter;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.client.view.desktop.detail.master.MusicMasterData;
 import dev.sdb.client.view.desktop.detail.master.ReleaseMasterData;
@@ -22,7 +22,7 @@ public class SoundtrackDetailWidget extends DetailWidget {
 	@UiField ReleaseMasterData releaseMasterData;
 	@UiField MusicMasterData musicMasterData;
 
-	public SoundtrackDetailWidget(SoundtrackController controller) {
+	public SoundtrackDetailWidget(SoundtrackPresenter controller) {
 		super(controller);
 		initWidget(uiBinder.createAndBindUi(this));
 	}

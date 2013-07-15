@@ -9,15 +9,17 @@ import dev.sdb.shared.model.entity.Entity;
 public class Result implements IsSerializable {
 
 	private List<Entity> resultChunk;
+	private int rangeStart;
 	private int totalLength;
 
 	public Result() {
 		super();
 	}
 
-	public Result(List<Entity> resultChunk, int totalLength) {
+	public Result(List<Entity> resultChunk, int rangeStart, int totalLength) {
 		super();
 		this.resultChunk = resultChunk;
+		this.rangeStart = rangeStart;
 		this.totalLength = totalLength;
 	}
 
@@ -29,5 +31,7 @@ public class Result implements IsSerializable {
 		return this.totalLength;
 	}
 
-
+	public int getRangeStart() {
+		return this.rangeStart;
+	}
 }

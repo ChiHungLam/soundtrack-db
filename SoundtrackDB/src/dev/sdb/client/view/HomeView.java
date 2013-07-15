@@ -4,12 +4,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public interface HomeView extends IsWidget {
 
-
-	public interface Presenter {
-		//		ControllerType getType();
-		//
-		//		Widget getWidget(String state);
-	}
+	public interface Presenter {}
 
 	void setPresenter(Presenter presenter);
 }

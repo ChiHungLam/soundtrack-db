@@ -11,6 +11,10 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import dev.sdb.client.ClientFactory;
+import dev.sdb.client.service.SearchServiceAsync;
+import dev.sdb.client.view.ReleaseSearchView;
+import dev.sdb.client.view.SearchView;
+import dev.sdb.client.view.desktop.UiFactoryImpl;
 import dev.sdb.client.view.desktop.detail.DetailWidget;
 import dev.sdb.client.view.desktop.detail.ReleaseDetailWidget;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
@@ -21,21 +25,19 @@ import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
 import dev.sdb.shared.model.entity.Soundtrack;
 
-public class ReleaseController extends AbstractDataController {
+public class ReleasePresenter extends AbstractBrowsePresenter implements ReleaseSearchView.Presenter {
 
-	public ReleaseController(ClientFactory clientFactory) {
-		super(clientFactory, ControllerType.RELEASE, Flavor.RELEASES);
+	public ReleasePresenter(ClientFactory clientFactory) {
+		super(clientFactory, ContentPresenterType.RELEASE, Flavor.RELEASES);
 	}
 
-	@Override protected void addSearchResultColumns(DataGrid<Entity> table) {
-		addReleaseColumns(table, isSearchResultCompactView(), true);
-	}
+
 
 	@Override protected DetailWidget createDetailWidget() {
 		final ReleaseDetailWidget widget = new ReleaseDetailWidget(this);
 		DataGrid<Entity> table = widget.getSublist().getTable();
 
-		addReleaseMusicColumns(table, true, true);
+		UiFactoryImpl.addReleaseMusicColumns(table, true, true);
 
 		table.setWidth("100%");
 
@@ -70,7 +72,7 @@ public class ReleaseController extends AbstractDataController {
 				if (soundtrack != null) {
 					Music music = soundtrack.getMusic();
 					if (music != null) {
-						addHistoryNavigation(ControllerType.MUSIC, music);
+						addHistoryNavigation(ContentPresenterType.MUSIC, music);
 					}
 				}
 			}
@@ -99,8 +101,10 @@ public class ReleaseController extends AbstractDataController {
 		final DataGrid<Entity> table = list.getTable();
 		final Range range = table.getVisibleRange();
 
+		SearchServiceAsync service = getClientFactory().getSearchService();
+
 		// Then, we send the input to the server.
-		SEARCH_SERVICE.getReleaseSoundtrackList(audioId, range, new AsyncCallback<Result>() {
+		service.getReleaseSoundtrackList(audioId, range, new AsyncCallback<Result>() {
 
 			public void onSuccess(Result searchResult) {
 				int total = searchResult.getTotalLength();
@@ -127,5 +131,27 @@ public class ReleaseController extends AbstractDataController {
 			}
 		});
 	}
+
+	protected SearchView createQueryWidget(String term) {
+		// Create the query widget instance
+		final ReleaseSearchView queryWidget = getClientFactory().getUi().getReleaseSearchView();
+		queryWidget.setPresenter(this);
+
+		// Set the search term
+		queryWidget.setText(term);
+
+		// Create a data provider.
+		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
+			@Override protected void onRangeChanged(HasData<Entity> display) {
+				getSearchFromServer(queryWidget);
+			}
+		};
+
+		queryWidget.setDataProvider(dataProvider);
+
+		return queryWidget;
+	}
+
+
 
 }

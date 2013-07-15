@@ -3,20 +3,20 @@ package dev.sdb.client.view.desktop.detail;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
 
-import dev.sdb.client.presenter.AbstractDataController;
+import dev.sdb.client.presenter.AbstractBrowsePresenter;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.shared.model.entity.Entity;
 
 public abstract class DetailWidget extends Composite implements HasEnabled {
 
-	private AbstractDataController controller;
+	private AbstractBrowsePresenter controller;
 
-	public DetailWidget(AbstractDataController controller) {
+	public DetailWidget(AbstractBrowsePresenter controller) {
 		super();
 		this.controller = controller;
 	}
 
-	protected AbstractDataController getController() {
+	protected AbstractBrowsePresenter getController() {
 		return this.controller;
 	}
 	public Entity getCurrentEntity() {
