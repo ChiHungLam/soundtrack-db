@@ -18,14 +18,14 @@ public class SoundtrackPresenter extends AbstractBrowsePresenter implements Soun
 		super(clientFactory, ContentPresenterType.SOUNDTRACK, Flavor.SOUNDTRACK);
 	}
 
-	@Override protected DetailView createDetailWidget() {
+	@Override protected DetailView createDetailView() {
 		// Create the query widget instance
 		final SoundtrackDetailView view = getClientFactory().getUi().getSoundtrackDetailView();
 		view.setPresenter(this);
 		return view;
 	}
 
-	protected QueryView createQueryWidget(String term) {
+	protected QueryView createQueryView(String term) {
 		// Create the query widget instance
 		final SoundtrackQueryView view = getClientFactory().getUi().getSoundtrackQueryView();
 		view.setPresenter(this);

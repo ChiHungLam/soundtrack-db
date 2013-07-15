@@ -24,10 +24,6 @@ public abstract class DetailWidget extends Composite implements DetailView {
 		super();
 	}
 
-	public Entity getCurrentEntity() {
-		return getMasterDataWidget().getCurrentEntity();
-	}
-
 	protected abstract MasterDataWidget getMasterDataWidget();
 
 	public abstract void initEntity(Entity entity);
@@ -72,7 +68,7 @@ public abstract class DetailWidget extends Composite implements DetailView {
 		}, DoubleClickEvent.getType());
 	}
 
-	@Override public void setDataProvider(AsyncDataProvider<Entity> dataProvider) {
+	@Override public void setSublistDataProvider(AsyncDataProvider<Entity> dataProvider) {
 		dataProvider.addDataDisplay(getSublist().getTable());
 	}
 

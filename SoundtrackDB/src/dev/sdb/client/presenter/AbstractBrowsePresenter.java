@@ -1,15 +1,7 @@
 package dev.sdb.client.presenter;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.client.ClientFactory;
@@ -29,8 +21,8 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 	private Entity currentDetailEntity;
 
-	private DetailView detailWidget;
-	private QueryView queryWidget;
+	private DetailView detailView;
+	private QueryView queryView;
 
 	public AbstractBrowsePresenter(ClientFactory clientFactory, ContentPresenterType type, Flavor flavor) {
 		super(clientFactory, type);
@@ -49,9 +41,9 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		return this.lastDetailId;
 	}
 
-	protected abstract DetailView createDetailWidget();
+	protected abstract DetailView createDetailView();
 
-	protected abstract QueryView createQueryWidget(String term);
+	protected abstract QueryView createQueryView(String term);
 
 	protected String getEntityToken(ContentPresenterType type, Entity entity) {
 		return type.getToken() + "?id=" + entity.getId();
@@ -63,22 +55,22 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 	//	
 
-	public IsWidget getWidget(String state) {
+	public IsWidget getView(String state) {
 		assert (state != null);
 
 		if (state.isEmpty())
-			return getQueryWidget("");
+			return getQueryView("");
 
 		if (state.startsWith("search=")) {
-			return getQueryWidget(getSearchFromState(state));
+			return getQueryView(getSearchFromState(state));
 
 		} else if (state.startsWith("id=")) {
 			long id = getIdFromState(state);
 			if (id > 0) {
-				return getDetailWidget(id);
+				return getDetailView(id);
 			}
 		}
-		return getQueryWidget("");
+		return getQueryView("");
 	}
 
 	private String getSearchFromState(String state) {
@@ -98,45 +90,45 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		}
 	}
 
-	private IsWidget getDetailWidget(long id) {
+	private IsWidget getDetailView(long id) {
 		assert (id > 0);
 
-		if (this.detailWidget == null) {
-			this.detailWidget = createDetailWidget();
+		if (this.detailView == null) {
+			this.detailView = createDetailView();
 			setLastDetailId(id);
-			getDetailsFromServer(this.detailWidget);
+			getDetailsFromServer(this.detailView);
 		} else {
 			if (getLastDetailId() != id) {
 				setLastDetailId(id);
-				getDetailsFromServer(this.detailWidget);
+				getDetailsFromServer(this.detailView);
 			}
 		}
-		return this.detailWidget;
+		return this.detailView;
 	}
 
 
-	private QueryView getQueryWidget(String term) {
+	private IsWidget getQueryView(String term) {
 		assert (term != null);
 
-		if (this.queryWidget == null) {
-			this.queryWidget = createQueryWidget(term);
+		if (this.queryView == null) {
+			this.queryView = createQueryView(term);
 			if (!term.isEmpty()) {
 				this.lastSearchTerm = term;
-				getSearchFromServer(this.queryWidget);
+				getSearchFromServer(this.queryView);
 			}
 		} else {
-			if (!this.queryWidget.getText().equalsIgnoreCase(term)) {
-				this.queryWidget.setText(term);
+			if (!this.queryView.getText().equalsIgnoreCase(term)) {
+				this.queryView.setText(term);
 				this.lastSearchTerm = term;
 
 				if (term.isEmpty()) {
-					this.queryWidget.reset();
+					this.queryView.reset();
 				} else {
-					getSearchFromServer(this.queryWidget);
+					getSearchFromServer(this.queryView);
 				}
 			}
 		}
-		return this.queryWidget;
+		return this.queryView;
 	}
 
 	protected Entity getCurrentDetailEntity() {
@@ -147,9 +139,9 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		this.currentDetailEntity = currentDetailEntity;
 	}
 
-	protected void getDetailsFromServer(final DetailView detailWidget) {
+	protected void getDetailsFromServer(final DetailView view) {
 		setCurrentDetailEntity(null);
-		detailWidget.initEntity(null);
+		view.initEntity(null);
 
 		//if there's no id, cancel the action
 		if (getLastDetailId() <= 0)
@@ -162,13 +154,13 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 			public void onSuccess(Entity entity) {
 				setCurrentDetailEntity(entity);
-				detailWidget.initEntity(entity);
-				detailWidget.setEnabled(true);
+				view.initEntity(entity);
+				view.setEnabled(true);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				showRpcError(caught, "[" + AbstractBrowsePresenter.this.flavor.name() + "] id=" + getLastDetailId(), detailWidget);
+				getClientFactory().getUi().showRpcError(caught, "[" + AbstractBrowsePresenter.this.flavor.name() + "] id=" + getLastDetailId(), view);
 			}
 		});
 	}
@@ -179,27 +171,21 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 	@Override public void onSearch(String term) {
 		setLastSearchTerm(term);
-		getSearchFromServer(this.queryWidget);
+		getSearchFromServer(this.queryView);
 	}
 
-	protected void getSearchFromServer(final QueryView queryWidget) {
-		//		final SearchField search = queryWidget.getSearchField();
-		//		final ResultField result = queryWidget.getResultField();
+	protected void getSearchFromServer(final QueryView view) {
 
 		//if there hasn't been a search before, cancel the action
-
-
-
 		if (this.lastSearchTerm == null) {
-			queryWidget.reset();
+			view.reset();
 			return;
 		}
 
-		queryWidget.lockForSearch();
+		view.lockForSearch();
 
-		//		final DataGrid<Entity> table = result.getDataGrid();
-		final Range range = queryWidget.getRange();//table.getVisibleRange();
-		final boolean ascending = queryWidget.isSortAscending();//true; //sortInfo.isAscending();
+		final Range range = view.getRange();
+		final boolean ascending = view.isSortAscending();
 
 		final String term = this.lastSearchTerm;
 
@@ -210,14 +196,12 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 			public void onSuccess(Result searchResult) {
 				addHistorySearch(term);
-				queryWidget.showResult(term, searchResult);
+				view.showResult(term, searchResult);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				showRpcError(caught, "[" + AbstractBrowsePresenter.this.flavor.name() + "] " + AbstractBrowsePresenter.this.lastSearchTerm, queryWidget);
-
-				//				result.setElementVisibility(-1);
+				getClientFactory().getUi().showRpcError(caught, "[" + AbstractBrowsePresenter.this.flavor.name() + "] " + AbstractBrowsePresenter.this.lastSearchTerm, view);
 			}
 		});
 	}
@@ -232,47 +216,7 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		getClientFactory().getHistoryManager().setHistory(token, true);
 	}
 
-	protected void showRpcError(Throwable caught, String msg, final HasEnabled hasEnabled) {
-		// Create the popup dialog box
-		final DialogBox dialogBox = new DialogBox();
-		dialogBox.setText("Remote Procedure Call - Fehler");
-		dialogBox.setAnimationEnabled(true);
-		final Button closeButton = new Button("Close");
 
-		// We can set the id of a widget by accessing its Element
-		closeButton.getElement().setId("closeButton");
-
-		final Label textToServerLabel = new Label();
-		textToServerLabel.setText(msg);
-
-		final HTML serverResponseLabel = new HTML();
-		serverResponseLabel.setText("");
-		serverResponseLabel.addStyleName("serverResponseLabelError");
-		serverResponseLabel.setHTML(SERVER_ERROR + "<p>Original error message:<br/>" + caught.getLocalizedMessage() + "</p>");
-
-		VerticalPanel dialogVPanel = new VerticalPanel();
-		dialogVPanel.addStyleName("dialogVPanel");
-		dialogVPanel.add(new HTML("<b>Sent to the server:</b>"));
-		dialogVPanel.add(textToServerLabel);
-		dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-		dialogVPanel.add(serverResponseLabel);
-		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-		dialogVPanel.add(closeButton);
-		dialogBox.setWidget(dialogVPanel);
-
-		// Add a handler to close the DialogBox
-		closeButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				dialogBox.hide();
-				if (hasEnabled != null)
-					hasEnabled.setEnabled(true);
-			}
-		});
-
-		// Show the RPC error message to the user
-		dialogBox.center();
-		closeButton.setFocus(true);
-	}
 
 
 }

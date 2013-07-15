@@ -22,7 +22,6 @@ public class SoundtrackMasterData extends MasterDataWidget {
 	}
 
 	public void initEntity(Entity entity) {
-		setCurrentEntity(entity);
 		if (entity == null) {
 			this.idField.setValue(null);
 		} else {

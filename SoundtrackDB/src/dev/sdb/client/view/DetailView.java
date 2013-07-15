@@ -17,9 +17,9 @@ public interface DetailView extends IsWidget, HasEnabled {
 
 	void setPresenter(Presenter presenter);
 
-	void setDataProvider(AsyncDataProvider<Entity> dataProvider);
-
 	void initEntity(Entity entity);
+
+	void setSublistDataProvider(AsyncDataProvider<Entity> dataProvider);
 
 	void clearSublist();
 
