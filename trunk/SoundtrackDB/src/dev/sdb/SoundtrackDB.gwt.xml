@@ -13,15 +13,9 @@
 
   <!-- Other module inherits                                      -->
 
-  
   <!-- Specify the app entry point class.                         -->
   <entry-point class='dev.sdb.client.SoundtrackDB'/>
 
-  <!-- Use ClientFactoryImpl by default -->
-  <replace-with class="dev.sdb.client.view.desktop.UiFactoryImpl">
-    <when-type-is class="dev.sdb.client.view.UiFactory"/>
-  </replace-with>
-  
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
   <source path='shared'/>
