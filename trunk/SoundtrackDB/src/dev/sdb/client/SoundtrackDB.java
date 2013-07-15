@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -17,7 +19,7 @@ import dev.sdb.client.presenter.HomeController;
 import dev.sdb.client.presenter.MusicController;
 import dev.sdb.client.presenter.ReleaseController;
 import dev.sdb.client.presenter.SoundtrackController;
-import dev.sdb.client.view.desktop.NavigatorWidget;
+import dev.sdb.client.view.UiFactory;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -26,28 +28,31 @@ public class SoundtrackDB implements EntryPoint {
 
 	private static final Map<ControllerType, Controller> CONTROLLER_MAP = new HashMap<ControllerType, Controller>();
 
-	private static boolean LOG_URLS_AND_TOKENS = false;
-
-	/**
-	 * This token represents the current state of the application. Its value is <i>not</i> url encoded.
-	 */
-	private String token;
+	private ClientFactory clientFactory;
 
 	public SoundtrackDB() {
 		super();
+	}
+
+	private void logStartup() {
+		String href = Window.Location.getHref();
+		System.out.println("Start up url: " + href);
 	}
 
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		if (LOG_URLS_AND_TOKENS) {
-			String href = Window.Location.getHref();
-			System.out.println("Start up url: " + href);
-		}
+		logStartup();
+
+		// Create ClientFactory using deferred binding so we can replace with different
+		// impls in gwt.xml
+
+		UiFactory uiFactory = GWT.create(UiFactory.class);
+		this.clientFactory = new ClientFactory(uiFactory);
 
 		//attaching navigator
-		Widget navigatorWidget = createNavigatorWidget();
+		IsWidget navigatorWidget = uiFactory.getNavigatorView();
 		RootPanel.get("navigator_area").add(navigatorWidget);
 
 		//attaching content
@@ -59,7 +64,7 @@ public class SoundtrackDB implements EntryPoint {
 			public void onValueChange(ValueChangeEvent<String> event) {
 				String historyToken = event.getValue();
 
-				if (getToken().equals(historyToken))
+				if (SoundtrackDB.this.clientFactory.getHistoryManager().getToken().equals(historyToken))
 					return;
 
 				setContentArea(historyToken);
@@ -67,30 +72,9 @@ public class SoundtrackDB implements EntryPoint {
 		});
 	}
 
-	public void setHistory(String token, boolean issueEvent) {
-		if (LOG_URLS_AND_TOKENS) {
-			System.out.println("Adding to history" + (!issueEvent ? " (without events)" : "") + ": " + token);
-		}
-
-		History.newItem(token, issueEvent);
-		if (!issueEvent)
-			setToken(token);
-	}
-
-	private String getToken() {
-		return this.token;
-	}
-
-	private void setToken(String token) {
-		if (LOG_URLS_AND_TOKENS) {
-			System.out.println("Setting token to: " + token);
-		}
-
-		this.token = token;
-	}
 
 	private void setContentArea(String token) {
-		setToken(token);
+		this.clientFactory.getHistoryManager().setToken(token);
 
 		final RootPanel contentArea = RootPanel.get("content_area");
 
@@ -161,16 +145,16 @@ public class SoundtrackDB implements EntryPoint {
 
 		switch (type) {
 		case HOME:
-			controller = new HomeController(this);
+			controller = new HomeController(this.clientFactory);
 			break;
 		case RELEASE:
-			controller = new ReleaseController(this);
+			controller = new ReleaseController(this.clientFactory);
 			break;
 		case MUSIC:
-			controller = new MusicController(this);
+			controller = new MusicController(this.clientFactory);
 			break;
 		case SOUNDTRACK:
-			controller = new SoundtrackController(this);
+			controller = new SoundtrackController(this.clientFactory);
 			break;
 		case SERIES:
 			controller = null; // not yet
@@ -188,9 +172,4 @@ public class SoundtrackDB implements EntryPoint {
 		CONTROLLER_MAP.put(type, controller);
 		return controller;
 	}
-
-	private Widget createNavigatorWidget() {
-		return new NavigatorWidget();
-	}
-
 }

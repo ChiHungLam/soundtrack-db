@@ -5,7 +5,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class NavigatorWidget extends Composite {
+import dev.sdb.client.view.NavigatorView;
+
+public class NavigatorWidget extends Composite implements NavigatorView {
 
 	private static NavigatorWidgetUiBinder uiBinder = GWT.create(NavigatorWidgetUiBinder.class);
 

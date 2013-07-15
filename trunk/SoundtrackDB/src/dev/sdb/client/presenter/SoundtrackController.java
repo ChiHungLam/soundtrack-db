@@ -2,7 +2,7 @@ package dev.sdb.client.presenter;
 
 import com.google.gwt.user.cellview.client.DataGrid;
 
-import dev.sdb.client.SoundtrackDB;
+import dev.sdb.client.ClientFactory;
 import dev.sdb.client.view.desktop.detail.DetailWidget;
 import dev.sdb.client.view.desktop.detail.SoundtrackDetailWidget;
 import dev.sdb.shared.model.db.Flavor;
@@ -10,8 +10,8 @@ import dev.sdb.shared.model.entity.Entity;
 
 public class SoundtrackController extends AbstractDataController {
 
-	public SoundtrackController(SoundtrackDB sdb) {
-		super(sdb, ControllerType.SOUNDTRACK, Flavor.SOUNDTRACK);
+	public SoundtrackController(ClientFactory clientFactory) {
+		super(clientFactory, ControllerType.SOUNDTRACK, Flavor.SOUNDTRACK);
 	}
 
 	@Override protected void addSearchResultColumns(DataGrid<Entity> table) {

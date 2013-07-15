@@ -10,7 +10,7 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import dev.sdb.client.SoundtrackDB;
+import dev.sdb.client.ClientFactory;
 import dev.sdb.client.view.desktop.detail.DetailWidget;
 import dev.sdb.client.view.desktop.detail.MusicDetailWidget;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
@@ -21,8 +21,8 @@ import dev.sdb.shared.model.entity.Music;
 
 public class MusicController extends AbstractDataController {
 
-	public MusicController(SoundtrackDB sdb) {
-		super(sdb, ControllerType.MUSIC, Flavor.MUSIC);
+	public MusicController(ClientFactory clientFactory) {
+		super(clientFactory, ControllerType.MUSIC, Flavor.MUSIC);
 	}
 
 	@Override protected void addSearchResultColumns(DataGrid<Entity> table) {
