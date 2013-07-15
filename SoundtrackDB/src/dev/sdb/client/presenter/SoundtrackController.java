@@ -3,8 +3,8 @@ package dev.sdb.client.presenter;
 import com.google.gwt.user.cellview.client.DataGrid;
 
 import dev.sdb.client.SoundtrackDB;
-import dev.sdb.client.ui.detail.DetailWidget;
-import dev.sdb.client.ui.detail.SoundtrackDetailWidget;
+import dev.sdb.client.view.desktop.detail.DetailWidget;
+import dev.sdb.client.view.desktop.detail.SoundtrackDetailWidget;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.entity.Entity;
 

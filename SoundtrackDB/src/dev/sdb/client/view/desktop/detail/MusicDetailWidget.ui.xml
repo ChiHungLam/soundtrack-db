@@ -2,8 +2,8 @@
 <ui:UiBinder
 	xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:m="urn:import:dev.sdb.client.ui.detail.master"
-	xmlns:s="urn:import:dev.sdb.client.ui.detail.sublist">
+	xmlns:m="urn:import:dev.sdb.client.view.desktop.detail.master"
+	xmlns:s="urn:import:dev.sdb.client.view.desktop.detail.sublist">
 	
 	<ui:style>
 		

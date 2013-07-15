@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dev.sdb.client.ui.search;
+package dev.sdb.client.view.desktop.search;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

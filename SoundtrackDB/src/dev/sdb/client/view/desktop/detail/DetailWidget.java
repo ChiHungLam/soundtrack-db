@@ -1,10 +1,10 @@
-package dev.sdb.client.ui.detail;
+package dev.sdb.client.view.desktop.detail;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
 
 import dev.sdb.client.presenter.AbstractDataController;
-import dev.sdb.client.ui.detail.master.MasterDataWidget;
+import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.shared.model.entity.Entity;
 
 public abstract class DetailWidget extends Composite implements HasEnabled {

@@ -1,4 +1,4 @@
-package dev.sdb.client.ui.detail.sublist;
+package dev.sdb.client.view.desktop.detail.sublist;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

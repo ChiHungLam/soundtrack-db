@@ -1,4 +1,4 @@
-package dev.sdb.client.ui.detail;
+package dev.sdb.client.view.desktop.detail;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -6,9 +6,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.presenter.MusicController;
-import dev.sdb.client.ui.detail.master.MasterDataWidget;
-import dev.sdb.client.ui.detail.master.MusicMasterData;
-import dev.sdb.client.ui.detail.sublist.SublistWidget;
+import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
+import dev.sdb.client.view.desktop.detail.master.MusicMasterData;
+import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 

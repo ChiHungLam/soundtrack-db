@@ -11,9 +11,9 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import dev.sdb.client.SoundtrackDB;
-import dev.sdb.client.ui.detail.DetailWidget;
-import dev.sdb.client.ui.detail.MusicDetailWidget;
-import dev.sdb.client.ui.detail.sublist.SublistWidget;
+import dev.sdb.client.view.desktop.detail.DetailWidget;
+import dev.sdb.client.view.desktop.detail.MusicDetailWidget;
+import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;

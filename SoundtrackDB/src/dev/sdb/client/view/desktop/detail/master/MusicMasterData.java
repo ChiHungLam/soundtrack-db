@@ -1,4 +1,4 @@
-package dev.sdb.client.ui.detail.master;
+package dev.sdb.client.view.desktop.detail.master;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -8,17 +8,17 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.shared.model.entity.Entity;
-import dev.sdb.shared.model.entity.Release;
+import dev.sdb.shared.model.entity.Music;
 
-public class ReleaseMasterData extends MasterDataWidget {
+public class MusicMasterData extends MasterDataWidget {
 
-	interface ReleaseMasterDataUiBinder extends UiBinder<Widget, ReleaseMasterData> {}
-	private static ReleaseMasterDataUiBinder uiBinder = GWT.create(ReleaseMasterDataUiBinder.class);
+	interface MusicMasterDataUiBinder extends UiBinder<Widget, MusicMasterData> {}
+	private static MusicMasterDataUiBinder uiBinder = GWT.create(MusicMasterDataUiBinder.class);
 
 	@UiField LongBox idField;
 	@UiField TextBox titleField;
 
-	public ReleaseMasterData() {
+	public MusicMasterData() {
 		super();
 		initWidget(uiBinder.createAndBindUi(this));
 	}
@@ -27,11 +27,11 @@ public class ReleaseMasterData extends MasterDataWidget {
 		setCurrentEntity(entity);
 		if (entity == null) {
 			this.idField.setValue(null);
-			this.titleField.setText("");
+			this.titleField.setText(null);
 		} else {
-			Release release = (Release) entity;
-			this.idField.setValue(Long.valueOf(release.getId()));
-			this.titleField.setText(release.getTitle());
+			Music music = (Music) entity;
+			this.idField.setValue(Long.valueOf(music.getId()));
+			this.titleField.setText(music.getTitle());
 		}
 	}
 }
