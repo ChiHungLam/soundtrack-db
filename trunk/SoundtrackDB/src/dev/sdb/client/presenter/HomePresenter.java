@@ -11,7 +11,7 @@ public class HomePresenter extends AbstractContentPresenter implements HomeView.
 		super(clientFactory, ContentPresenterType.HOME);
 	}
 
-	@Override public IsWidget getWidget(String state) {
+	@Override public IsWidget getView(String state) {
 		HomeView view = getClientFactory().getUi().getHomeView();
 		view.setPresenter(this);
 		return view;

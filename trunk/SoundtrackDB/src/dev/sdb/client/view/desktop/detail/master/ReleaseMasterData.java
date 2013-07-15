@@ -24,7 +24,6 @@ public class ReleaseMasterData extends MasterDataWidget {
 	}
 
 	public void initEntity(Entity entity) {
-		setCurrentEntity(entity);
 		if (entity == null) {
 			this.idField.setValue(null);
 			this.titleField.setText("");

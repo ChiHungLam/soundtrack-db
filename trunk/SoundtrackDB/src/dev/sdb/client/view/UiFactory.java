@@ -1,5 +1,7 @@
 package dev.sdb.client.view;
 
+import com.google.gwt.user.client.ui.HasEnabled;
+
 
 public interface UiFactory {
 
@@ -15,4 +17,5 @@ public interface UiFactory {
 	MusicDetailView getMusicDetailView();
 	SoundtrackDetailView getSoundtrackDetailView();
 
+	void showRpcError(Throwable caught, String msg, final HasEnabled hasEnabled);
 }

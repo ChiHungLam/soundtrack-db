@@ -94,7 +94,7 @@ public class SoundtrackDB implements EntryPoint {
 			return null;
 
 		String state = getContentPresenterState(type, historyToken);
-		IsWidget widget = controller.getWidget(state);
+		IsWidget widget = controller.getView(state);
 
 		return widget;
 	}

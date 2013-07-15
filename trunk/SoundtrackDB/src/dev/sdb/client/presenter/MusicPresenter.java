@@ -24,7 +24,7 @@ public class MusicPresenter extends AbstractBrowsePresenter implements MusicQuer
 	}
 
 
-	@Override protected DetailView createDetailWidget() {
+	@Override protected DetailView createDetailView() {
 		final MusicDetailView view = getClientFactory().getUi().getMusicDetailView();
 		view.setPresenter(this);
 
@@ -34,7 +34,7 @@ public class MusicPresenter extends AbstractBrowsePresenter implements MusicQuer
 				getMusicReleaseListFromServer(view);
 			}
 		};
-		view.setDataProvider(dataProvider);
+		view.setSublistDataProvider(dataProvider);
 
 		return view;
 	}
@@ -77,7 +77,7 @@ public class MusicPresenter extends AbstractBrowsePresenter implements MusicQuer
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				showRpcError(caught, "Release list for [" + Flavor.MUSIC.name() + "] id=" + id, null);
+				getClientFactory().getUi().showRpcError(caught, "Release list for [" + Flavor.MUSIC.name() + "] id=" + id, null);
 				view.clearSublist();
 			}
 		});
@@ -85,7 +85,7 @@ public class MusicPresenter extends AbstractBrowsePresenter implements MusicQuer
 	}
 
 
-	protected QueryView createQueryWidget(String term) {
+	protected QueryView createQueryView(String term) {
 		// Create the query widget instance
 		final MusicQueryView queryWidget = getClientFactory().getUi().getMusicQueryView();
 		queryWidget.setPresenter(this);

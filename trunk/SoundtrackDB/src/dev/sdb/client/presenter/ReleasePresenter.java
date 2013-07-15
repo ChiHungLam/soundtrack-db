@@ -23,9 +23,27 @@ public class ReleasePresenter extends AbstractBrowsePresenter implements Release
 		super(clientFactory, ContentPresenterType.RELEASE, Flavor.RELEASES);
 	}
 
+	protected QueryView createQueryView(String term) {
+		// Create the query widget instance
+		final ReleaseQueryView view = getClientFactory().getUi().getReleaseQueryView();
+		view.setPresenter(this);
 
+		// Set the search term
+		view.setText(term);
 
-	@Override protected DetailView createDetailWidget() {
+		// Create a data provider.
+		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
+			@Override protected void onRangeChanged(HasData<Entity> display) {
+				getSearchFromServer(view);
+			}
+		};
+
+		view.setDataProvider(dataProvider);
+
+		return view;
+	}
+
+	@Override protected DetailView createDetailView() {
 		final ReleaseDetailView view = getClientFactory().getUi().getReleaseDetailView();
 		view.setPresenter(this);
 
@@ -36,7 +54,7 @@ public class ReleasePresenter extends AbstractBrowsePresenter implements Release
 			}
 		};
 
-		view.setDataProvider(dataProvider);
+		view.setSublistDataProvider(dataProvider);
 
 		return view;
 	}
@@ -79,30 +97,10 @@ public class ReleasePresenter extends AbstractBrowsePresenter implements Release
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				showRpcError(caught, "Sequence list for [" + Flavor.RELEASES.name() + "] audioId=" + audioId, null);
+				getClientFactory().getUi().showRpcError(caught, "Sequence list for [" + Flavor.RELEASES.name() + "] audioId=" + audioId, null);
 				view.clearSublist();
 			}
 		});
-	}
-
-	protected QueryView createQueryWidget(String term) {
-		// Create the query widget instance
-		final ReleaseQueryView queryWidget = getClientFactory().getUi().getReleaseQueryView();
-		queryWidget.setPresenter(this);
-
-		// Set the search term
-		queryWidget.setText(term);
-
-		// Create a data provider.
-		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
-			@Override protected void onRangeChanged(HasData<Entity> display) {
-				getSearchFromServer(queryWidget);
-			}
-		};
-
-		queryWidget.setDataProvider(dataProvider);
-
-		return queryWidget;
 	}
 
 
