@@ -10,18 +10,14 @@ public class Result implements IsSerializable {
 
 	private List<Entity> resultChunk;
 	private int totalLength;
-	private String term;
-	private int resultStart;
 
 	public Result() {
 		super();
 	}
 
-	public Result(String term, List<Entity> resultChunk, int resultStart, int totalLength) {
+	public Result(List<Entity> resultChunk, int totalLength) {
 		super();
-		this.term = term;
 		this.resultChunk = resultChunk;
-		this.resultStart = resultStart;
 		this.totalLength = totalLength;
 	}
 
@@ -33,12 +29,5 @@ public class Result implements IsSerializable {
 		return this.totalLength;
 	}
 
-	public String getTerm() {
-		return this.term;
-	}
-
-	public int getResultStart() {
-		return this.resultStart;
-	}
 
 }
