@@ -202,6 +202,14 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		return sql;
 	}
 
+	protected String composeSeriesGet() {
+		String sql = "SELECT " + SERIES_INFO_FIELDS + " "
+				+ "FROM `edition` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
+				+ "WHERE `edt_id` = ? ;";
+		return sql;
+	}
+
 	protected String composeSoundtrackGet() {
 		String sql = "SELECT `soundtrack`.* , " + MUSIC_INFO_FIELDS + " , " + RELEASE_INFO_FIELDS + " "
 				+ "FROM `soundtrack` "
@@ -248,6 +256,14 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		return sql;
 	}
 
+	protected String composeSeriesCount() {
+		String sql = "SELECT COUNT( * ) AS `rows` "
+				+ "FROM `edition` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
+				+ "WHERE `edt_override_title` LIKE ? ;";
+		return sql;
+	}
+
 	protected String composeSoundtrackCount() {
 		String sql = "SELECT COUNT( * ) AS `rows` "
 				+ "FROM `soundtrack` "
@@ -276,9 +292,18 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 		String sql = "SELECT COUNT( * ) AS `rows` "
 				+ "FROM `print` "
+				//				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
+				//				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
+				+ "WHERE `print_audio_id` IN ( " + inSelect + " ) ;";
+		return sql;
+	}
+
+	protected String composeSeriesReleaseListCount() {
+		String sql = "SELECT COUNT( * ) AS `rows` "
+				+ "FROM `print` "
 				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
-				+ "WHERE `print_audio_id` IN ( " + inSelect + " ) ;";
+				+ "WHERE `prod_edition_id` LIKE ? ;";
 		return sql;
 	}
 
@@ -313,6 +338,16 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
 				+ "WHERE `rec_title` LIKE ? "
 				+ "ORDER BY `rec_title` " + getOrderDirection(ascending) + " "
+				+ getLimit(range);
+		return sql;
+	}
+
+	protected String composeSeriesList(Range range, boolean ascending) {
+		String sql = "SELECT " + SERIES_INFO_FIELDS + " "
+				+ "FROM `edition` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
+				+ "WHERE `edt_override_title` LIKE ? "
+				+ "ORDER BY `edt_override_title` " + getOrderDirection(ascending) + " "
 				+ getLimit(range);
 		return sql;
 	}
@@ -388,6 +423,27 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `print_audio_id` IN ( " + inSelect + " ) "
+				+ "ORDER BY " + composePrintOrder(true) + " "
+				+ getLimit(range);
+		return sql;
+	}
+	
+	protected String composeSeriesReleaseList(Range range) {
+		String sql = "SELECT " + RELEASE_INFO_FIELDS + " "
+				+ "FROM `print` "
+				+ "LEFT JOIN `calendar` ON `cal_id` = `print_calendar_id` "
+				+ "LEFT JOIN `audio` ON `au_id` = `print_audio_id` "
+				+ "LEFT JOIN `label` ON `lab_id` = `print_label_id` "
+				//				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
+				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
+				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
+				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
+				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
+				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
+				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
+				+ "WHERE `prod_edition_id` LIKE ? "
 				+ "ORDER BY " + composePrintOrder(true) + " "
 				+ getLimit(range);
 		return sql;

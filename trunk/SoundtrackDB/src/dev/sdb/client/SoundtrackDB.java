@@ -17,6 +17,7 @@ import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.presenter.HomePresenter;
 import dev.sdb.client.presenter.MusicPresenter;
 import dev.sdb.client.presenter.ReleasePresenter;
+import dev.sdb.client.presenter.SeriesPresenter;
 import dev.sdb.client.presenter.SoundtrackPresenter;
 import dev.sdb.client.view.UiFactory;
 
@@ -155,7 +156,7 @@ public class SoundtrackDB implements EntryPoint {
 			presenter = new SoundtrackPresenter(this.clientFactory);
 			break;
 		case SERIES:
-			presenter = null; // not yet
+			presenter = new SeriesPresenter(this.clientFactory);
 			break;
 
 		default:
@@ -164,8 +165,8 @@ public class SoundtrackDB implements EntryPoint {
 			return getContentPresenter(ContentPresenterType.HOME);
 		}
 
-		if (presenter == null)
-			return null;
+		//		if (presenter == null)
+		//			return null;
 
 		PRESENTER_MAP.put(type, presenter);
 		return presenter;

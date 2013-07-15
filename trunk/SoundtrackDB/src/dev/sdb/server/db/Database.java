@@ -15,9 +15,11 @@ public interface Database {
 
 	Entity getEntity(Flavor flavor, long id) throws IOException;
 
+	Result getReleaseSoundtrackList(long audioId, Range range) throws IOException;
+
 	Result getMusicReleaseList(long versionId, Range range) throws IOException;
 
-	Result getReleaseSoundtrackList(long audioId, Range range) throws IOException;
+	Result getSeriesReleaseList(long seriesId, Range range) throws IOException;
 
 	Result query(Flavor flavor, String term, Range range, boolean ascending) throws IOException;
 }

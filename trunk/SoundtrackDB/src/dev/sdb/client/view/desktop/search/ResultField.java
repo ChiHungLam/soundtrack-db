@@ -52,7 +52,7 @@ public class ResultField extends Composite {
 	}
 
 	public void setElementVisibility(int total) {
-		//		this.tablePanel.setVisible(total > 0);
+		this.tablePanel.setVisible(total > 0);
 		this.lastSearchLabel.setVisible(total >= 0);
 		this.selectionInfoLabel.setVisible(total >= 0);
 	}

@@ -72,6 +72,20 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
+	@Override public Result getSeriesReleaseList(long id, Range range) throws IllegalArgumentException, IOException {
+		assert (id > 0);
+		assert (range != null);
+
+		Database manager = getDatabase();
+		manager.open();
+
+		try {
+			return manager.getSeriesReleaseList(id, range);
+		} finally {
+			manager.close();
+		}
+	}
+
 	@Override public Result getReleaseSoundtrackList(long id, Range range) throws IllegalArgumentException, IOException {
 		assert (id > 0);
 		assert (range != null);
