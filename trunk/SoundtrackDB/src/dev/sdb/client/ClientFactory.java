@@ -9,12 +9,12 @@ import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.view.UiFactory;
 
 public class ClientFactory {
-	private static final EventBus EVENT_BUS = new SimpleEventBus();
-	private static final HistoryManager HISTORY_MANAGER = new HistoryManager();
 
-	private static SearchServiceAsync searchService;
-
+	private final EventBus eventBus = new SimpleEventBus();
 	private final UiFactory uiFactory;
+
+	private HistoryManager historyManager;
+	private SearchServiceAsync searchService;
 
 	public ClientFactory(UiFactory uiFactory) {
 		super();
@@ -26,16 +26,18 @@ public class ClientFactory {
 	}
 
 	public EventBus getEventBus() {
-		return EVENT_BUS;
+		return this.eventBus;
 	}
 
 	public HistoryManager getHistoryManager() {
-		return HISTORY_MANAGER;
+		if (this.historyManager == null)
+			this.historyManager = new HistoryManager(this);
+		return this.historyManager;
 	}
 
 	public SearchServiceAsync getSearchService() {
-		if (searchService == null)
-			searchService = GWT.create(SearchService.class);
-		return searchService;
+		if (this.searchService == null)
+			this.searchService = GWT.create(SearchService.class);
+		return this.searchService;
 	}
 }
