@@ -10,43 +10,48 @@ import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.service.SearchServiceAsync;
-import dev.sdb.client.view.SearchView;
-import dev.sdb.client.view.desktop.detail.DetailWidget;
+import dev.sdb.client.view.DetailView;
+import dev.sdb.client.view.QueryView;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 
-public abstract class AbstractBrowsePresenter extends AbstractContentPresenter implements SearchView.Presenter {
+public abstract class AbstractBrowsePresenter extends AbstractContentPresenter implements QueryView.Presenter {
 
 	private final Flavor flavor;
 
 	private String lastSearchTerm;
-	private long lastId;
+	private long lastDetailId;
 
-	private DetailWidget detailWidget;
-	private SearchView queryWidget;
+	private Entity currentDetailEntity;
 
+	private DetailView detailWidget;
+	private QueryView queryWidget;
 
 	public AbstractBrowsePresenter(ClientFactory clientFactory, ContentPresenterType type, Flavor flavor) {
 		super(clientFactory, type);
-
 		this.flavor = flavor;
 	}
-
-
 
 	protected void setLastSearchTerm(String lastSearchTerm) {
 		this.lastSearchTerm = lastSearchTerm;
 	}
 
-	protected abstract DetailWidget createDetailWidget();
+	protected void setLastDetailId(long lastDetailId) {
+		this.lastDetailId = lastDetailId;
+	}
 
-	protected abstract SearchView createQueryWidget(String term);
+	public long getLastDetailId() {
+		return this.lastDetailId;
+	}
+
+	protected abstract DetailView createDetailWidget();
+
+	protected abstract QueryView createQueryWidget(String term);
 
 	protected String getEntityToken(ContentPresenterType type, Entity entity) {
 		return type.getToken() + "?id=" + entity.getId();
@@ -93,18 +98,16 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		}
 	}
 
-	private Widget getDetailWidget(long id) {
+	private IsWidget getDetailWidget(long id) {
 		assert (id > 0);
 
 		if (this.detailWidget == null) {
 			this.detailWidget = createDetailWidget();
-			this.lastId = id;
+			setLastDetailId(id);
 			getDetailsFromServer(this.detailWidget);
 		} else {
-			Entity entity = this.detailWidget.getCurrentEntity();
-			long currentId = (entity == null) ? 0 : entity.getId();
-			if (currentId != id) {
-				this.lastId = id;
+			if (getLastDetailId() != id) {
+				setLastDetailId(id);
 				getDetailsFromServer(this.detailWidget);
 			}
 		}
@@ -112,7 +115,7 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 	}
 
 
-	private SearchView getQueryWidget(String term) {
+	private QueryView getQueryWidget(String term) {
 		assert (term != null);
 
 		if (this.queryWidget == null) {
@@ -136,32 +139,42 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		return this.queryWidget;
 	}
 
-	protected void getDetailsFromServer(final DetailWidget detailWidget) {
+	protected Entity getCurrentDetailEntity() {
+		return this.currentDetailEntity;
+	}
+
+	protected void setCurrentDetailEntity(Entity currentDetailEntity) {
+		this.currentDetailEntity = currentDetailEntity;
+	}
+
+	protected void getDetailsFromServer(final DetailView detailWidget) {
+		setCurrentDetailEntity(null);
 		detailWidget.initEntity(null);
 
 		//if there's no id, cancel the action
-		if (this.lastId <= 0)
+		if (getLastDetailId() <= 0)
 			return;
 		
 		SearchServiceAsync service = getClientFactory().getSearchService();
 		
 		// Then, we send the input to the server.
-		service.get(this.flavor, this.lastId, new AsyncCallback<Entity>() {
+		service.get(this.flavor, getLastDetailId(), new AsyncCallback<Entity>() {
 
 			public void onSuccess(Entity entity) {
+				setCurrentDetailEntity(entity);
 				detailWidget.initEntity(entity);
 				detailWidget.setEnabled(true);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				showRpcError(caught, "[" + AbstractBrowsePresenter.this.flavor.name() + "] id=" + AbstractBrowsePresenter.this.lastId, detailWidget);
+				showRpcError(caught, "[" + AbstractBrowsePresenter.this.flavor.name() + "] id=" + getLastDetailId(), detailWidget);
 			}
 		});
 	}
 
-	@Override public void onBrowse(Entity entity) {
-		addHistoryNavigation(getType(), entity);
+	@Override public void onBrowse(ContentPresenterType type, Entity entity) {
+		addHistoryNavigation(type, entity);
 	}
 
 	@Override public void onSearch(String term) {
@@ -169,7 +182,7 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		getSearchFromServer(this.queryWidget);
 	}
 
-	protected void getSearchFromServer(final SearchView queryWidget) {
+	protected void getSearchFromServer(final QueryView queryWidget) {
 		//		final SearchField search = queryWidget.getSearchField();
 		//		final ResultField result = queryWidget.getResultField();
 

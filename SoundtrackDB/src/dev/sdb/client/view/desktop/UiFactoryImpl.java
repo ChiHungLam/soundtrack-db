@@ -9,11 +9,17 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 
 import dev.sdb.client.view.HomeView;
-import dev.sdb.client.view.MusicSearchView;
+import dev.sdb.client.view.MusicDetailView;
+import dev.sdb.client.view.MusicQueryView;
 import dev.sdb.client.view.NavigatorView;
-import dev.sdb.client.view.ReleaseSearchView;
-import dev.sdb.client.view.SoundtrackSearchView;
+import dev.sdb.client.view.ReleaseDetailView;
+import dev.sdb.client.view.ReleaseQueryView;
+import dev.sdb.client.view.SoundtrackDetailView;
+import dev.sdb.client.view.SoundtrackQueryView;
 import dev.sdb.client.view.UiFactory;
+import dev.sdb.client.view.desktop.detail.MusicDetailWidget;
+import dev.sdb.client.view.desktop.detail.ReleaseDetailWidget;
+import dev.sdb.client.view.desktop.detail.SoundtrackDetailWidget;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
@@ -24,9 +30,13 @@ public class UiFactoryImpl implements UiFactory {
 	private NavigatorView navigatorView;
 	private HomeView homeView;
 
-	private ReleaseSearchView releaseSearchView;
-	private MusicSearchView musicSearchView;
-	private SoundtrackSearchView soundtrackSearchView;
+	private ReleaseQueryView releaseQueryView;
+	private MusicQueryView musicQueryView;
+	private SoundtrackQueryView soundtrackQueryView;
+
+	private ReleaseDetailView releaseDetailView;
+	private MusicDetailView musicDetailView;
+	private SoundtrackDetailView soundtrackDetailView;
 
 	public UiFactoryImpl() {
 		super();
@@ -44,22 +54,40 @@ public class UiFactoryImpl implements UiFactory {
 		return this.homeView;
 	}
 
-	@Override public ReleaseSearchView getReleaseSearchView() {
-		if (this.releaseSearchView == null)
-			this.releaseSearchView = new ReleaseSearchWidget();
-		return this.releaseSearchView;
+	@Override public ReleaseQueryView getReleaseQueryView() {
+		if (this.releaseQueryView == null)
+			this.releaseQueryView = new ReleaseQueryWidget();
+		return this.releaseQueryView;
 	}
 
-	@Override public MusicSearchView getMusicSearchView() {
-		if (this.musicSearchView == null)
-			this.musicSearchView = new MusicSearchWidget();
-		return this.musicSearchView;
+	@Override public MusicQueryView getMusicQueryView() {
+		if (this.musicQueryView == null)
+			this.musicQueryView = new MusicQueryWidget();
+		return this.musicQueryView;
 	}
 
-	@Override public SoundtrackSearchView getSoundtrackSearchView() {
-		if (this.soundtrackSearchView == null)
-			this.soundtrackSearchView = new SoundtrackSearchWidget();
-		return this.soundtrackSearchView;
+	@Override public SoundtrackQueryView getSoundtrackQueryView() {
+		if (this.soundtrackQueryView == null)
+			this.soundtrackQueryView = new SoundtrackQueryWidget();
+		return this.soundtrackQueryView;
+	}
+
+	@Override public ReleaseDetailView getReleaseDetailView() {
+		if (this.releaseDetailView == null)
+			this.releaseDetailView = new ReleaseDetailWidget();
+		return this.releaseDetailView;
+	}
+
+	@Override public MusicDetailView getMusicDetailView() {
+		if (this.musicDetailView == null)
+			this.musicDetailView = new MusicDetailWidget();
+		return this.musicDetailView;
+	}
+
+	@Override public SoundtrackDetailView getSoundtrackDetailView() {
+		if (this.soundtrackDetailView == null)
+			this.soundtrackDetailView = new SoundtrackDetailWidget();
+		return this.soundtrackDetailView;
 	}
 
 	public static Column<Entity, SafeHtml> createCompactReleaseColumn() {

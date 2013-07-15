@@ -1,31 +1,23 @@
 package dev.sdb.client.presenter;
 
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.service.SearchServiceAsync;
-import dev.sdb.client.view.ReleaseSearchView;
-import dev.sdb.client.view.SearchView;
-import dev.sdb.client.view.desktop.UiFactoryImpl;
-import dev.sdb.client.view.desktop.detail.DetailWidget;
-import dev.sdb.client.view.desktop.detail.ReleaseDetailWidget;
-import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
+import dev.sdb.client.view.DetailView;
+import dev.sdb.client.view.QueryView;
+import dev.sdb.client.view.ReleaseDetailView;
+import dev.sdb.client.view.ReleaseQueryView;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
-import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
-import dev.sdb.shared.model.entity.Soundtrack;
 
-public class ReleasePresenter extends AbstractBrowsePresenter implements ReleaseSearchView.Presenter {
+public class ReleasePresenter extends AbstractBrowsePresenter implements ReleaseQueryView.Presenter,
+		ReleaseDetailView.Presenter {
 
 	public ReleasePresenter(ClientFactory clientFactory) {
 		super(clientFactory, ContentPresenterType.RELEASE, Flavor.RELEASES);
@@ -33,60 +25,27 @@ public class ReleasePresenter extends AbstractBrowsePresenter implements Release
 
 
 
-	@Override protected DetailWidget createDetailWidget() {
-		final ReleaseDetailWidget widget = new ReleaseDetailWidget(this);
-		DataGrid<Entity> table = widget.getSublist().getTable();
-
-		UiFactoryImpl.addReleaseMusicColumns(table, true, true);
-
-		table.setWidth("100%");
-
-		// Set the total row count. You might send an RPC request to determine the
-		// total row count.
-		table.setRowCount(0, true);
-
-		// Set the range to display. In this case, our visible range is smaller than
-		// the data set.
-		int rangeLength = 10;
-		table.setVisibleRange(0, rangeLength);
+	@Override protected DetailView createDetailWidget() {
+		final ReleaseDetailView view = getClientFactory().getUi().getReleaseDetailView();
+		view.setPresenter(this);
 
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
 			@Override protected void onRangeChanged(HasData<Entity> display) {
-				getSequenceListFromServer(widget);
+				getSequenceListFromServer(view);
 			}
 		};
-		dataProvider.addDataDisplay(table);
 
-		// Add a ColumnSortEvent.AsyncHandler to connect sorting to the
-		// AsyncDataPRrovider.
-		AsyncHandler columnSortHandler = new AsyncHandler(table);
-		table.addColumnSortHandler(columnSortHandler);
+		view.setDataProvider(dataProvider);
 
-		final SingleSelectionModel<Entity> selectionModel = new SingleSelectionModel<Entity>();
-		table.setSelectionModel(selectionModel);
-
-		table.addDomHandler(new DoubleClickHandler() {
-			@Override public void onDoubleClick(final DoubleClickEvent event) {
-				Soundtrack soundtrack = (Soundtrack) selectionModel.getSelectedObject();
-				if (soundtrack != null) {
-					Music music = soundtrack.getMusic();
-					if (music != null) {
-						addHistoryNavigation(ContentPresenterType.MUSIC, music);
-					}
-				}
-			}
-		}, DoubleClickEvent.getType());
-
-		return widget;
+		return view;
 	}
 
-	public void getSequenceListFromServer(final ReleaseDetailWidget detailWidget) {
-		final SublistWidget list = detailWidget.getSublist();
+	public void getSequenceListFromServer(final ReleaseDetailView view) {
 
-		Release release = (Release) detailWidget.getCurrentEntity();
+		Release release = (Release) getCurrentDetailEntity();
 		if (release == null) {
-			list.setElementVisibility(-1);
+			view.clearSublist();
 			return;
 		}
 
@@ -94,12 +53,11 @@ public class ReleasePresenter extends AbstractBrowsePresenter implements Release
 
 		//if there's no id, cancel the action
 		if (audioId <= 0) {
-			list.setElementVisibility(-1);
+			view.clearSublist();
 			return;
 		}
 
-		final DataGrid<Entity> table = list.getTable();
-		final Range range = table.getVisibleRange();
+		final Range range = view.getSublistRange();
 
 		SearchServiceAsync service = getClientFactory().getSearchService();
 
@@ -116,25 +74,20 @@ public class ReleasePresenter extends AbstractBrowsePresenter implements Release
 					resultInfo = "Für diese Veröffentlichung " + (total == 1 ? "existiert 1 Sequenz" : ("existieren " + total + " Sequenzen")) + ".";
 				}
 
-				table.setRowCount(total, true);
-				table.setRowData(range.getStart(), searchResult.getResultChunk());
-
-				list.setSelectionInfoText(resultInfo);
-				list.setElementVisibility(total);
+				view.showSublistResult(resultInfo, searchResult);
 			}
 
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
 				showRpcError(caught, "Sequence list for [" + Flavor.RELEASES.name() + "] audioId=" + audioId, null);
-
-				list.setElementVisibility(-1);
+				view.clearSublist();
 			}
 		});
 	}
 
-	protected SearchView createQueryWidget(String term) {
+	protected QueryView createQueryWidget(String term) {
 		// Create the query widget instance
-		final ReleaseSearchView queryWidget = getClientFactory().getUi().getReleaseSearchView();
+		final ReleaseQueryView queryWidget = getClientFactory().getUi().getReleaseQueryView();
 		queryWidget.setPresenter(this);
 
 		// Set the search term
