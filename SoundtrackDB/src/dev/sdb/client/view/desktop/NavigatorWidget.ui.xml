@@ -3,18 +3,17 @@
 	xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
-	<ui:style>
-		
+	<ui:style type="dev.sdb.client.view.desktop.NavigatorWidget.NavigatorStyle">
+		.highlighted {border-color: red; border-style: outset}
 	</ui:style>
 
 	<g:HTMLPanel>
 		<g:VerticalPanel spacing="5">
-			<g:Hyperlink text="sdb" targetHistoryToken="home"/>
-			<g:Hyperlink text="Veröffentlichungen" targetHistoryToken="release"/>
-			<g:Hyperlink text="Musik" targetHistoryToken="music"/>
-			<g:Hyperlink text="Soundtrack" targetHistoryToken="soundtrack"/>
-			<g:Hyperlink text="Serien" targetHistoryToken="series"/>
+			<g:Hyperlink text="sdb" targetHistoryToken="home" ui:field="homeLink"/>
+			<g:Hyperlink text="Veröffentlichungen" targetHistoryToken="release" ui:field="releaseLink"/>
+			<g:Hyperlink text="Musik" targetHistoryToken="music" ui:field="musicLink"/>
+			<g:Hyperlink text="Soundtrack" targetHistoryToken="soundtrack" ui:field="soundtrackLink"/>
+			<g:Hyperlink text="Serien" targetHistoryToken="series" ui:field="seriesLink"/>
 		</g:VerticalPanel>
-		
 	</g:HTMLPanel>
 </ui:UiBinder> 
