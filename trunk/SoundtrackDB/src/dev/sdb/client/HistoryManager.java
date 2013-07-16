@@ -11,8 +11,11 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import dev.sdb.client.presenter.ContentPresenter;
 import dev.sdb.client.presenter.ContentPresenterType;
+import dev.sdb.client.presenter.FooterPresenter;
+import dev.sdb.client.presenter.HeaderPresenter;
 import dev.sdb.client.presenter.HomePresenter;
 import dev.sdb.client.presenter.MusicPresenter;
+import dev.sdb.client.presenter.NavigatorPresenter;
 import dev.sdb.client.presenter.ReleasePresenter;
 import dev.sdb.client.presenter.SeriesPresenter;
 import dev.sdb.client.presenter.SoundtrackPresenter;
@@ -25,6 +28,10 @@ public class HistoryManager {
 
 	private ClientFactory clientFactory;
 
+	private NavigatorPresenter navigatorPresenter;
+	private HeaderPresenter headerPresenter;
+	private FooterPresenter footerPresenter;
+
 	/**
 	 * This token represents the current state of the application. Its value is <i>not</i> url encoded.
 	 */
@@ -35,7 +42,11 @@ public class HistoryManager {
 		this.clientFactory = clientFactory;
 	}
 
-	public void setUp() {
+	public void setUp(NavigatorPresenter navigatorPresenter, HeaderPresenter headerPresenter, FooterPresenter footerPresenter) {
+		this.navigatorPresenter = navigatorPresenter;
+		this.headerPresenter = headerPresenter;
+		this.footerPresenter = footerPresenter;
+
 		//Prepare history event handler
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {
 			public void onValueChange(ValueChangeEvent<String> event) {
@@ -93,27 +104,29 @@ public class HistoryManager {
 	private void setContentArea(String token) {
 		setToken(token);
 
+		ContentPresenterType type = getContentPresenterType(token);
+
+		this.navigatorPresenter.switchToArea(type);
+		this.headerPresenter.switchToArea(type);
+		this.footerPresenter.switchToArea(type);
+
 		final RootPanel contentArea = RootPanel.get("content_area");
 
 		while (contentArea.getWidgetCount() > 0)
 			contentArea.remove(0);
 
-		IsWidget contentWidget = getContentWidget(token);
-		if (contentWidget == null)
-			return;
-
-		contentArea.add(contentWidget);
+		IsWidget contentWidget = getContentWidget(type, token);
+		if (contentWidget != null)
+			contentArea.add(contentWidget);
 	}
 
-	protected IsWidget getContentWidget(String historyToken) {
-		ContentPresenterType type = getContentPresenterType(historyToken);
-
-		ContentPresenter controller = getContentPresenter(type);
-		if (controller == null)
+	protected IsWidget getContentWidget(ContentPresenterType type, String historyToken) {
+		ContentPresenter presenter = getContentPresenter(type);
+		if (presenter == null)
 			return null;
 
 		String state = getContentPresenterState(type, historyToken);
-		IsWidget widget = controller.getView(state);
+		IsWidget widget = presenter.getView(state);
 
 		return widget;
 	}

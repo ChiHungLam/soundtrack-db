@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import dev.sdb.client.view.FooterView;
+import dev.sdb.client.view.HeaderView;
 import dev.sdb.client.view.HomeView;
 import dev.sdb.client.view.MusicDetailView;
 import dev.sdb.client.view.MusicQueryView;
@@ -46,6 +48,9 @@ public class UiFactoryImpl implements UiFactory {
 			+ "connection and try again.";
 
 	private NavigatorView navigatorView;
+	private HeaderView headerView;
+	private FooterView footerView;
+
 	private HomeView homeView;
 
 	private ReleaseQueryView releaseQueryView;
@@ -108,6 +113,18 @@ public class UiFactoryImpl implements UiFactory {
 		if (this.navigatorView == null)
 			this.navigatorView = new NavigatorWidget();
 		return this.navigatorView;
+	}
+
+	@Override public HeaderView getHeaderView() {
+		if (this.headerView == null)
+			this.headerView = new HeaderWidget();
+		return this.headerView;
+	}
+
+	@Override public FooterView getFooterView() {
+		if (this.footerView == null)
+			this.footerView = new FooterWidget();
+		return this.footerView;
 	}
 
 	@Override public HomeView getHomeView() {

@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 import dev.sdb.client.presenter.ContentPresenterType;
 
-public interface NavigatorView extends IsWidget {
+public interface FooterView extends IsWidget {
 
 	public interface Presenter {
 		void switchToArea(ContentPresenterType type);
