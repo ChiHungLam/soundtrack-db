@@ -8,6 +8,6 @@
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<h1>Larry's Soundtrack Database</h1>
+		<h1 class="neonLightShadow">Larry's Soundtrack Database</h1>
 	</g:HTMLPanel>
 </ui:UiBinder> 

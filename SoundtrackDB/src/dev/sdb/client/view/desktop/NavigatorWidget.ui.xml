@@ -4,16 +4,25 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
 	<ui:style type="dev.sdb.client.view.desktop.NavigatorWidget.NavigatorStyle">
-		.highlighted {border-color: red; border-style: outset}
+		.highlighted {
+			font-weight: bold;
+			text-shadow: 0 0 14px black;
+		}
+		.highlighted a:link {
+			color: #453F6B;
+		}
+		.highlighted a:visited {
+			color: #453F6B;
+		}
 	</ui:style>
 
 	<g:HTMLPanel>
 		<g:VerticalPanel spacing="5">
-			<g:Hyperlink text="sdb" targetHistoryToken="home" ui:field="homeLink"/>
-			<g:Hyperlink text="Veröffentlichungen" targetHistoryToken="release" ui:field="releaseLink"/>
-			<g:Hyperlink text="Musik" targetHistoryToken="music" ui:field="musicLink"/>
-			<g:Hyperlink text="Soundtrack" targetHistoryToken="soundtrack" ui:field="soundtrackLink"/>
-			<g:Hyperlink text="Serien" targetHistoryToken="series" ui:field="seriesLink"/>
+			<g:Hyperlink text="sdb" targetHistoryToken="home" ui:field="homeLink" styleName="neonDarkShadow contentLink"/>
+			<g:Hyperlink text="Veröffentlichungen" targetHistoryToken="release" ui:field="releaseLink" styleName="neonDarkShadow contentLink"/>
+			<g:Hyperlink text="Musik" targetHistoryToken="music" ui:field="musicLink" styleName="neonDarkShadow contentLink"/>
+			<g:Hyperlink text="Soundtrack" targetHistoryToken="soundtrack" ui:field="soundtrackLink" styleName="neonDarkShadow contentLink"/>
+			<g:Hyperlink text="Serien" targetHistoryToken="series" ui:field="seriesLink" styleName="neonDarkShadow contentLink"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
