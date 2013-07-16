@@ -3,11 +3,10 @@
 
 /** Example rules used by the template application (remove for your app) */
 h1 {
-  font-size: 2em;
   font-weight: bold;
-  color: #777777;
-  margin: 40px 0px 70px;
-  text-align: center;
+  margin-top: 25px;
+  margin-left: 35px;
+  text-align: left;
 }
 
 .sendButton {
@@ -35,4 +34,117 @@ h1 {
 .gwt-Label,serverResponseLabelError {
 }
 .gwt-Label {
+}
+
+#stage {
+	/* background-color: blue; */
+	text-align: center;
+	
+	/* needed for FF */
+	margin: 0;
+	margin-right: 0px;
+	
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+}
+
+#header_area {
+	/* background-color: white; */
+	background: rgb(155,158,198); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(155,158,198,1) 0%, rgba(83,83,94,1) 3%, rgba(6,6,7,1) 50%, rgba(83,83,94,1) 90%, rgba(213,212,247,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(155,158,198,1)), color-stop(3%,rgba(83,83,94,1)), color-stop(50%,rgba(6,6,7,1)), color-stop(90%,rgba(83,83,94,1)), color-stop(100%,rgba(213,212,247,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(155,158,198,1) 0%,rgba(83,83,94,1) 3%,rgba(6,6,7,1) 50%,rgba(83,83,94,1) 90%,rgba(213,212,247,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(155,158,198,1) 0%,rgba(83,83,94,1) 3%,rgba(6,6,7,1) 50%,rgba(83,83,94,1) 90%,rgba(213,212,247,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(155,158,198,1) 0%,rgba(83,83,94,1) 3%,rgba(6,6,7,1) 50%,rgba(83,83,94,1) 90%,rgba(213,212,247,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(155,158,198,1) 0%,rgba(83,83,94,1) 3%,rgba(6,6,7,1) 50%,rgba(83,83,94,1) 90%,rgba(213,212,247,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9b9ec6', endColorstr='#d5d4f7',GradientType=0 ); /* IE6-9 */
+
+	color:#D5D4F7;
+
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	height: 100px;
+}
+
+#navigator_area {
+	background-color: #D5D4F7; 
+	
+	display: block;
+
+	position: absolute;
+	top: 100px;
+	bottom: 55px;
+	left: 0px;
+	width: 150px;
+}
+
+#content_area {
+	background-color: #D5D4F7;
+	
+	padding-left: 5px;
+	padding-right: 5px;
+	
+	display: inline-block;
+
+	position: absolute;	
+	top: 100px;
+	left: 150px;
+	right: 0px;
+	bottom: 55px;
+}
+
+#footer_area {
+	/* background-color: white; */
+	background: rgb(213,212,247); /* Old browsers */
+	background: -moz-linear-gradient(top,  rgba(213,212,247,1) 0%, rgba(83,83,94,1) 10%, rgba(0,0,0,1) 50%, rgba(83,83,94,1) 90%, rgba(155,158,198,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(213,212,247,1)), color-stop(10%,rgba(83,83,94,1)), color-stop(50%,rgba(0,0,0,1)), color-stop(90%,rgba(83,83,94,1)), color-stop(100%,rgba(155,158,198,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(213,212,247,1) 0%,rgba(83,83,94,1) 10%,rgba(0,0,0,1) 50%,rgba(83,83,94,1) 90%,rgba(155,158,198,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(213,212,247,1) 0%,rgba(83,83,94,1) 10%,rgba(0,0,0,1) 50%,rgba(83,83,94,1) 90%,rgba(155,158,198,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(213,212,247,1) 0%,rgba(83,83,94,1) 10%,rgba(0,0,0,1) 50%,rgba(83,83,94,1) 90%,rgba(155,158,198,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(213,212,247,1) 0%,rgba(83,83,94,1) 10%,rgba(0,0,0,1) 50%,rgba(83,83,94,1) 90%,rgba(155,158,198,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5d4f7', endColorstr='#9b9ec6',GradientType=0 ); /* IE6-9 */
+
+	color:#D5D4F7;
+					
+	position: absolute;	
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 55px;
+}
+
+.contentLink {
+	border: 1px solid #9b9ec6;
+	background: #CbCeF6;
+	padding-left: 5px;
+	padding-top: 5px;
+	width: 140px;
+	height: 25px;
+	font-weight: bolder;
+	
+}
+
+.contentLink a:link {
+	color: #6A5FA8;
+}
+
+.contentLink a:visited {
+	color: #6A5FA8;
+}
+
+.contentLink a:hover {
+	text-shadow: 0 0 14px black;
+	text-decoration: none;
+}
+
+.neonLightShadow {
+	text-shadow: 0 0 14px white;
+}
+.neonDarkShadow {
+	text-shadow: 0 0 7px grey;
 }

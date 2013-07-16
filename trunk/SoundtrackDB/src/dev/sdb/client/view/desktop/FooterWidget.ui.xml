@@ -8,6 +8,6 @@
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<h4>(P) 2013 JooceWare</h4>
+		<h4 class="neonLightShadow">(P) 2013 JooceWare</h4>
 	</g:HTMLPanel>
 </ui:UiBinder> 
