@@ -8,6 +8,9 @@
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<h1 class="neonLightShadow">Larry's Soundtrack Database</h1>
+		<div class="siteTitle">
+			<span class="siteLogo">sdb&nbsp;</span>
+			<span class="siteDescription">Die Soundtrack-Datenbank für Hörspiele aus dem Studio EUROPA</span>
+		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

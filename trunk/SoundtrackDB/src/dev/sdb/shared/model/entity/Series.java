@@ -21,6 +21,10 @@ public class Series extends AbstractEntity {
 		this.singles = singles;
 	}
 
+	@Override public String getMatch() {
+		return getTitle();
+	}
+	
 	public String getTitleInfo() {
 		if (this.singles)
 			return null;
@@ -52,4 +56,7 @@ public class Series extends AbstractEntity {
 		return StatusChecker.isBitSet(this.editionStatus, 0);
 	}
 
+	@Override public String toString() {
+		return "Series #" + getId();
+	}
 }

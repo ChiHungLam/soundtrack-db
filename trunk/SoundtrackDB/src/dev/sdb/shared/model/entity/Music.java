@@ -35,9 +35,12 @@ public class Music extends AbstractEntity {
 		this.versionStatus = versionStatus;
 	}
 
+	@Override public String getMatch() {
+		return getTitleInfo();
+	}
+
 	@Override public String toString() {
-		String info = "Music #" + getId() + ": " + getTitleInfo();
-		return info;
+		return "Music #" + getId();
 	}
 
 	public String getTitleInfo() {

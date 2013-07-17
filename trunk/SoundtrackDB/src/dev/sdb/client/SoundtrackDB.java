@@ -1,6 +1,7 @@
 package dev.sdb.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -53,6 +54,13 @@ public class SoundtrackDB implements EntryPoint {
 
 		//Setting up history and display the current content
 		clientFactory.getHistoryManager().setUp(navigatorPresenter, headerPresenter, footerPresenter);
+	}
+
+	public static void setBrowserWindowTitle(String title) {
+		if (Document.get() != null) {
+			title = "sdb" + (title == null || title.isEmpty() ? "" : (" - " + title));
+			Document.get().setTitle(title);
+		}
 	}
 
 }

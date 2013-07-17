@@ -166,7 +166,7 @@ public class HistoryManager {
 		return type;
 	}
 
-	public void setHistory(String token, boolean issueEvent) {
+	public void createHistory(String token, boolean issueEvent) {
 		if (LOG_URLS_AND_TOKENS) {
 			System.out.println("Adding to history" + (!issueEvent ? " (without events)" : "") + ": " + token);
 		}

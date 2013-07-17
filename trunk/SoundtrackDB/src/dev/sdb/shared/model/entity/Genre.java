@@ -19,6 +19,10 @@ public class Genre extends AbstractEntity {
 		this.childName = childName;
 	}
 
+	@Override public String getMatch() {
+		return getName();
+	}
+
 	public String getName() {
 		String name;
 		if (this.childName != null && !this.childName.isEmpty())
@@ -44,5 +48,9 @@ public class Genre extends AbstractEntity {
 
 	public boolean isSoundtrackContainer() {
 		return StatusChecker.isBitSet(this.status, 0);
+	}
+
+	@Override public String toString() {
+		return "Genre #" + getId();
 	}
 }

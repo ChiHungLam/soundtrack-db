@@ -9,6 +9,10 @@ public class Soundtrack extends AbstractEntity {
 		super();
 	}
 
+	@Override public String getMatch() {
+		return "#" + getId();
+	}
+
 	public Soundtrack(long id, Release release, Music music) {
 		super(id);
 		this.release = release;
@@ -32,11 +36,6 @@ public class Soundtrack extends AbstractEntity {
 	}
 
 	@Override public String toString() {
-		String info = "Soundtrack #" + getId();
-		info += " - " + ((this.release == null) ? "no release" : this.release);
-		info += " - " + ((this.music == null) ? "no music" : this.music);
-		return info;
+		return "Soundtrack #" + getId();
 	}
-
-
 }
