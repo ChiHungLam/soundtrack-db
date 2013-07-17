@@ -9,4 +9,8 @@ public interface Entity extends IsSerializable {
 	 */
 	long getId();
 
+	/**
+	 * @return the match, a single line unique descriptive String
+	 */
+	String getMatch();
 }

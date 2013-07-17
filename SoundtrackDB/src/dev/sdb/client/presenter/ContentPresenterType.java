@@ -1,22 +1,28 @@
 package dev.sdb.client.presenter;
 
 public enum ContentPresenterType {
-	HOME("home"),
-	RELEASE("release"),
-	MUSIC("music"),
-	SOUNDTRACK("soundtrack"),
-	SERIES("series");
+	HOME("home", ""),
+	RELEASE("release", "VÖ"),
+	MUSIC("music", "Musik"),
+	SOUNDTRACK("soundtrack", "Soundtrack"),
+	SERIES("series", "Serien");
 
-	private String token = "";
+	private String token;
+	private String name;
 
-	private ContentPresenterType(String token) {
+	private ContentPresenterType(String token, String name) {
 		if (token.contains("?"))
 			throw new IllegalArgumentException("token must not contain the question mark");
 		this.token = token.toLowerCase();
+		this.name = name;
 	}
 
 	public String getToken() {
 		return this.token;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 	public static ContentPresenterType getByToken(String token) {

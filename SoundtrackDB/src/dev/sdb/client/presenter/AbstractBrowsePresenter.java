@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.client.ClientFactory;
+import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.view.DetailView;
 import dev.sdb.client.view.QueryView;
@@ -110,6 +111,9 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 	private IsWidget getQueryView(String term) {
 		assert (term != null);
 
+		String title = getType().getName() + "-Suche" + ((term.isEmpty()) ? "" : (": " + term));
+		SoundtrackDB.setBrowserWindowTitle(title);
+
 		if (this.queryView == null) {
 			this.queryView = createQueryView(term);
 			if (!term.isEmpty()) {
@@ -153,6 +157,10 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		service.get(this.flavor, getLastDetailId(), new AsyncCallback<Entity>() {
 
 			public void onSuccess(Entity entity) {
+				String match = entity.getMatch();
+				String title = getType().getName() + "-Details" + ((match.isEmpty()) ? "" : (": " + match));
+				SoundtrackDB.setBrowserWindowTitle(title);
+
 				setCurrentDetailEntity(entity);
 				view.initEntity(entity);
 				view.setEnabled(true);
@@ -196,6 +204,10 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 			public void onSuccess(Result searchResult) {
 				addHistorySearch(term);
+
+				String title = getType().getName() + "-Suche" + ((term.isEmpty()) ? "" : (": " + term));
+				SoundtrackDB.setBrowserWindowTitle(title);
+
 				view.showResult(term, searchResult);
 			}
 
@@ -208,12 +220,12 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 	protected void addHistorySearch(String term) {
 		String token = getSearchToken(term);
-		getClientFactory().getHistoryManager().setHistory(token, false);
+		getClientFactory().getHistoryManager().createHistory(token, false);
 	}
 
 	protected void addHistoryNavigation(ContentPresenterType type, Entity entity) {
 		String token = getEntityToken(type, entity);
-		getClientFactory().getHistoryManager().setHistory(token, true);
+		getClientFactory().getHistoryManager().createHistory(token, true);
 	}
 
 

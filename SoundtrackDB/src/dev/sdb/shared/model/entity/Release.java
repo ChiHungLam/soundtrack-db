@@ -48,10 +48,13 @@ public class Release extends AbstractEntity {
 	}
 
 	@Override public String toString() {
-		String info = "Release #" + getId() + ": " + getTitleInfo();
-		return info;
+		return "Release #" + getId();
 	}
 
+	@Override public String getMatch() {
+		return getTitleInfo();
+	}
+	
 	public String getTitleInfo() {
 		String info;
 

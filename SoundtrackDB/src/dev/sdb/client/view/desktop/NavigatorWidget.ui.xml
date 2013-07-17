@@ -10,19 +10,29 @@
 		}
 		.highlighted a:link {
 			color: #453F6B;
+
+			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			transition: text-shadow 0.5s, color 0.5s;
 		}
 		.highlighted a:visited {
 			color: #453F6B;
+
+			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			transition: text-shadow 0.5s, color 0.5s;
 		}
 	</ui:style>
 
 	<g:HTMLPanel>
 		<g:VerticalPanel spacing="5">
-			<g:Hyperlink text="sdb" targetHistoryToken="home" ui:field="homeLink" styleName="neonDarkShadow contentLink"/>
-			<g:Hyperlink text="Veröffentlichungen" targetHistoryToken="release" ui:field="releaseLink" styleName="neonDarkShadow contentLink"/>
-			<g:Hyperlink text="Musik" targetHistoryToken="music" ui:field="musicLink" styleName="neonDarkShadow contentLink"/>
-			<g:Hyperlink text="Soundtrack" targetHistoryToken="soundtrack" ui:field="soundtrackLink" styleName="neonDarkShadow contentLink"/>
-			<g:Hyperlink text="Serien" targetHistoryToken="series" ui:field="seriesLink" styleName="neonDarkShadow contentLink"/>
+			<g:Hyperlink text="sdb" targetHistoryToken="home" ui:field="homeLink" styleName="contentLink"/>
+			<g:Hyperlink text="Veröffentlichungen" targetHistoryToken="release" ui:field="releaseLink" styleName="contentLink"/>
+			<g:Hyperlink text="Musik" targetHistoryToken="music" ui:field="musicLink" styleName="contentLink"/>
+			<g:Hyperlink text="Soundtrack" targetHistoryToken="soundtrack" ui:field="soundtrackLink" styleName="contentLink"/>
+			<g:Hyperlink text="Serien" targetHistoryToken="series" ui:field="seriesLink" styleName="contentLink"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

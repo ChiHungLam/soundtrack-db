@@ -3,6 +3,7 @@ package dev.sdb.client.presenter;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import dev.sdb.client.ClientFactory;
+import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.view.HomeView;
 
 public class HomePresenter extends AbstractContentPresenter implements HomeView.Presenter {
@@ -14,6 +15,9 @@ public class HomePresenter extends AbstractContentPresenter implements HomeView.
 	@Override public IsWidget getView(String state) {
 		HomeView view = getClientFactory().getUi().getHomeView();
 		view.setPresenter(this);
+
+		SoundtrackDB.setBrowserWindowTitle(null);
+
 		return view;
 	}
 
