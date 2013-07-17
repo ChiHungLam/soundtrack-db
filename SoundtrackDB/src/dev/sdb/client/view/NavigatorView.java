@@ -12,5 +12,9 @@ public interface NavigatorView extends IsWidget {
 
 	void setPresenter(Presenter presenter);
 
+	/**
+	 * @param type
+	 *            The currently active type
+	 */
 	void highlightLink(ContentPresenterType type);
 }

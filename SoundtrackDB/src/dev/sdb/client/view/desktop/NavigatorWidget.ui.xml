@@ -4,11 +4,57 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
 	<ui:style type="dev.sdb.client.view.desktop.NavigatorWidget.NavigatorStyle">
-		.highlighted {
+		.contentLink {
+			border: 1px solid #9b9ec6;
+			background: #CbCeF6;
+			padding-left: 5px;
+			padding-top: 5px;
+			width: 140px;
+			height: 25px;
+			font-weight: bolder;
+			
+			text-shadow: 0 0 7px grey;
+			
+			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			transition: text-shadow 0.5s, color 0.5s;
+		}
+		
+		.contentLink a:link {
+			color: #6A5FA8;
+			
+			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			transition: text-shadow 0.5s, color 0.5s;
+		}
+		
+		.contentLink a:visited {
+			color: #6A5FA8;
+			
+			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
+			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
+			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
+			transition: text-shadow 0.5s, color 0.5s;
+		}
+		
+		.contentLink a:hover {
+			text-shadow: 0 0 14px black;
+			text-decoration: none;
+			
+			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
+			transition: text-shadow 0.5s, color 0.5s;
+		}
+		
+		.contentLink.highlighted {
 			font-weight: bold;
 			text-shadow: 0 0 14px black;
 		}
-		.highlighted a:link {
+		
+		.contentLink.highlighted a:link {
 			color: #453F6B;
 
 			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
@@ -16,7 +62,8 @@
 			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
 			transition: text-shadow 0.5s, color 0.5s;
 		}
-		.highlighted a:visited {
+		
+		.contentLink.highlighted a:visited {
 			color: #453F6B;
 
 			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
