@@ -90,6 +90,14 @@
 	bottom: 55px;
 }
 
+#error_area {
+	position: absolute;	
+	top: 0px;
+	left: 0px;
+	width: 0px;
+	height: 0px;
+}
+
 #footer_area {
 	/* background-color: white; */
 	background: rgb(213,212,247); /* Old browsers */
@@ -110,50 +118,7 @@
 	height: 55px;
 }
 
-.contentLink {
-	border: 1px solid #9b9ec6;
-	background: #CbCeF6;
-	padding-left: 5px;
-	padding-top: 5px;
-	width: 140px;
-	height: 25px;
-	font-weight: bolder;
-	
-	text-shadow: 0 0 7px grey;
-	
-	-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	transition: text-shadow 0.5s, color 0.5s;
-}
 
-.contentLink a:link {
-	color: #6A5FA8;
-	
-	-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	transition: text-shadow 0.5s, color 0.5s;
-}
-
-.contentLink a:visited {
-	color: #6A5FA8;
-	
-	-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
-	-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
-	-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
-	transition: text-shadow 0.5s, color 0.5s;
-}
-
-.contentLink a:hover {
-	text-shadow: 0 0 14px black;
-	text-decoration: none;
-	
-	-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-	transition: text-shadow 0.5s, color 0.5s;
-}
 
 .siteTitle {
 	text-shadow: 0 0 14px white;
@@ -174,4 +139,38 @@
 }
 .neonDarkShadow {
 	text-shadow: 0 0 7px grey;
+}
+
+
+
+.glass-pane{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+	
+	background-color: rgba(128, 128, 128, 0.5);
+}
+
+
+.message {
+	position: fixed;	
+	min-width: 400px;
+	min-height: 300px;
+	
+	border: 1px solid white;
+	background-color: rgba(255, 255, 255, 0.9);
+}
+.message-title {
+	background-color: rgba(255, 255, 255, 0.9);
+	display: block;
+	font-weight: bold;
+	color: red;
+}
+.message-content {
+	display: block;
+	font-family: monospace;
+	
+	overflow: auto;
 }

@@ -13,6 +13,8 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import dev.sdb.client.event.SearchEvent;
+import dev.sdb.client.event.SearchEventHandler;
 import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.view.QueryView;
 import dev.sdb.shared.model.db.Result;

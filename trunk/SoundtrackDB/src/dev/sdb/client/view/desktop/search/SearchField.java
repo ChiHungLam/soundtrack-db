@@ -20,6 +20,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import dev.sdb.client.event.SearchEvent;
+import dev.sdb.client.event.SearchEventHandler;
 import dev.sdb.shared.SearchTermVerifier;
 
 

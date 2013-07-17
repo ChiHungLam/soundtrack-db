@@ -18,6 +18,7 @@ public class NavigatorWidget extends Composite implements NavigatorView {
 
 	public interface NavigatorStyle extends CssResource {
 		String highlighted();
+		String contentLink();
 	}
 
 	@UiField protected NavigatorStyle style;
@@ -33,13 +34,25 @@ public class NavigatorWidget extends Composite implements NavigatorView {
 	public NavigatorWidget() {
 		super();
 		initWidget(uiBinder.createAndBindUi(this));
+
+		this.homeLink.setStyleName(this.style.contentLink());
+		this.releaseLink.setStyleName(this.style.contentLink());
+		this.musicLink.setStyleName(this.style.contentLink());
+		this.soundtrackLink.setStyleName(this.style.contentLink());
+		this.seriesLink.setStyleName(this.style.contentLink());
 	}
 
 	@Override public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see dev.sdb.client.view.NavigatorView#highlightLink(dev.sdb.client.presenter.ContentPresenterType)
+	 */
 	@Override public void highlightLink(ContentPresenterType type) {
+		//adding or removing the highlightes style depending on the given type
 		this.homeLink.setStyleName(this.style.highlighted(), (type == ContentPresenterType.HOME));
 		this.releaseLink.setStyleName(this.style.highlighted(), (type == ContentPresenterType.RELEASE));
 		this.musicLink.setStyleName(this.style.highlighted(), (type == ContentPresenterType.MUSIC));

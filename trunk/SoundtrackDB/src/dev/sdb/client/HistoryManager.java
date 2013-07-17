@@ -2,35 +2,29 @@ package dev.sdb.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RootPanel;
 
+import dev.sdb.client.event.ContentAreaChangeEvent;
 import dev.sdb.client.presenter.ContentPresenter;
 import dev.sdb.client.presenter.ContentPresenterType;
-import dev.sdb.client.presenter.FooterPresenter;
-import dev.sdb.client.presenter.HeaderPresenter;
 import dev.sdb.client.presenter.HomePresenter;
 import dev.sdb.client.presenter.MusicPresenter;
-import dev.sdb.client.presenter.NavigatorPresenter;
 import dev.sdb.client.presenter.ReleasePresenter;
 import dev.sdb.client.presenter.SeriesPresenter;
 import dev.sdb.client.presenter.SoundtrackPresenter;
 
 public class HistoryManager {
 
+	private static final Logger LOGGER = Logger.getLogger(HistoryManager.class.getName());
+
 	private static final Map<ContentPresenterType, ContentPresenter> PRESENTER_MAP = new HashMap<ContentPresenterType, ContentPresenter>();
 
-	private static boolean LOG_URLS_AND_TOKENS = false;
-
 	private ClientFactory clientFactory;
-
-	private NavigatorPresenter navigatorPresenter;
-	private HeaderPresenter headerPresenter;
-	private FooterPresenter footerPresenter;
 
 	/**
 	 * This token represents the current state of the application. Its value is <i>not</i> url encoded.
@@ -40,13 +34,10 @@ public class HistoryManager {
 	public HistoryManager(ClientFactory clientFactory) {
 		super();
 		this.clientFactory = clientFactory;
+		setUp();
 	}
 
-	public void setUp(NavigatorPresenter navigatorPresenter, HeaderPresenter headerPresenter, FooterPresenter footerPresenter) {
-		this.navigatorPresenter = navigatorPresenter;
-		this.headerPresenter = headerPresenter;
-		this.footerPresenter = footerPresenter;
-
+	private void setUp() {
 		//Prepare history event handler
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {
 			public void onValueChange(ValueChangeEvent<String> event) {
@@ -58,10 +49,6 @@ public class HistoryManager {
 				setContentArea(historyToken);
 			}
 		});
-
-		//Show current content
-		String startingToken = History.getToken();
-		setContentArea(startingToken);
 	}
 
 	protected ContentPresenter getContentPresenter(ContentPresenterType type) {
@@ -105,19 +92,9 @@ public class HistoryManager {
 		setToken(token);
 
 		ContentPresenterType type = getContentPresenterType(token);
-
-		this.navigatorPresenter.switchToArea(type);
-		this.headerPresenter.switchToArea(type);
-		this.footerPresenter.switchToArea(type);
-
-		final RootPanel contentArea = RootPanel.get("content_area");
-
-		while (contentArea.getWidgetCount() > 0)
-			contentArea.remove(0);
-
 		IsWidget contentWidget = getContentWidget(type, token);
-		if (contentWidget != null)
-			contentArea.add(contentWidget);
+
+		this.clientFactory.getEventBus().fireEventFromSource(new ContentAreaChangeEvent(type, contentWidget), this);
 	}
 
 	protected IsWidget getContentWidget(ContentPresenterType type, String historyToken) {
@@ -167,9 +144,7 @@ public class HistoryManager {
 	}
 
 	public void createHistory(String token, boolean issueEvent) {
-		if (LOG_URLS_AND_TOKENS) {
-			System.out.println("Adding to history" + (!issueEvent ? " (without events)" : "") + ": " + token);
-		}
+		LOGGER.config("Adding to history" + (!issueEvent ? " (without events)" : "") + ": " + token);
 
 		History.newItem(token, issueEvent);
 		if (!issueEvent)
@@ -181,10 +156,14 @@ public class HistoryManager {
 	}
 
 	public void setToken(String token) {
-		if (LOG_URLS_AND_TOKENS) {
-			System.out.println("Setting token to: " + token);
-		}
+		LOGGER.config("Setting token to: " + token);
 
 		this.token = token;
+	}
+
+	public void handleCurrentHistory() {
+		//Show current content
+		String startingToken = History.getToken();
+		setContentArea(startingToken);
 	}
 }

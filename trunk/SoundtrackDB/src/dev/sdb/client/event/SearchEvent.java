@@ -1,4 +1,4 @@
-package dev.sdb.client.view.desktop.search;
+package dev.sdb.client.event;
 
 import com.google.gwt.event.shared.GwtEvent;
 
