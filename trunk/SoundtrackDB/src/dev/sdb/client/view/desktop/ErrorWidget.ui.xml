@@ -1,0 +1,73 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+	xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	
+	<ui:style type="dev.sdb.client.view.desktop.ErrorWidget.ErrorStyle">
+		.glass-pane{
+			position: fixed;
+			
+			top: 0px;
+			left: 0px;
+			bottom: 0px;
+			right: 0px;
+			
+			background-color: rgba(128, 128, 128, 0.5);
+			
+			display: none;
+			opacity: 0;
+			
+			-webkit-transition: opacity 1s ease-in-out;
+			-moz-transition: opacity 1s ease-in-out;
+			-o-transition: opacity 1s ease-in-out;
+			transition: opacity 1s ease-in-out;
+		}
+		.glass-pane.displayed {
+			display: block;
+			opacity: 1;
+		}
+		.message {
+			position: fixed;	
+			
+			top: 100%;
+			left: 160px;
+			bottom: 55px;
+			right: 10px;
+			
+ 			border: 1px solid white;
+ 			background-color: rgba(255, 255, 255, 0.9);
+ 			
+ 			-webkit-transition: top 1s ease-in-out;
+			-moz-transition: top 1s ease-in-out;
+			-o-transition: top 1s ease-in-out;
+			transition: top 1s ease-in-out;
+		}
+		.message.displayed {
+			top: 100px;
+		}
+		
+		.message-title {
+			background-color: rgba(255, 255, 255, 0.9);
+			display: block;
+			font-weight: bold;
+			color: red;
+		}
+		.message-content {
+			display: block;
+			font-family: monospace;
+			
+			overflow: auto;
+		}
+		
+		
+	</ui:style>
+	
+	<g:HTMLPanel>
+		<g:FlowPanel ui:field="glassPanel" styleName="{style.glass-pane}"></g:FlowPanel>
+		<g:FlowPanel ui:field="dialogPanel" styleName="{style.message}">
+			<g:FlowPanel styleName="{style.message-title}"><g:Label ui:field="errorTitle" text="ERROR"/></g:FlowPanel>
+			<g:FlowPanel styleName="{style.message-content}"><g:HTML ui:field="errorMessage" wordWrap="true">This is an error text</g:HTML></g:FlowPanel>
+			<g:Button ui:field="closeButton" text="Schließen"/>
+		</g:FlowPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

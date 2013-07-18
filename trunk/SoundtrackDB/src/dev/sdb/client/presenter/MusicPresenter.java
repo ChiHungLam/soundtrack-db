@@ -76,8 +76,7 @@ public class MusicPresenter extends AbstractBrowsePresenter implements MusicQuer
 			}
 
 			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-				getClientFactory().getUi().showRpcError(caught, "Release list for [" + Flavor.MUSIC.name() + "] id=" + id, null);
+				handleRpcError("Release list for [" + Flavor.MUSIC.name() + "] id=" + id, caught);
 				view.clearSublist();
 			}
 		});
