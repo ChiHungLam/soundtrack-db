@@ -143,34 +143,4 @@
 
 
 
-.glass-pane{
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	bottom: 0px;
-	right: 0px;
-	
-	background-color: rgba(128, 128, 128, 0.5);
-}
 
-
-.message {
-	position: fixed;	
-	min-width: 400px;
-	min-height: 300px;
-	
-	border: 1px solid white;
-	background-color: rgba(255, 255, 255, 0.9);
-}
-.message-title {
-	background-color: rgba(255, 255, 255, 0.9);
-	display: block;
-	font-weight: bold;
-	color: red;
-}
-.message-content {
-	display: block;
-	font-family: monospace;
-	
-	overflow: auto;
-}

@@ -1,11 +1,15 @@
 package dev.sdb.client.presenter;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.SoundtrackDB;
+import dev.sdb.client.event.FatalErrorEvent;
 import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.view.DetailView;
 import dev.sdb.client.view.QueryView;
@@ -14,6 +18,8 @@ import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 
 public abstract class AbstractBrowsePresenter extends AbstractContentPresenter implements QueryView.Presenter {
+
+	private static final Logger LOGGER = Logger.getLogger(AbstractBrowsePresenter.class.getName());
 
 	private final Flavor flavor;
 
@@ -167,10 +173,16 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 			}
 
 			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-				getClientFactory().getUi().showRpcError(caught, "[" + AbstractBrowsePresenter.this.flavor.name() + "] id=" + getLastDetailId(), view);
+				handleRpcError("[" + AbstractBrowsePresenter.this.flavor.name() + "] id=" + getLastDetailId(), caught);
+				view.setEnabled(true);
 			}
 		});
+	}
+
+	protected void handleRpcError(String message, Throwable caught) {
+		String title = "Remote Procedure Call - Error";
+		LOGGER.log(Level.SEVERE, title + ":" + message, caught);
+		getClientFactory().getEventBus().fireEventFromSource(new FatalErrorEvent(title, message, caught), this);
 	}
 
 	@Override public void onBrowse(ContentPresenterType type, Entity entity) {
@@ -212,8 +224,8 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 			}
 
 			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-				getClientFactory().getUi().showRpcError(caught, "[" + AbstractBrowsePresenter.this.flavor.name() + "] " + AbstractBrowsePresenter.this.lastSearchTerm, view);
+				handleRpcError("[" + AbstractBrowsePresenter.this.flavor.name() + "] " + AbstractBrowsePresenter.this.lastSearchTerm, caught);
+				view.setEnabled(true);
 			}
 		});
 	}
@@ -227,8 +239,4 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		String token = getEntityToken(type, entity);
 		getClientFactory().getHistoryManager().createHistory(token, true);
 	}
-
-
-
-
 }

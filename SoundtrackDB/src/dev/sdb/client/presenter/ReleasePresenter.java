@@ -96,8 +96,7 @@ public class ReleasePresenter extends AbstractBrowsePresenter implements Release
 			}
 
 			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-				getClientFactory().getUi().showRpcError(caught, "Sequence list for [" + Flavor.RELEASES.name() + "] audioId=" + audioId, null);
+				handleRpcError("Sequence list for [" + Flavor.RELEASES.name() + "] audioId=" + audioId, caught);
 				view.clearSublist();
 			}
 		});

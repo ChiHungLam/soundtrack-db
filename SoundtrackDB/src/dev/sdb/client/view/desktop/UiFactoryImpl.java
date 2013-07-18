@@ -2,20 +2,13 @@ package dev.sdb.client.view.desktop;
 
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
+import dev.sdb.client.view.ErrorView;
 import dev.sdb.client.view.FooterView;
 import dev.sdb.client.view.HeaderView;
 import dev.sdb.client.view.HomeView;
@@ -40,16 +33,13 @@ import dev.sdb.shared.model.entity.Series;
 import dev.sdb.shared.model.entity.Soundtrack;
 
 public class UiFactoryImpl implements UiFactory {
-	/**
-	 * The message displayed to the user when the server cannot be reached or returns an error.
-	 */
-	public static final String SERVER_ERROR = "An error occurred while "
-			+ "attempting to contact the server. Please check your network "
-			+ "connection and try again.";
+
 
 	private NavigatorView navigatorView;
 	private HeaderView headerView;
 	private FooterView footerView;
+
+	private ErrorView errorView;
 
 	private HomeView homeView;
 
@@ -65,48 +55,6 @@ public class UiFactoryImpl implements UiFactory {
 
 	public UiFactoryImpl() {
 		super();
-	}
-
-	public void showRpcError(Throwable caught, String msg, final HasEnabled hasEnabled) {
-		// Create the popup dialog box
-		final DialogBox dialogBox = new DialogBox();
-		dialogBox.setText("Remote Procedure Call - Fehler");
-		dialogBox.setAnimationEnabled(true);
-		final Button closeButton = new Button("Close");
-
-		// We can set the id of a widget by accessing its Element
-		closeButton.getElement().setId("closeButton");
-
-		final Label textToServerLabel = new Label();
-		textToServerLabel.setText(msg);
-
-		final HTML serverResponseLabel = new HTML();
-		serverResponseLabel.setText("");
-		serverResponseLabel.addStyleName("serverResponseLabelError");
-		serverResponseLabel.setHTML(SERVER_ERROR + "<p>Original error message:<br/>" + caught.getLocalizedMessage() + "</p>");
-
-		VerticalPanel dialogVPanel = new VerticalPanel();
-		dialogVPanel.addStyleName("dialogVPanel");
-		dialogVPanel.add(new HTML("<b>Sent to the server:</b>"));
-		dialogVPanel.add(textToServerLabel);
-		dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-		dialogVPanel.add(serverResponseLabel);
-		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-		dialogVPanel.add(closeButton);
-		dialogBox.setWidget(dialogVPanel);
-
-		// Add a handler to close the DialogBox
-		closeButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				dialogBox.hide();
-				if (hasEnabled != null)
-					hasEnabled.setEnabled(true);
-			}
-		});
-
-		// Show the RPC error message to the user
-		dialogBox.center();
-		closeButton.setFocus(true);
 	}
 
 	@Override public NavigatorView getNavigatorView() {
@@ -127,6 +75,11 @@ public class UiFactoryImpl implements UiFactory {
 		return this.footerView;
 	}
 
+	@Override public ErrorView getErrorView() {
+		if (this.errorView == null)
+			this.errorView = new ErrorWidget();
+		return this.errorView;
+	}
 	@Override public HomeView getHomeView() {
 		if (this.homeView == null)
 			this.homeView = new HomeWidget();
