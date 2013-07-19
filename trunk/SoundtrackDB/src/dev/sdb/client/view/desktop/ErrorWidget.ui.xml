@@ -4,28 +4,42 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
 	<ui:style type="dev.sdb.client.view.desktop.ErrorWidget.ErrorStyle">
-		.glass-pane{
+		
+		.glasspane {
 			position: fixed;
 			
 			top: 0px;
 			left: 0px;
-			bottom: 0px;
+			
 			right: 0px;
 			
 			background-color: rgba(128, 128, 128, 0.5);
 			
-			display: none;
-			opacity: 0;
-			
-			-webkit-transition: opacity 1s ease-in-out;
-			-moz-transition: opacity 1s ease-in-out;
-			-o-transition: opacity 1s ease-in-out;
-			transition: opacity 1s ease-in-out;
-		}
-		.glass-pane.displayed {
 			display: block;
-			opacity: 1;
+			opacity: 0.0;
+			
+			height: 0px;
+    		overflow: hidden;
+    
+			-webkit-transition: opacity 1s ease-in-out, height 1s linear 0s;
+			-moz-transition: opacity 1s ease-in-out, height 1s linear 0s;
+			-o-transition: opacity 1s ease-in-out, height 1s linear 0s;
+			transition: opacity 1s ease-in-out, height 1s linear 0s;
 		}
+		.glasspane.blocking {
+			opacity: 1.0;
+			
+			height: 100%;
+		}
+		
+		.closeButton {
+			position: absolute;
+			top: 10px;
+			right: 15px;
+			width: 80px;
+			height: 25px;
+		}
+		
 		.message {
 			position: fixed;	
 			
@@ -33,6 +47,9 @@
 			left: 160px;
 			bottom: 55px;
 			right: 10px;
+			
+			padding: 15px;
+			padding-top: 10px;
 			
  			border: 1px solid white;
  			background-color: rgba(255, 255, 255, 0.9);
@@ -49,13 +66,27 @@
 		.message-title {
 			background-color: rgba(255, 255, 255, 0.9);
 			display: block;
+			font-family: verdana;
 			font-weight: bold;
+			font-size: 25px;
+			text-align: left;
 			color: red;
 		}
+		
+		.message-summary {
+			margin-top: 15px;
+			font-family: verdana;
+			font-weight: bold;
+			font-size: 14px;
+			text-align: left;
+			display: block;
+		}
+		
 		.message-content {
+			margin-top: 15px;
 			display: block;
 			font-family: monospace;
-			
+			text-align: left;
 			overflow: auto;
 		}
 		
@@ -63,11 +94,12 @@
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<g:FlowPanel ui:field="glassPanel" styleName="{style.glass-pane}"></g:FlowPanel>
+		<g:FlowPanel ui:field="glassPanel" styleName="{style.glasspane}"></g:FlowPanel>
 		<g:FlowPanel ui:field="dialogPanel" styleName="{style.message}">
 			<g:FlowPanel styleName="{style.message-title}"><g:Label ui:field="errorTitle" text="ERROR"/></g:FlowPanel>
-			<g:FlowPanel styleName="{style.message-content}"><g:HTML ui:field="errorMessage" wordWrap="true">This is an error text</g:HTML></g:FlowPanel>
-			<g:Button ui:field="closeButton" text="Schließen"/>
+			<g:FlowPanel styleName="{style.message-summary}"><g:HTML ui:field="errorSummary" wordWrap="true">This is the summary</g:HTML></g:FlowPanel>
+			<g:FlowPanel styleName="{style.message-content}"><g:HTML ui:field="errorDetails" wordWrap="true">These are the details</g:HTML></g:FlowPanel>
+			<g:Button ui:field="closeButton" styleName="{style.closeButton}" text="Schließen"/>
 		</g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

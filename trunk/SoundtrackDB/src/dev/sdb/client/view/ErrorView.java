@@ -15,7 +15,9 @@ public interface ErrorView extends IsWidget {
 	void setPresenter(Presenter presenter);
 
 	HasText getTitleWidget();
-	HasHTML getMessageWidget();
+
+	HasHTML getSummaryWidget();
+	HasHTML getDetailsWidget();
 
 	void show();
 
