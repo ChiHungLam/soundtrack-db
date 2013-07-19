@@ -23,6 +23,7 @@ public class ErrorWidget extends Composite implements ErrorView {
 	private static ErrorWidgetUiBinder uiBinder = GWT.create(ErrorWidgetUiBinder.class);
 
 	public interface ErrorStyle extends CssResource {
+		String blocking();
 		String displayed();
 	}
 
@@ -32,7 +33,8 @@ public class ErrorWidget extends Composite implements ErrorView {
 	@UiField FlowPanel dialogPanel;
 
 	@UiField Label errorTitle;
-	@UiField HTML errorMessage;
+	@UiField HTML errorSummary;
+	@UiField HTML errorDetails;
 	@UiField Button closeButton;
 
 	@SuppressWarnings("unused") private Presenter presenter;
@@ -50,17 +52,21 @@ public class ErrorWidget extends Composite implements ErrorView {
 		return this.errorTitle;
 	}
 
-	@Override public HasHTML getMessageWidget() {
-		return this.errorMessage;
+	@Override public HasHTML getSummaryWidget() {
+		return this.errorSummary;
+	}
+
+	@Override public HasHTML getDetailsWidget() {
+		return this.errorDetails;
 	}
 
 	@Override public void show() {
-		this.glassPanel.addStyleName(this.style.displayed());
+		this.glassPanel.addStyleName(this.style.blocking());
 		this.dialogPanel.addStyleName(this.style.displayed());
 	}
 
 	@Override public void hide() {
-		this.glassPanel.removeStyleName(this.style.displayed());
+		this.glassPanel.removeStyleName(this.style.blocking());
 		this.dialogPanel.removeStyleName(this.style.displayed());
 	}
 	@UiHandler("closeButton")

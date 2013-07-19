@@ -21,6 +21,13 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 	private static final Logger LOGGER = Logger.getLogger(AbstractBrowsePresenter.class.getName());
 
+	/**
+	 * The message displayed to the user when the server cannot be reached or returns an error.
+	 */
+	public static final String SERVER_ERROR = "An error occurred while "
+			+ "attempting to contact the server. Please check your network "
+			+ "connection and try again.";
+
 	private final Flavor flavor;
 
 	private String lastSearchTerm;
@@ -182,6 +189,9 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 	protected void handleRpcError(String message, Throwable caught) {
 		String title = "Remote Procedure Call - Error";
 		LOGGER.log(Level.SEVERE, title + ":" + message, caught);
+
+		message = SERVER_ERROR + "<br><br>" + message;
+
 		getClientFactory().getEventBus().fireEventFromSource(new FatalErrorEvent(title, message, caught), this);
 	}
 
