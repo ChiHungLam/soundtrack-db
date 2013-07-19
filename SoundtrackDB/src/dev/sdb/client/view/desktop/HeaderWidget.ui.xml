@@ -3,14 +3,35 @@
 	xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
-	<ui:style>
-		
+	<ui:style type="dev.sdb.client.view.desktop.HeaderWidget.Style">
+		.siteTitle {
+			text-shadow: 0 0 14px white;
+			font-weight: bold;
+			margin-top: 25px;
+			margin-left: 35px;
+			text-align: left;
+			
+			position: absolute;
+			left: 0px;
+			right: 0px;
+			
+			-webkit-transition: right 0.3s;
+		}
+		.siteTitle.shrunk {
+			right:250px;
+		}
+		.siteLogo {
+			font-size: xx-large;
+		}
+		.siteDescription {
+			padding-left:10px;
+		}
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<div class="siteTitle">
-			<span class="siteLogo">sdb&nbsp;</span>
-			<span class="siteDescription">Die Soundtrack-Datenbank für Hörspiele aus dem Studio EUROPA</span>
-		</div>
+		<g:FlowPanel styleName="{style.siteTitle}" ui:field="titlePanel">
+			<g:InlineLabel text="sdb" styleName="{style.siteLogo}"/>
+			<g:InlineLabel text="Die Soundtrack-Datenbank für Hörspiele aus dem Studio EUROPA" styleName="{style.siteDescription}"/>
+		</g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

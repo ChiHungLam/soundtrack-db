@@ -3,7 +3,7 @@
 	xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
-	<ui:style type="dev.sdb.client.view.desktop.NavigatorWidget.NavigatorStyle">
+	<ui:style type="dev.sdb.client.view.desktop.NavigatorWidget.Style">
 		.contentLink {
 			border: 1px solid #9b9ec6;
 			background: #CbCeF6;
@@ -15,70 +15,64 @@
 			
 			text-shadow: 0 0 7px grey;
 			
-			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			transition: text-shadow 0.5s, color 0.5s;
+			-webkit-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			-moz-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			-o-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			transition: text-shadow 1.0s, color 1.0s, background 1.0s;
 		}
 		
 		.contentLink a:link {
 			color: #6A5FA8;
 			
-			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			transition: text-shadow 0.5s, color 0.5s;
+			-webkit-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			-moz-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			-o-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			transition: text-shadow 1.0s, color 1.0s, background 1.0s;
 		}
 		
 		.contentLink a:visited {
 			color: #6A5FA8;
 			
-			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
-			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
-			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */	
-			transition: text-shadow 0.5s, color 0.5s;
+			-webkit-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */	
+			-moz-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */	
+			-o-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */	
+			transition: text-shadow 1.0s, color 1.0s, background 1.0s;
 		}
 		
 		.contentLink a:hover {
 			text-shadow: 0 0 14px black;
 			text-decoration: none;
 			
-			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			transition: text-shadow 0.5s, color 0.5s;
+			-webkit-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			-moz-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			-o-transition: text-shadow 1.0s, color 1.0s, background 1.0s; /* Safari */
+			transition: text-shadow 1.0s, color 1.0s, background 1.0s;
 		}
 		
-		.contentLink.highlighted {
+		.contentLink.highlighted {			
 			font-weight: bold;
-			text-shadow: 0 0 14px black;
+			
+			background: #6B6FA2;
 		}
 		
 		.contentLink.highlighted a:link {
-			color: #453F6B;
-
-			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			transition: text-shadow 0.5s, color 0.5s;
+			color: #D5D4F7;
+			text-shadow: 0 0 14px white;
 		}
 		
 		.contentLink.highlighted a:visited {
-			color: #453F6B;
-
-			-webkit-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-moz-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			-o-transition: text-shadow 0.5s, color 0.5s; /* Safari */
-			transition: text-shadow 0.5s, color 0.5s;
+			color: #D5D4F7;
+			text-shadow: 0 0 14px white;
 		}
+		
 	</ui:style>
 
 	<g:HTMLPanel>
 		<g:VerticalPanel spacing="5">
-			<g:Hyperlink text="sdb" targetHistoryToken="home" ui:field="homeLink" styleName="contentLink"/>
+			<g:Hyperlink text="Willkommen" targetHistoryToken="home" ui:field="homeLink" styleName="contentLink"/>
 			<g:Hyperlink text="Veröffentlichungen" targetHistoryToken="release" ui:field="releaseLink" styleName="contentLink"/>
 			<g:Hyperlink text="Musik" targetHistoryToken="music" ui:field="musicLink" styleName="contentLink"/>
-			<g:Hyperlink text="Soundtrack" targetHistoryToken="soundtrack" ui:field="soundtrackLink" styleName="contentLink"/>
+			<g:Hyperlink text="Soundtracks" targetHistoryToken="soundtrack" ui:field="soundtrackLink" styleName="contentLink"/>
 			<g:Hyperlink text="Serien" targetHistoryToken="series" ui:field="seriesLink" styleName="contentLink"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>

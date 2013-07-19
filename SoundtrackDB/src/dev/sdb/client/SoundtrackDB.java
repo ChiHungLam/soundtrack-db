@@ -18,10 +18,12 @@ import dev.sdb.client.presenter.ErrorPresenter;
 import dev.sdb.client.presenter.FooterPresenter;
 import dev.sdb.client.presenter.HeaderPresenter;
 import dev.sdb.client.presenter.NavigatorPresenter;
+import dev.sdb.client.presenter.SectionInfoPresenter;
 import dev.sdb.client.view.ErrorView;
 import dev.sdb.client.view.FooterView;
 import dev.sdb.client.view.HeaderView;
 import dev.sdb.client.view.NavigatorView;
+import dev.sdb.client.view.SectionInfoView;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -64,6 +66,13 @@ public class SoundtrackDB implements EntryPoint {
 		footerView.setPresenter(footerPresenter);
 		RootPanel.get("footer_area").add(footerView);
 
+		//Create the footer presenter
+		final SectionInfoPresenter sectionInfoPresenter = new SectionInfoPresenter(clientFactory);
+		//Create view and attach it to the corresponding panel
+		SectionInfoView sectionInfoView = clientFactory.getUi().getSectionInfoView();
+		sectionInfoView.setPresenter(sectionInfoPresenter);
+		RootPanel.get("sectioninfo_area").add(sectionInfoView);
+
 		//Create the error presenter
 		final ErrorPresenter errorPresenter = new ErrorPresenter(clientFactory);
 		//Create view and attach it to the corresponding panel
@@ -81,6 +90,7 @@ public class SoundtrackDB implements EntryPoint {
 				navigatorPresenter.switchToArea(type);
 				headerPresenter.switchToArea(type);
 				footerPresenter.switchToArea(type);
+				sectionInfoPresenter.switchToArea(type);
 
 				final RootPanel contentArea = RootPanel.get("content_area");
 

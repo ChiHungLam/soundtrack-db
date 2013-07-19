@@ -17,6 +17,7 @@ import dev.sdb.client.view.MusicQueryView;
 import dev.sdb.client.view.NavigatorView;
 import dev.sdb.client.view.ReleaseDetailView;
 import dev.sdb.client.view.ReleaseQueryView;
+import dev.sdb.client.view.SectionInfoView;
 import dev.sdb.client.view.SeriesDetailView;
 import dev.sdb.client.view.SeriesQueryView;
 import dev.sdb.client.view.SoundtrackDetailView;
@@ -34,10 +35,21 @@ import dev.sdb.shared.model.entity.Soundtrack;
 
 public class UiFactoryImpl implements UiFactory {
 
+	public static String getBrowserPrefixedCssDefinition(String attribute, String value) {
+		String all = "";
+		all += "-webkit-" + attribute + ": " + value + "; ";
+		all += "-moz-" + attribute + ": " + value + "; ";
+		all += "-o-" + attribute + ": " + value + "; ";
+		all += attribute + ": " + value + ";";
+		return all;
+	}
+
+
 
 	private NavigatorView navigatorView;
 	private HeaderView headerView;
 	private FooterView footerView;
+	private SectionInfoView sectionInfoView;
 
 	private ErrorView errorView;
 
@@ -55,6 +67,12 @@ public class UiFactoryImpl implements UiFactory {
 
 	public UiFactoryImpl() {
 		super();
+	}
+
+	@Override public SectionInfoView getSectionInfoView() {
+		if (this.sectionInfoView == null)
+			this.sectionInfoView = new SectionInfoWidget();
+		return this.sectionInfoView;
 	}
 
 	@Override public NavigatorView getNavigatorView() {
