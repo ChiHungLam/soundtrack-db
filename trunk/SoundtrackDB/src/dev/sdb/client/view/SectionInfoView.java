@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 import dev.sdb.client.presenter.ContentPresenterType;
 
-public interface NavigatorView extends IsWidget {
+public interface SectionInfoView extends IsWidget {
 
 	public interface Presenter {
 		void switchToArea(ContentPresenterType type);
@@ -12,10 +12,5 @@ public interface NavigatorView extends IsWidget {
 
 	void setPresenter(Presenter presenter);
 
-	/**
-	 * @param type
-	 *            The currently active type
-	 */
-	void highlightLink(ContentPresenterType type);
-
+	void display(ContentPresenterType type);
 }

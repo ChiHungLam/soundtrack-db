@@ -44,6 +44,14 @@
 	right: 0px;
 }
 
+#sectioninfo_area {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	height: 60px;
+	width: 220px;
+}
+
 #header_area {
 	/* background-color: white; */
 	background: rgb(155,158,198); /* Old browsers */
@@ -120,19 +128,6 @@
 
 
 
-.siteTitle {
-	text-shadow: 0 0 14px white;
-	font-weight: bold;
-	margin-top: 25px;
-	margin-left: 35px;
-	text-align: left;
-}
-.siteLogo {
-	font-size: xx-large;
-}
-.siteDescription {
-	
-}
 
 .neonLightShadow {
 	text-shadow: 0 0 14px white;

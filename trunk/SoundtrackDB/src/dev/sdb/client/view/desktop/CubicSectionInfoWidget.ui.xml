@@ -1,0 +1,105 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+	xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	
+	<ui:style>
+		#experiment {
+			-webkit-perspective: 800;
+			-moz-perspective: 800;
+			-o-perspective: 800;
+			perspective: 800;
+
+			-webkit-perspective-origin: 50% 40px;
+			-moz-perspective-origin: 50% 40px;
+			-o-perspective-origin: 50% 40px;
+			perspective-origin: 50% 40px;
+	    }
+	    .cube {
+			position: relative;
+			margin: 0 auto;
+			height: 80px;
+			width: 80px;
+			
+			-webkit-transition: -webkit-transform 0.5s linear;
+			-moz-transition: -webkit-transform 0.5s linear;
+			-o-transition: -webkit-transform 0.5s linear;
+			transition: -webkit-transform 0.5s linear;
+			
+			-webkit-transform-style: preserve-3d;
+			-moz-transform-style: preserve-3d;
+			-o-transform-style: preserve-3d;
+			transform-style: preserve-3d;
+	    }
+	    .face {
+			position: absolute;
+			height: 60px;
+			width: 60px;
+			padding: 10px;
+			background-color: rgb(50, 50, 50);
+			color:white;
+	    }
+	    .cube .one  {
+			-webkit-transform: translateZ(40px);
+			-moz-transform: translateZ(40px);
+			-o-transform: translateZ(40px);
+			transform: translateZ(40px);
+	    }
+	
+	    .cube .two {
+			-webkit-transform: rotateX(-90deg) translateZ(40px);
+			-moz-transform: rotateX(-90deg) translateZ(40px);
+			-o-transform: rotateX(-90deg) translateZ(40px);
+			transform: rotateX(-90deg) translateZ(40px);
+	    }
+	
+	    .cube .three {
+			-webkit-transform: rotateY(90deg) translateZ(40px);
+			-moz-transform: rotateY(90deg) translateZ(40px);
+			-o-transform: rotateY(90deg) translateZ(40px);
+			transform: rotateY(90deg) translateZ(40px);
+	    }
+	
+	    .cube .four {
+			-webkit-transform: rotateY(-90deg) translateZ(40px);
+			-moz-transform: rotateY(-90deg) translateZ(40px);
+			-o-transform: rotateY(-90deg) translateZ(40px);
+			transform: rotateY(-90deg) translateZ(40px);
+	    }
+	
+	    .cube .five {
+	    	-webkit-transform: rotateX(90deg) translateZ(40px);
+			-moz-transform: rotateX(90deg) translateZ(40px);
+			-o-transform: rotateX(90deg) translateZ(40px);
+			transform: rotateX(90deg) translateZ(40px);
+	    }
+	
+	    .cube .six {
+			-webkit-transform: rotateY(180deg) translateZ(40px);	     
+			-moz-transform: rotateY(180deg) translateZ(40px);	     
+			-o-transform: rotateY(180deg) translateZ(40px);	     
+			transform: rotateY(180deg) translateZ(40px);	
+	    }
+	    .content {
+			position: absolute;
+			top: 28px;
+			width: 60px;
+			text-align: center;
+	    }
+	</ui:style>
+	
+	<g:HTMLPanel>
+	
+		<div id="experiment">
+			<g:FlowPanel styleName="{style.cube}" ui:field="cube">
+				<g:FlowPanel styleName="{style.face} {style.one}"><g:Label styleName="{style.content}" text="1 Home"/></g:FlowPanel>
+				<g:FlowPanel styleName="{style.face} {style.two}"><g:Label styleName="{style.content}" text="2 VÖ"/></g:FlowPanel>
+				<g:FlowPanel styleName="{style.face} {style.three}"><g:Label styleName="{style.content}" text="3 Musik"/></g:FlowPanel>
+				<g:FlowPanel styleName="{style.face} {style.four}"><g:Label styleName="{style.content}" text="4 OST"/></g:FlowPanel>
+				<g:FlowPanel styleName="{style.face} {style.five}"><g:Label styleName="{style.content}" text="5 Serien"/></g:FlowPanel>
+				<g:FlowPanel styleName="{style.face} {style.six}"><g:Label styleName="{style.content}" text="6 none"/></g:FlowPanel>
+			</g:FlowPanel>
+		</div>
+		
+	</g:HTMLPanel>
+</ui:UiBinder> 

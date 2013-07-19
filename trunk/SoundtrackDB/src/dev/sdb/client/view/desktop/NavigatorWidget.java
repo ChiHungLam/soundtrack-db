@@ -16,12 +16,12 @@ public class NavigatorWidget extends Composite implements NavigatorView {
 	interface NavigatorWidgetUiBinder extends UiBinder<Widget, NavigatorWidget> {}
 	private static NavigatorWidgetUiBinder uiBinder = GWT.create(NavigatorWidgetUiBinder.class);
 
-	public interface NavigatorStyle extends CssResource {
+	public interface Style extends CssResource {
 		String highlighted();
 		String contentLink();
 	}
 
-	@UiField protected NavigatorStyle style;
+	@UiField protected Style style;
 
 	@UiField Hyperlink homeLink;
 	@UiField Hyperlink releaseLink;

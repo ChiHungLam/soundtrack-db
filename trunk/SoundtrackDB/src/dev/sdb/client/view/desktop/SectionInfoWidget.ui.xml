@@ -1,0 +1,114 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+	xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	
+	<ui:style type="dev.sdb.client.view.desktop.SectionInfoWidget.Style">
+		#experiment {
+			-webkit-perspective: 800;
+			-moz-perspective: 800;
+			-o-perspective: 800;
+			perspective: 800;
+
+			-webkit-perspective-origin: 50% 40px;
+			-moz-perspective-origin: 50% 40px;
+			-o-perspective-origin: 50% 40px;
+			perspective-origin: 50% 40px;
+	    }
+	    .cube {
+			position: relative;
+			margin: 0 auto;
+			height: 60px;
+			width: 220px;
+			
+			opacity: 1.0;
+			
+			-webkit-transition: -webkit-transform 0.5s linear, opacity 1s;
+			-moz-transition: -webkit-transform 0.5s linear, opacity 1s;
+			-o-transition: -webkit-transform 0.5s linear, opacity 1s;
+			transition: -webkit-transform 0.5s linear, opacity 1s;
+			
+			-webkit-transform-style: preserve-3d;
+			-moz-transform-style: preserve-3d;
+			-o-transform-style: preserve-3d;
+			transform-style: preserve-3d;
+	    }
+	    .cube.invisible {
+	    	opacity: 0;
+	    }
+	    .face {
+			position: absolute;
+			height: 40px;
+			width: 200px;
+			padding: 10px;
+			
+			color: black;
+			
+			background: rgb(83,83,94); 
+			background: -moz-linear-gradient(top,  rgba(83,83,94,1) 0%, rgba(107,111,162,1) 17%, rgba(213,212,247,1) 90%, rgba(83,83,94,1) 100%); 
+			background: -webkit-linear-gradient(top, rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); 
+			background: -o-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); 
+			background: -ms-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); 
+			background: linear-gradient(to bottom,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); 
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#53535e', endColorstr='#53535e',GradientType=0 ); 
+			
+	    }
+	    .cube .one  {
+			-webkit-transform: translateZ(30px);
+			-moz-transform: translateZ(30px);
+			-o-transform: translateZ(30px);
+			transform: translateZ(30px);
+	    }
+	
+	    .cube .two {
+			-webkit-transform: rotateX(-90deg) translateZ(30px);
+			-moz-transform: rotateX(-90deg) translateZ(30px);
+			-o-transform: rotateX(-90deg) translateZ(30px);
+			transform: rotateX(-90deg) translateZ(30px);
+	    }
+	
+	    .cube .five {
+	    	-webkit-transform: rotateX(90deg) translateZ(30px);
+			-moz-transform: rotateX(90deg) translateZ(30px);
+			-o-transform: rotateX(90deg) translateZ(30px);
+			transform: rotateX(90deg) translateZ(30px);
+	    }
+	
+	    .cube .six {
+			-webkit-transform: rotateX(-180deg) translateZ(30px);	     
+			-moz-transform: rotateX(-180deg) translateZ(30px);	     
+			-o-transform: rotateX(-180deg) translateZ(30px);	     
+			transform: rotateY(180deg) translateZ(30px);	
+	    }
+	    .content {
+			position: absolute;
+			top: 10px;
+			width: 198px;
+			height: 32px;
+			
+			padding-top: 4px;
+			
+			text-align: center;
+			text-shadow: 0 0 14px white;
+			font-size: 20px;
+			font-weight: bolder;
+
+			color: #D5D4F7;
+			background: #6B6FA2;
+			border: 1px solid #9b9ec6;
+	    }
+	</ui:style>
+	
+	<g:HTMLPanel>
+	
+		<div id="experiment">
+			<g:FlowPanel styleName="{style.cube}" ui:field="cube">
+				<g:FlowPanel styleName="{style.face} {style.one}"><g:Label ui:field="label1" styleName="{style.content}" text="1"/></g:FlowPanel>
+				<g:FlowPanel styleName="{style.face} {style.two}"><g:Label ui:field="label2" styleName="{style.content}" text="2"/></g:FlowPanel>
+				<g:FlowPanel styleName="{style.face} {style.five}"><g:Label ui:field="label5" styleName="{style.content}" text="5"/></g:FlowPanel>
+				<g:FlowPanel styleName="{style.face} {style.six}"><g:Label ui:field="label6" styleName="{style.content}" text="6"/></g:FlowPanel>
+			</g:FlowPanel>
+		</div>
+		
+	</g:HTMLPanel>
+</ui:UiBinder> 

@@ -5,6 +5,7 @@ public interface UiFactory {
 	NavigatorView getNavigatorView();
 	HeaderView getHeaderView();
 	FooterView getFooterView();
+	SectionInfoView getSectionInfoView();
 
 	ErrorView getErrorView();
 
