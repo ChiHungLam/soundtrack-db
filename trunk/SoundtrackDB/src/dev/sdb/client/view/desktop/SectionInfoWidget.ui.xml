@@ -43,14 +43,15 @@
 			padding: 10px;
 			
 			color: black;
-			
-			background: rgb(83,83,94); 
-			background: -moz-linear-gradient(top,  rgba(83,83,94,1) 0%, rgba(107,111,162,1) 17%, rgba(213,212,247,1) 90%, rgba(83,83,94,1) 100%); 
-			background: -webkit-linear-gradient(top, rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); 
-			background: -o-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); 
-			background: -ms-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); 
-			background: linear-gradient(to bottom,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); 
-			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#53535e', endColorstr='#53535e',GradientType=0 ); 
+
+			background: rgb(83,83,94); /* Old browsers */
+			background: -moz-linear-gradient(top,  rgba(83,83,94,1) 0%, rgba(107,111,162,1) 17%, rgba(213,212,247,1) 90%, rgba(83,83,94,1) 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(83,83,94,1)), color-stop(17%,rgba(107,111,162,1)), color-stop(90%,rgba(213,212,247,1)), color-stop(100%,rgba(83,83,94,1))); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); /* W3C */
+			filter: literal("progid:DXImageTransform.Microsoft.gradient( startColorstr='#53535e', endColorstr='#53535e',GradientType=0 )"); /* IE6-9 */
 			
 	    }
 	    .cube .one  {
