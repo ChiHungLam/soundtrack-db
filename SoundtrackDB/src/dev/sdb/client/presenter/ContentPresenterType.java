@@ -5,7 +5,8 @@ public enum ContentPresenterType {
 	RELEASE("release", "VÖ", "Veröffentlichungen"),
 	MUSIC("music", "Musik", "Musik"),
 	SOUNDTRACK("soundtrack", "Soundtrack", "Soundtracks"),
-	SERIES("series", "Serien", "Serien");
+	SERIES("series", "Serien", "Serien"),
+	CATALOG("catalog", "Kataloge", "Kataloge");
 
 	private String token;
 	private String name;

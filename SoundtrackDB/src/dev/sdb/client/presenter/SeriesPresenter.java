@@ -16,7 +16,7 @@ import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Series;
 
-public class SeriesPresenter extends AbstractBrowsePresenter implements SeriesQueryView.Presenter,
+public class SeriesPresenter extends AbstractSearchablePresenter implements SeriesQueryView.Presenter,
 	SeriesDetailView.Presenter {
 
 	public SeriesPresenter(ClientFactory clientFactory) {

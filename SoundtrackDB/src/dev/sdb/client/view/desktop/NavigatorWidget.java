@@ -28,6 +28,7 @@ public class NavigatorWidget extends Composite implements NavigatorView {
 	@UiField Hyperlink musicLink;
 	@UiField Hyperlink soundtrackLink;
 	@UiField Hyperlink seriesLink;
+	@UiField Hyperlink catalogLink;
 
 	@SuppressWarnings("unused") private Presenter presenter;
 
@@ -40,6 +41,7 @@ public class NavigatorWidget extends Composite implements NavigatorView {
 		this.musicLink.setStyleName(this.style.contentLink());
 		this.soundtrackLink.setStyleName(this.style.contentLink());
 		this.seriesLink.setStyleName(this.style.contentLink());
+		this.catalogLink.setStyleName(this.style.contentLink());
 	}
 
 	@Override public void setPresenter(Presenter presenter) {
@@ -58,5 +60,6 @@ public class NavigatorWidget extends Composite implements NavigatorView {
 		this.musicLink.setStyleName(this.style.highlighted(), (type == ContentPresenterType.MUSIC));
 		this.soundtrackLink.setStyleName(this.style.highlighted(), (type == ContentPresenterType.SOUNDTRACK));
 		this.seriesLink.setStyleName(this.style.highlighted(), (type == ContentPresenterType.SERIES));
+		this.catalogLink.setStyleName(this.style.highlighted(), (type == ContentPresenterType.CATALOG));
 	}
 }

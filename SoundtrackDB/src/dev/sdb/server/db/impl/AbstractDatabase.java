@@ -14,6 +14,7 @@ import dev.sdb.server.db.SqlManager;
 import dev.sdb.server.db.SqlServer;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
+import dev.sdb.shared.model.entity.Catalog;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Genre;
 import dev.sdb.shared.model.entity.Music;
@@ -37,6 +38,8 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 	protected abstract Soundtrack readSoundtrack(ResultSet rs, boolean readRelease, boolean readMusic) throws SQLException;
 
+	protected abstract Catalog readCatalog(ResultSet rs) throws SQLException;
+
 	protected abstract String composeReleaseGet();
 
 	protected abstract String composeMusicGet();
@@ -44,6 +47,8 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 	protected abstract String composeSoundtrackGet();
 
 	protected abstract String composeSeriesGet();
+
+	protected abstract String composeCatalogGet();
 
 	protected abstract String composeReleaseList(Range range, boolean ascending);
 
@@ -256,6 +261,15 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 				if (!rs.next())
 					return null;
 				return readSeries(rs);
+
+			case CATALOG:
+				ps = getStatement(composeCatalogGet());
+				ps.setLong(1, id);
+
+				rs = ps.executeQuery();
+				if (!rs.next())
+					return null;
+				return readCatalog(rs);
 
 			default:
 				throw new IllegalArgumentException("unknown flavor: " + flavor.name());

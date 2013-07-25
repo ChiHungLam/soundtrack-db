@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.server.db.SqlServer;
+import dev.sdb.shared.model.entity.Catalog;
 import dev.sdb.shared.model.entity.Genre;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
@@ -38,6 +39,11 @@ public class SimpleDatabase extends AbstractDatabase {
 		return null;
 	}
 
+	@Override protected Catalog readCatalog(ResultSet rs) throws SQLException {
+		// TODO SimpleDatabase
+		return null;
+	}
+
 	@Override protected Soundtrack readSoundtrack(ResultSet rs, boolean readRelease, boolean readMusic) throws SQLException {
 		// TODO SimpleDatabase
 		return null;
@@ -54,6 +60,11 @@ public class SimpleDatabase extends AbstractDatabase {
 	}
 
 	@Override protected String composeSoundtrackGet() {
+		// TODO SimpleDatabase
+		return null;
+	}
+
+	@Override protected String composeCatalogGet() {
 		// TODO SimpleDatabase
 		return null;
 	}

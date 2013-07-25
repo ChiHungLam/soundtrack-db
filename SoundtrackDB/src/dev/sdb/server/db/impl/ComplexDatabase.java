@@ -7,6 +7,7 @@ import java.util.Date;
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.server.db.SqlServer;
+import dev.sdb.shared.model.entity.Catalog;
 import dev.sdb.shared.model.entity.Genre;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
@@ -62,6 +63,10 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 			GENRE_INFO_FIELDS + " , " +
 			"`auts_display` , " +
 			"`perf_name`";
+
+	private static final String CATALOG_INFO_FIELDS = "" +
+			"`cat_id` , " +
+			"`cat_title`";
 
 	public ComplexDatabase(SqlServer sqlServer) {
 		super(sqlServer);
@@ -119,6 +124,15 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		return new Series(id, title, shortTitle, editionStatus, singles);
 	}
 
+	@Override protected Catalog readCatalog(ResultSet rs) throws SQLException {
+		long id = rs.getLong("cat_id");
+		if (id <= 0)
+			return null;
+
+		String title = rs.getString("cat_title");
+
+		return new Catalog(id, title);
+	}
 	protected Music readMusic(ResultSet rs) throws SQLException {
 		long id = rs.getLong("vers_id");
 		if (id <= 0)
@@ -199,6 +213,13 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
 				+ "WHERE `vers_id` = ? ;";
+		return sql;
+	}
+
+	protected String composeCatalogGet() {
+		String sql = "SELECT " + CATALOG_INFO_FIELDS + " "
+				+ "FROM `catalog` "
+				+ "WHERE `cat_id` = ? ;";
 		return sql;
 	}
 

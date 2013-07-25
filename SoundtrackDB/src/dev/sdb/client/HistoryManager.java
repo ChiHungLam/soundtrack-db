@@ -10,6 +10,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import dev.sdb.client.event.ContentAreaChangeEvent;
+import dev.sdb.client.presenter.CatalogPresenter;
 import dev.sdb.client.presenter.ContentPresenter;
 import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.presenter.HomePresenter;
@@ -73,6 +74,9 @@ public class HistoryManager {
 			break;
 		case SERIES:
 			presenter = new SeriesPresenter(this.clientFactory);
+			break;
+		case CATALOG:
+			presenter = new CatalogPresenter(this.clientFactory);
 			break;
 
 		default:
