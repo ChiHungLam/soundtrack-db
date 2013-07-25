@@ -74,6 +74,7 @@
 			<g:Hyperlink text="Musik" targetHistoryToken="music" ui:field="musicLink" styleName="contentLink"/>
 			<g:Hyperlink text="Soundtracks" targetHistoryToken="soundtrack" ui:field="soundtrackLink" styleName="contentLink"/>
 			<g:Hyperlink text="Serien" targetHistoryToken="series" ui:field="seriesLink" styleName="contentLink"/>
+			<g:Hyperlink text="Kataloge" targetHistoryToken="catalog" ui:field="catalogLink" styleName="contentLink"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

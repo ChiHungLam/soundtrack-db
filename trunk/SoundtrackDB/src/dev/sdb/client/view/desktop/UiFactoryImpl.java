@@ -8,6 +8,8 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 
+import dev.sdb.client.view.CatalogDetailView;
+import dev.sdb.client.view.CatalogTreeView;
 import dev.sdb.client.view.ErrorView;
 import dev.sdb.client.view.FooterView;
 import dev.sdb.client.view.HeaderView;
@@ -23,6 +25,7 @@ import dev.sdb.client.view.SeriesQueryView;
 import dev.sdb.client.view.SoundtrackDetailView;
 import dev.sdb.client.view.SoundtrackQueryView;
 import dev.sdb.client.view.UiFactory;
+import dev.sdb.client.view.desktop.detail.CatalogDetailWidget;
 import dev.sdb.client.view.desktop.detail.MusicDetailWidget;
 import dev.sdb.client.view.desktop.detail.ReleaseDetailWidget;
 import dev.sdb.client.view.desktop.detail.SeriesDetailWidget;
@@ -59,11 +62,13 @@ public class UiFactoryImpl implements UiFactory {
 	private MusicQueryView musicQueryView;
 	private SoundtrackQueryView soundtrackQueryView;
 	private SeriesQueryView seriesQueryView;
+	private CatalogTreeView catalogTreeView;
 
 	private ReleaseDetailView releaseDetailView;
 	private MusicDetailView musicDetailView;
 	private SoundtrackDetailView soundtrackDetailView;
 	private SeriesDetailView seriesDetailView;
+	private CatalogDetailView catalogDetailView;
 
 	public UiFactoryImpl() {
 		super();
@@ -128,6 +133,12 @@ public class UiFactoryImpl implements UiFactory {
 		return this.seriesQueryView;
 	}
 
+	@Override public CatalogTreeView getCatalogTreeView() {
+		if (this.catalogTreeView == null)
+			this.catalogTreeView = new CatalogTreeWidget();
+		return this.catalogTreeView;
+	}
+
 	@Override public ReleaseDetailView getReleaseDetailView() {
 		if (this.releaseDetailView == null)
 			this.releaseDetailView = new ReleaseDetailWidget();
@@ -150,6 +161,12 @@ public class UiFactoryImpl implements UiFactory {
 		if (this.seriesDetailView == null)
 			this.seriesDetailView = new SeriesDetailWidget();
 		return this.seriesDetailView;
+	}
+
+	@Override public CatalogDetailView getCatalogDetailView() {
+		if (this.catalogDetailView == null)
+			this.catalogDetailView = new CatalogDetailWidget();
+		return this.catalogDetailView;
 	}
 
 	public static Column<Entity, SafeHtml> createCompactReleaseColumn() {

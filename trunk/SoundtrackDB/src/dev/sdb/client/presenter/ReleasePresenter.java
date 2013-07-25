@@ -16,7 +16,7 @@ import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Release;
 
-public class ReleasePresenter extends AbstractBrowsePresenter implements ReleaseQueryView.Presenter,
+public class ReleasePresenter extends AbstractSearchablePresenter implements ReleaseQueryView.Presenter,
 		ReleaseDetailView.Presenter {
 
 	public ReleasePresenter(ClientFactory clientFactory) {

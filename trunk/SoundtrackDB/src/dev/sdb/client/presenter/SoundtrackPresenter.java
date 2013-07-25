@@ -11,7 +11,7 @@ import dev.sdb.client.view.SoundtrackQueryView;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.entity.Entity;
 
-public class SoundtrackPresenter extends AbstractBrowsePresenter implements SoundtrackQueryView.Presenter,
+public class SoundtrackPresenter extends AbstractSearchablePresenter implements SoundtrackQueryView.Presenter,
 		SoundtrackDetailView.Presenter {
 
 	public SoundtrackPresenter(ClientFactory clientFactory) {

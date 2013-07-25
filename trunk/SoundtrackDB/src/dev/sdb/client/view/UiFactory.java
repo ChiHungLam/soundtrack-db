@@ -15,10 +15,12 @@ public interface UiFactory {
 	MusicQueryView getMusicQueryView();
 	SoundtrackQueryView getSoundtrackQueryView();
 	SeriesQueryView getSeriesQueryView();
+	CatalogTreeView getCatalogTreeView();
 
 	ReleaseDetailView getReleaseDetailView();
 	MusicDetailView getMusicDetailView();
 	SoundtrackDetailView getSoundtrackDetailView();
 	SeriesDetailView getSeriesDetailView();
+	CatalogDetailView getCatalogDetailView();
 
 }

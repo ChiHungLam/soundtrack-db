@@ -6,7 +6,8 @@ public enum Flavor implements IsSerializable {
 	RELEASES,
 	MUSIC,
 	SOUNDTRACK,
-	SERIES;
+	SERIES,
+	CATALOG;
 
 	Flavor() {}
 }

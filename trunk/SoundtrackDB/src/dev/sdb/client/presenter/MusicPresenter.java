@@ -16,7 +16,7 @@ import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 
-public class MusicPresenter extends AbstractBrowsePresenter implements MusicQueryView.Presenter,
+public class MusicPresenter extends AbstractSearchablePresenter implements MusicQueryView.Presenter,
 		MusicDetailView.Presenter {
 
 	public MusicPresenter(ClientFactory clientFactory) {
