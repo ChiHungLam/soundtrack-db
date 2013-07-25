@@ -1,42 +1,7 @@
-/** Add css rules here for your application. */
+/** Application wide css rules in this document. */
 
-
-/** Example rules used by the template application (remove for your app) */
-.sendButton {
-  display: block;
-  font-size: 16pt;
-}
-
-/** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
-  width: 400px;
-}
-
-.dialogVPanel {
-  margin: 5px;
-}
-
-.serverResponseLabelError {
-  color: red;
-}
-
-/** Set ids using widget.getElement().setId("idOfElement") */
-#closeButton {
-  margin: 15px 6px 6px;
-}
-.gwt-Label,serverResponseLabelError {
-}
-.gwt-Label {
-}
-
+/* html body tag */
 #stage {
-	/* background-color: blue; */
-	text-align: center;
-	
-	/* needed for FF */
-	margin: 0;
-	margin-right: 0px;
-	
 	position: fixed;
 	top: 0px;
 	left: 0px;
@@ -44,6 +9,17 @@
 	right: 0px;
 }
 
+/* layout positions and behaviour*/
+
+#header_area {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	height: 100px;
+}
+
+/* this element belongs to the header. it's placed on top of header_area. */
 #sectioninfo_area {
 	position: absolute;
 	top: 20px;
@@ -52,7 +28,55 @@
 	width: 220px;
 }
 
-#header_area {
+#navigator_area {
+	display: block;
+
+	position: absolute;
+	top: 100px;
+	bottom: 55px;
+	left: 0px;
+	width: 150px;
+}
+
+#content_area {	
+	display: inline-block;
+
+	position: absolute;	
+	top: 100px;
+	left: 150px;
+	right: 0px;
+	bottom: 55px;
+}
+
+
+#footer_area {		
+	position: absolute;	
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 55px;
+}
+
+#error_area {
+	position: absolute;	
+	top: 0px;
+	left: 0px;
+	width: 0px;
+	height: 0px;
+}
+
+/* Coloring and other styles incl. padding, margin and text formatting.*/
+
+.stage_style {
+	/* needed for FF */
+	margin: 0;
+	margin-right: 0px;	
+	
+	/* background-color: blue; */
+	text-align: center;
+}
+
+.header_style {
 	/* background-color: white; */
 	background: rgb(155,158,198); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgba(155,158,198,1) 0%, rgba(83,83,94,1) 3%, rgba(6,6,7,1) 50%, rgba(83,83,94,1) 90%, rgba(213,212,247,1) 100%); /* FF3.6+ */
@@ -64,49 +88,9 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9b9ec6', endColorstr='#d5d4f7',GradientType=0 ); /* IE6-9 */
 
 	color:#D5D4F7;
-
-	position: absolute;
-	left: 0px;
-	right: 0px;
-	top: 0px;
-	height: 100px;
 }
 
-#navigator_area {
-	background-color: #D5D4F7; 
-	
-	display: block;
-
-	position: absolute;
-	top: 100px;
-	bottom: 55px;
-	left: 0px;
-	width: 150px;
-}
-
-#content_area {
-	background-color: #D5D4F7;
-	
-	padding: 15px;
-	
-	display: inline-block;
-
-	position: absolute;	
-	top: 100px;
-	left: 150px;
-	right: 0px;
-	bottom: 55px;
-}
-
-#error_area {
-	position: absolute;	
-	top: 0px;
-	left: 0px;
-	width: 0px;
-	height: 0px;
-}
-
-#footer_area {
+.footer_style {
 	/* background-color: white; */
 	background: rgb(213,212,247); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgba(213,212,247,1) 0%, rgba(83,83,94,1) 10%, rgba(0,0,0,1) 50%, rgba(83,83,94,1) 90%, rgba(155,158,198,1) 100%); /* FF3.6+ */
@@ -118,24 +102,16 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d5d4f7', endColorstr='#9b9ec6',GradientType=0 ); /* IE6-9 */
 
 	color:#D5D4F7;
-					
-	position: absolute;	
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	height: 55px;
 }
 
-
-
-
-.neonLightShadow {
-	text-shadow: 0 0 14px white;
-}
-.neonDarkShadow {
-	text-shadow: 0 0 7px grey;
+.navigator_style {
+	background-color: #D5D4F7; 
 }
 
+.content_style {
+	background-color: #D5D4F7;
+	padding: 15px;
+}
 
-
-
+.sectioninfo_style {}
+.error_style {}

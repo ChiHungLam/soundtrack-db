@@ -4,10 +4,17 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
 	<ui:style>
-		
+		.productionInfo {
+			margin-top: 20px;
+			text-shadow: 0 0 14px white;
+			font-size: smaller;
+			font-weight: bold;
+		}
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<h4 class="neonLightShadow">(P) 2013 JooceWare</h4>
+		<g:FlowPanel>
+			<g:Label text="(P) 2013 JooceWare" styleName="{style.productionInfo}"/>
+		</g:FlowPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
