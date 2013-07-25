@@ -6,30 +6,27 @@
 	<ui:style type="dev.sdb.client.view.desktop.ErrorWidget.ErrorStyle">
 		
 		.glasspane {
+			display: block;
+    		overflow: hidden;
 			position: fixed;
 			
-			top: 0px;
 			left: 0px;
-			
+			top: 0px;
 			right: 0px;
-			
-			background-color: rgba(128, 128, 128, 0.5);
-			
-			display: block;
-			opacity: 0.0;
-			
 			height: 0px;
-    		overflow: hidden;
+    					
+			background-color: rgba(128, 128, 128, 0.5);
+			opacity: 0.0;
     
 			-webkit-transition: opacity 1s ease-in-out, height 1s linear 0s;
 			-moz-transition: opacity 1s ease-in-out, height 1s linear 0s;
 			-o-transition: opacity 1s ease-in-out, height 1s linear 0s;
 			transition: opacity 1s ease-in-out, height 1s linear 0s;
 		}
+		
 		.glasspane.blocking {
-			opacity: 1.0;
-			
 			height: 100%;
+			opacity: 1.0;
 		}
 		
 		.closeButton {
@@ -40,8 +37,10 @@
 			height: 25px;
 		}
 		
-		.message {
-			position: fixed;	
+		.message-dialog {
+			display: block;
+    		overflow: hidden;
+			position: fixed;
 			
 			top: 100%;
 			left: 160px;
@@ -54,13 +53,16 @@
  			border: 1px solid white;
  			background-color: rgba(255, 255, 255, 0.9);
  			
- 			-webkit-transition: top 1s ease-in-out;
-			-moz-transition: top 1s ease-in-out;
-			-o-transition: top 1s ease-in-out;
-			transition: top 1s ease-in-out;
+ 			opacity: 0.0;
+ 			
+ 			-webkit-transition: top 1s ease-in-out, opacity 1s ease-in-out;
+			-moz-transition: top 1s ease-in-out, opacity 1s ease-in-out;
+			-o-transition: top 1s ease-in-out, opacity 1s ease-in-out;
+			transition: top 1s ease-in-out, opacity 1s ease-in-out;
 		}
-		.message.displayed {
+		.message-dialog.displayed {
 			top: 100px;
+			opacity: 1.0;
 		}
 		
 		.message-title {
@@ -95,7 +97,7 @@
 	
 	<g:HTMLPanel>
 		<g:FlowPanel ui:field="glassPanel" styleName="{style.glasspane}"></g:FlowPanel>
-		<g:FlowPanel ui:field="dialogPanel" styleName="{style.message}">
+		<g:FlowPanel ui:field="dialogPanel" styleName="{style.message-dialog}">
 			<g:FlowPanel styleName="{style.message-title}"><g:Label ui:field="errorTitle" text="ERROR"/></g:FlowPanel>
 			<g:FlowPanel styleName="{style.message-summary}"><g:HTML ui:field="errorSummary" wordWrap="true">This is the summary</g:HTML></g:FlowPanel>
 			<g:FlowPanel styleName="{style.message-content}"><g:HTML ui:field="errorDetails" wordWrap="true">These are the details</g:HTML></g:FlowPanel>

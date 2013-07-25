@@ -1,23 +1,31 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+<ui:UiBinder
+	xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	
 	<ui:style>
-		/* Add CSS here. See the GWT docs on UI Binder for more details */
-		.important {
+		.searchTermStyle {
+			font-weight: bold;
+		}
+		.errorLabelStyle {
+			color: red;
+		}
+		.findButtonStyle {
+			display: block;
+			font-size: 16pt;
 			font-weight: bold;
 		}
 	</ui:style>
+	
 	<g:HTMLPanel>
-		<!-- Add GWT widgets here. Enter < and hit Ctrl-Space to auto-complete 
-			widget names. The ui:field attribute binds an element to a field in the owner 
-			class. See the GWT docs on UI Binder for more details. -->
 		<g:VerticalPanel>
 			<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" spacing="5">
 				<g:Label text="Suche:"/>
-				<g:TextBox ui:field="text"/>
-				<g:Button ui:field="button" styleName="{style.important}">Finde</g:Button>
+				<g:TextBox ui:field="searchTerm" styleName="{style.searchTermStyle}"/>
+				<g:Button ui:field="findButton" styleName="{style.findButtonStyle}">Finde</g:Button>
 			</g:HorizontalPanel>			
-			<g:Label ui:field="errorLabel"/>
+			<g:Label ui:field="errorLabel" styleName="{style.errorLabelStyle}"/>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
+	
 </ui:UiBinder> 

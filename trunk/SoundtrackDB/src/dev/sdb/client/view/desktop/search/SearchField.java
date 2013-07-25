@@ -30,8 +30,8 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 	interface SearchFieldUiBinder extends UiBinder<Widget, SearchField> {}
 	private static SearchFieldUiBinder uiBinder = GWT.create(SearchFieldUiBinder.class);
 
-	@UiField Button button;
-	@UiField TextBox text;
+	@UiField Button findButton;
+	@UiField TextBox searchTerm;
 	@UiField Label errorLabel;
 
 	public SearchField() {
@@ -48,15 +48,12 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 		setText(searchText);
 
 		// Focus the cursor on the search field when the app loads
-		this.text.setFocus(true);
-		this.text.selectAll();
-
-		this.button.addStyleName("sendButton");
-		this.errorLabel.addStyleName("serverResponseLabelError");
+		this.searchTerm.setFocus(true);
+		this.searchTerm.selectAll();
 	}
 
 	public void setText(String text) {
-		this.text.setText(text);
+		this.searchTerm.setText(text);
 	}
 
 	/**
@@ -64,15 +61,15 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 	 * and a string is provided in the ui.xml file.
 	 */
 	public String getText() {
-		return this.text.getText();
+		return this.searchTerm.getText();
 	}
 
-	@UiHandler("button")
+	@UiHandler("findButton")
 	void onButtonClick(ClickEvent event) {
 		prepareSearch();
 	}
 
-	@UiHandler("text")
+	@UiHandler("searchTerm")
 	void onTextKeyUp(KeyUpEvent event) {
 		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 			prepareSearch();
@@ -84,7 +81,7 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 		this.errorLabel.setText("");
 
 		// Get the input
-		String searchText = this.text.getText();
+		String searchText = this.searchTerm.getText();
 
 		// Validate the input
 		if (!SearchTermVerifier.isValidSearchTerm(searchText)) {
@@ -102,14 +99,14 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
     }
 
 	@Override public boolean isEnabled() {
-		return this.text.isEnabled();
+		return this.searchTerm.isEnabled();
 	}
 
 	@Override public void setEnabled(boolean enabled) {
-		this.button.setEnabled(enabled);
+		this.findButton.setEnabled(enabled);
+		this.searchTerm.setEnabled(enabled);
 
-		this.text.setEnabled(enabled);
-		this.text.setFocus(true);
+		this.searchTerm.setFocus(true);
 	}
 
 }

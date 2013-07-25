@@ -3,7 +3,9 @@ package dev.sdb.client;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -76,9 +78,9 @@ public class SoundtrackDB implements EntryPoint {
 		//Create the error presenter
 		final ErrorPresenter errorPresenter = new ErrorPresenter(clientFactory);
 		//Create view and attach it to the corresponding panel
-		ErrorView errorView = clientFactory.getUi().getErrorView();
+		final ErrorView errorView = clientFactory.getUi().getErrorView();
 		errorView.setPresenter(errorPresenter);
-		RootPanel.get("error_area").add(errorView);
+
 
 		EventBus eventBus = clientFactory.getEventBus();
 
@@ -108,10 +110,14 @@ public class SoundtrackDB implements EntryPoint {
 			}
 		});
 
+		//Setting up display the current content
 		clientFactory.getHistoryManager().handleCurrentHistory();
 
-		//Setting up history and display the current content
-
+		Scheduler.get().scheduleDeferred(new Command() {
+			@Override public void execute() {
+				RootPanel.get("error_area").add(errorView);
+			}
+		});
 	}
 
 	public static void setBrowserWindowTitle(String title) {
