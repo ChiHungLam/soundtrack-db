@@ -2,7 +2,7 @@ package dev.sdb.shared.model.entity;
 
 import dev.sdb.shared.model.StatusChecker;
 
-public class Series extends AbstractEntity {
+public class Series extends AbstractEntity<Series> {
 
 	private String title;
 	private String shortTitle;

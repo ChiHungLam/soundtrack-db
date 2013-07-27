@@ -24,4 +24,6 @@ import dev.sdb.shared.model.entity.Entity;
 	Result getMusicReleaseList(long id, Range range) throws IllegalArgumentException, IOException;
 
 	Result getSeriesReleaseList(long id, Range range) throws IllegalArgumentException, IOException;
+
+	Result getCatalogList(long parentId) throws IllegalArgumentException, IOException;
 }

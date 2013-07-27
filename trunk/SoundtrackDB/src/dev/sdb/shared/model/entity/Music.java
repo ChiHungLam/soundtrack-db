@@ -2,7 +2,7 @@ package dev.sdb.shared.model.entity;
 
 import dev.sdb.shared.model.StatusChecker;
 
-public class Music extends AbstractEntity {
+public class Music extends AbstractEntity<Music> {
 
 	private Genre genre;
 	private String title;

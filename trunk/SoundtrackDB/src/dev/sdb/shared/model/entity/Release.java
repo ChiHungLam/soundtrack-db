@@ -4,7 +4,7 @@ import java.util.Date;
 
 import dev.sdb.shared.model.StatusChecker;
 
-public class Release extends AbstractEntity {
+public class Release extends AbstractEntity<Release> {
 
 	private String type;
 	private Series series;

@@ -48,13 +48,13 @@ import dev.sdb.shared.model.entity.Entity;
 		assert (flavor != null);
 		assert (id > 0);
 
-		Database manager = getDatabase();
-		manager.open();
+		Database database = getDatabase();
+		database.open();
 
 		try {
-			return manager.getEntity(flavor, id);
+			return database.getEntity(flavor, id);
 		} finally {
-			manager.close();
+			database.close();
 		}
 	}
 
@@ -62,13 +62,13 @@ import dev.sdb.shared.model.entity.Entity;
 		assert (id > 0);
 		assert (range != null);
 
-		Database manager = getDatabase();
-		manager.open();
+		Database database = getDatabase();
+		database.open();
 
 		try {
-			return manager.getMusicReleaseList(id, range);
+			return database.getMusicReleaseList(id, range);
 		} finally {
-			manager.close();
+			database.close();
 		}
 	}
 
@@ -76,13 +76,13 @@ import dev.sdb.shared.model.entity.Entity;
 		assert (id > 0);
 		assert (range != null);
 
-		Database manager = getDatabase();
-		manager.open();
+		Database database = getDatabase();
+		database.open();
 
 		try {
-			return manager.getSeriesReleaseList(id, range);
+			return database.getSeriesReleaseList(id, range);
 		} finally {
-			manager.close();
+			database.close();
 		}
 	}
 
@@ -90,15 +90,32 @@ import dev.sdb.shared.model.entity.Entity;
 		assert (id > 0);
 		assert (range != null);
 
-		Database manager = getDatabase();
-		manager.open();
+		Database database = getDatabase();
+		database.open();
 
 		try {
-			return manager.getReleaseSoundtrackList(id, range);
+			return database.getReleaseSoundtrackList(id, range);
 		} finally {
-			manager.close();
+			database.close();
 		}
 	}
+
+	@Override public Result getCatalogList(long parentId) throws IllegalArgumentException, IOException {
+		assert (parentId >= 0);
+
+		Database database = getDatabase();
+		database.open();
+
+		try {
+			database.getCatalogList(parentId);
+
+			return database.getCatalogList(parentId);
+		} finally {
+			database.close();
+		}
+	}
+
+
 
 	@Override public Result search(Flavor flavor, String term, Range range, boolean ascending) throws IllegalArgumentException, IOException {
 		assert (flavor != null);
@@ -114,13 +131,13 @@ import dev.sdb.shared.model.entity.Entity;
 		// Escape data from the client to avoid cross-site script vulnerabilities.
 		term = escapeHtml(term);
 
-		Database manager = getDatabase();
-		manager.open();
+		Database database = getDatabase();
+		database.open();
 
 		try {
-			return manager.query(flavor, term, range, ascending);
+			return database.query(flavor, term, range, ascending);
 		} finally {
-			manager.close();
+			database.close();
 		}
 	}
 

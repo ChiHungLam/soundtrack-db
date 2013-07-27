@@ -1,6 +1,6 @@
 package dev.sdb.shared.model.entity;
 
-public class Soundtrack extends AbstractEntity {
+public class Soundtrack extends AbstractEntity<Soundtrack> {
 
 	private Release release;
 	private Music music;

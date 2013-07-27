@@ -1,15 +1,18 @@
 package dev.sdb.client.presenter;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.SoundtrackDB;
+import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.view.CatalogDetailView;
 import dev.sdb.client.view.CatalogTreeView;
 import dev.sdb.client.view.DetailView;
 import dev.sdb.shared.model.db.Flavor;
+import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 
 public class CatalogPresenter extends AbstractBrowsePresenter implements CatalogTreeView.Presenter,
@@ -24,6 +27,23 @@ public class CatalogPresenter extends AbstractBrowsePresenter implements Catalog
 	@Override public void getCatalogEntriesFromServer(CatalogDetailView view) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override public void getCatalogLevelEntries(final long parentId, final AsyncDataProvider<Entity> dataProvider) {
+		SearchServiceAsync service = getClientFactory().getSearchService();
+
+		// Then, we send the input to the server.
+		service.getCatalogList(parentId, new AsyncCallback<Result>() {
+
+			public void onSuccess(Result searchResult) {
+				//				addHistorySearch(term);
+				dataProvider.updateRowData(0, searchResult.getResultChunk());
+			}
+
+			public void onFailure(Throwable caught) {
+				handleRpcError("[" + Flavor.CATALOG.name() + "] getting children of " + parentId, caught);
+			}
+		});
 	}
 
 	@Override public IsWidget getView(String state) {
@@ -78,8 +98,7 @@ public class CatalogPresenter extends AbstractBrowsePresenter implements Catalog
 
 	protected CatalogTreeView createTreeView(String term) {
 		// Create the query widget instance
-		final CatalogTreeView treeView = getClientFactory().getUi().getCatalogTreeView();
-		treeView.setPresenter(this);
+		final CatalogTreeView treeView = getClientFactory().getUi().getCatalogTreeView(this);
 
 		// Set the search term
 		//		treeView.setText(term);

@@ -50,6 +50,8 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 	protected abstract String composeCatalogGet();
 
+	protected abstract String composeCatalogLevelList();
+
 	protected abstract String composeReleaseList(Range range, boolean ascending);
 
 	protected abstract String composeMusicList(Range range, boolean ascending);
@@ -157,6 +159,26 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		} finally {
 			closeStatement(listPS);
 			closeStatement(countPS);
+		}
+	}
+
+	@Override public Result getCatalogList(long parentId) throws IOException {
+		PreparedStatement listPS = null;
+
+		List<Entity> result = new Vector<Entity>();
+
+		try {
+
+			listPS = getStatement(composeCatalogLevelList());
+			queryCatalogLevelList(listPS, result, parentId);
+
+			return new Result(result, 0, result.size());
+
+		} catch (SQLException e) {
+			result.clear();
+			throw new IOException(e);
+		} finally {
+			closeStatement(listPS);
 		}
 	}
 
@@ -308,6 +330,27 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		return readSoundtrack(rs, true, true);
 	}
 
+	protected void queryCatalogLevelList(PreparedStatement ps, List<Entity> result, long parentId) throws IOException {
+		ResultSet rs = null;
+
+		try {
+
+			ps.clearParameters();
+			ps.setLong(1, parentId);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Catalog catalog = readCatalog(rs);
+				result.add(catalog);
+			}
+
+		} catch (SQLException e) {
+			throw new IOException(e);
+		} finally {
+			closeResultSet(rs);
+		}
+	}
 	protected void queryReleases(final PreparedStatement ps, List<Entity> result, String term, Range range, boolean ascending) throws IOException {
 		ResultSet rs = null;
 

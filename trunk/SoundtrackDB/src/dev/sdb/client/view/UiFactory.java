@@ -15,7 +15,7 @@ public interface UiFactory {
 	MusicQueryView getMusicQueryView();
 	SoundtrackQueryView getSoundtrackQueryView();
 	SeriesQueryView getSeriesQueryView();
-	CatalogTreeView getCatalogTreeView();
+	CatalogTreeView getCatalogTreeView(CatalogTreeView.Presenter presenter);
 
 	ReleaseDetailView getReleaseDetailView();
 	MusicDetailView getMusicDetailView();
