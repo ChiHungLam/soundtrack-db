@@ -107,6 +107,8 @@ import dev.sdb.shared.model.entity.Entity;
 		database.open();
 
 		try {
+			//database.repairCatalogChildInfo();
+
 			database.getCatalogList(parentId);
 
 			return database.getCatalogList(parentId);

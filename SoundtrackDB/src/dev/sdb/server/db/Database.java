@@ -24,4 +24,6 @@ public interface Database {
 	Result query(Flavor flavor, String term, Range range, boolean ascending) throws IOException;
 
 	Result getCatalogList(long parentId) throws IOException;
+
+	void repairCatalogChildInfo() throws IOException;
 }

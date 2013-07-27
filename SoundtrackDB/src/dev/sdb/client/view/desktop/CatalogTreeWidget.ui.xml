@@ -6,13 +6,17 @@
 	
 	<ui:style>
 		.tree {
-			width: 500px;
+			width: 400px;
+		}
+		.panel {
+			width: 420px;
+			height: 100%;
 			border: 1px solid #ccc;
 		}
 	</ui:style>
+		
+		<g:ScrollPanel ui:field="scrollPanel" addStyleNames='{style.panel}'>
+			<c:CellTree ui:field="cellTree" addStyleNames='{style.tree}'/>
+		</g:ScrollPanel>
 	
-	<g:HTMLPanel>
-		Here is a tree
-		<c:CellTree addStyleNames='{style.tree}' ui:field="cellTree"/>	
-	</g:HTMLPanel>
 </ui:UiBinder> 

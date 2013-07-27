@@ -1,5 +1,6 @@
 package dev.sdb.server.db.impl;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -17,6 +18,10 @@ public class SimpleDatabase extends AbstractDatabase {
 
 	public SimpleDatabase(SqlServer sqlServer) {
 		super(sqlServer);
+	}
+
+	@Override public void repairCatalogChildInfo() throws IOException {
+		// TODO SimpleDatabase
 	}
 
 	@Override protected String composeCatalogLevelList() {
