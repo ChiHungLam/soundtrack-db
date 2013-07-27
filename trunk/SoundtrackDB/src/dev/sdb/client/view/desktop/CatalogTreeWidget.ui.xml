@@ -14,9 +14,9 @@
 			border: 1px solid #ccc;
 		}
 	</ui:style>
-		
-		<g:ScrollPanel ui:field="scrollPanel" addStyleNames='{style.panel}'>
-			<c:CellTree ui:field="cellTree" addStyleNames='{style.tree}'/>
-		</g:ScrollPanel>
+	
+	<g:ScrollPanel ui:field="scrollPanel" addStyleNames='{style.panel}'>
+		<c:CellTree ui:field="cellTree" addStyleNames='{style.tree}'/>
+	</g:ScrollPanel>
 	
 </ui:UiBinder> 
