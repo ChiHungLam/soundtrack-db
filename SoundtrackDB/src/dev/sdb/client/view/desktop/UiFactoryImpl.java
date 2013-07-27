@@ -133,9 +133,9 @@ public class UiFactoryImpl implements UiFactory {
 		return this.seriesQueryView;
 	}
 
-	@Override public CatalogTreeView getCatalogTreeView() {
+	@Override public CatalogTreeView getCatalogTreeView(CatalogTreeView.Presenter presenter) {
 		if (this.catalogTreeView == null)
-			this.catalogTreeView = new CatalogTreeWidget();
+			this.catalogTreeView = new CatalogTreeWidget(presenter);
 		return this.catalogTreeView;
 	}
 

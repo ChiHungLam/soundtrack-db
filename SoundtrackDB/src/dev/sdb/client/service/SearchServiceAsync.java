@@ -21,4 +21,7 @@ public interface SearchServiceAsync {
 	void getMusicReleaseList(long id, Range range, AsyncCallback<Result> asyncCallback);
 
 	void getSeriesReleaseList(long id, Range range, AsyncCallback<Result> asyncCallback);
+
+	void getCatalogList(long parentId, AsyncCallback<Result> asyncCallback);
+
 }

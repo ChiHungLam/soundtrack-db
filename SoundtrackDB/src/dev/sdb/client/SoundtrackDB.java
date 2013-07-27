@@ -113,6 +113,7 @@ public class SoundtrackDB implements EntryPoint {
 		//Setting up display the current content
 		clientFactory.getHistoryManager().handleCurrentHistory();
 
+		//Kind of workaround for preventing the error dialog to be shown on application startup.
 		Scheduler.get().scheduleDeferred(new Command() {
 			@Override public void execute() {
 				RootPanel.get("error_area").add(errorView);

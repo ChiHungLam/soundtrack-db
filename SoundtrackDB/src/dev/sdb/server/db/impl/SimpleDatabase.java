@@ -19,6 +19,11 @@ public class SimpleDatabase extends AbstractDatabase {
 		super(sqlServer);
 	}
 
+	@Override protected String composeCatalogLevelList() {
+		// TODO SimpleDatabase
+		return null;
+	}
+
 	@Override protected Release readRelease(ResultSet rs) throws SQLException {
 		// TODO SimpleDatabase
 		return null;

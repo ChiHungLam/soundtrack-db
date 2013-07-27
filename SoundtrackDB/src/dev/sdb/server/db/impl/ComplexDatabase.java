@@ -66,7 +66,9 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 	private static final String CATALOG_INFO_FIELDS = "" +
 			"`cat_id` , " +
-			"`cat_title`";
+			"`cat_title` , " +
+			"`cat_parent_id` , " +
+			"`cat_children`";
 
 	public ComplexDatabase(SqlServer sqlServer) {
 		super(sqlServer);
@@ -130,8 +132,10 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 			return null;
 
 		String title = rs.getString("cat_title");
+		long parentId = rs.getLong("cat_parent_id");
+		boolean children = rs.getBoolean("cat_children");
 
-		return new Catalog(id, title);
+		return new Catalog(id, title, parentId, children);
 	}
 	protected Music readMusic(ResultSet rs) throws SQLException {
 		long id = rs.getLong("vers_id");
@@ -220,6 +224,13 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		String sql = "SELECT " + CATALOG_INFO_FIELDS + " "
 				+ "FROM `catalog` "
 				+ "WHERE `cat_id` = ? ;";
+		return sql;
+	}
+
+	@Override protected String composeCatalogLevelList() {
+		String sql = "SELECT " + CATALOG_INFO_FIELDS + " "
+				+ "FROM `catalog` "
+				+ "WHERE `cat_parent_id` = ? ;";
 		return sql;
 	}
 
