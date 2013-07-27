@@ -3,7 +3,8 @@ package dev.sdb.client.view.desktop;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -83,8 +84,21 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		private final Cell<Entity> catalogCell = new AbstractCell<Entity>() {
 
 			@Override public void render(Cell.Context context, Entity value, SafeHtmlBuilder sb) {
-				//Catalog catalog = (Catalog) value;
-				sb.appendEscaped(value.getMatch());
+				Catalog catalog = (Catalog) value;
+				String info = catalog.getInfo();
+				String era = catalog.getEra();
+
+				String html = "<table><tr>"
+						+ "<td style='text-align: left; width: 100%;'><span style='font-weight: bold;'>" + catalog.getTitle() + "</span>";
+				if ((info != null) && !info.isEmpty())
+					html += "&nbsp;<span style='font-size: smaller;'>[" + info + "]</span>";
+				html += "</td><td style='text-align: right; width: 100px;'>";
+				if ((era != null) && !era.isEmpty())
+					html += "<span style='font-size: smaller;'>(" + era.replace(" ", "&nbsp;") + ")</span>";
+				html += "</td></tr></table>";
+
+				SafeHtml sh = new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(html);
+				sb.append(sh);
 			}
 
 		};
@@ -145,7 +159,7 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		getElement().getStyle().setOverflow(Overflow.AUTO);
+		//		getElement().getStyle().setOverflow(Overflow.AUTO);
 	}
 
 	private void setPresenter(Presenter presenter) {
