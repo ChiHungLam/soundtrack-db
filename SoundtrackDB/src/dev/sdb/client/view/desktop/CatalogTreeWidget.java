@@ -141,6 +141,7 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 
 	@UiField(provided = true) CellTree cellTree;
 
+
 	/**
 	 * The last selected catalog.
 	 */
@@ -189,8 +190,10 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 			}
 		});
 
+		CellTree.Resources resources = GWT.create(CellTree.BasicResources.class);
+
 		// Create a CellBrowser.
-		this.cellTree = new CellTree(model, null);
+		this.cellTree = new CellTree(model, null, resources);
 		this.cellTree.setAnimationEnabled(true);
 
 	}
