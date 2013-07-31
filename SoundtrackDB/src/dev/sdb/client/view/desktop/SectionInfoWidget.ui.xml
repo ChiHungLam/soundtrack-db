@@ -8,11 +8,13 @@
 			-webkit-perspective: 800;
 			-moz-perspective: 800;
 			-o-perspective: 800;
+			-ms-perspective: 800;
 			perspective: 800;
 
 			-webkit-perspective-origin: 50% 40px;
 			-moz-perspective-origin: 50% 40px;
 			-o-perspective-origin: 50% 40px;
+			-ms-perspective-origin: 50% 40px;
 			perspective-origin: 50% 40px;
 	    }
 	    .cube {
@@ -24,13 +26,15 @@
 			opacity: 1.0;
 			
 			-webkit-transition: -webkit-transform 0.5s linear, opacity 1s;
-			-moz-transition: -webkit-transform 0.5s linear, opacity 1s;
-			-o-transition: -webkit-transform 0.5s linear, opacity 1s;
-			transition: -webkit-transform 0.5s linear, opacity 1s;
+			-moz-transition: -moz-transform 0.5s linear, opacity 1s;
+			-o-transition: -o-transform 0.5s linear, opacity 1s;
+			-ms-transition: -ms-transform 0.5s linear, opacity 1s;
+			transition: transform 0.5s linear, opacity 1s;
 			
 			-webkit-transform-style: preserve-3d;
 			-moz-transform-style: preserve-3d;
 			-o-transform-style: preserve-3d;
+			-ms-transform-style: preserve-3d;
 			transform-style: preserve-3d;
 	    }
 	    .cube.invisible {
@@ -45,19 +49,25 @@
 			color: black;
 
 			background: rgb(83,83,94); /* Old browsers */
-			background: -moz-linear-gradient(top,  rgba(83,83,94,1) 0%, rgba(107,111,162,1) 17%, rgba(213,212,247,1) 90%, rgba(83,83,94,1) 100%); /* FF3.6+ */
 			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(83,83,94,1)), color-stop(17%,rgba(107,111,162,1)), color-stop(90%,rgba(213,212,247,1)), color-stop(100%,rgba(83,83,94,1))); /* Chrome,Safari4+ */
 			background: -webkit-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); /* Chrome10+,Safari5.1+ */
+			background: -moz-linear-gradient(top,  rgba(83,83,94,1) 0%, rgba(107,111,162,1) 17%, rgba(213,212,247,1) 90%, rgba(83,83,94,1) 100%); /* FF3.6+ */
 			background: -o-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); /* Opera 11.10+ */
 			background: -ms-linear-gradient(top,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); /* IE10+ */
 			background: linear-gradient(to bottom,  rgba(83,83,94,1) 0%,rgba(107,111,162,1) 17%,rgba(213,212,247,1) 90%,rgba(83,83,94,1) 100%); /* W3C */
 			filter: literal("progid:DXImageTransform.Microsoft.gradient( startColorstr='#53535e', endColorstr='#53535e',GradientType=0 )"); /* IE6-9 */
 			
+			-webkit-backface-visibility: hidden;
+			-moz-backface-visibility: hidden;
+			-o-backface-visibility: hidden;
+			-ms-backface-visibility: hidden;
+			backface-visibility: hidden;
 	    }
 	    .cube .one  {
 			-webkit-transform: translateZ(30px);
 			-moz-transform: translateZ(30px);
 			-o-transform: translateZ(30px);
+			-ms-transform: translateZ(30px);
 			transform: translateZ(30px);
 	    }
 	
@@ -65,6 +75,7 @@
 			-webkit-transform: rotateX(-90deg) translateZ(30px);
 			-moz-transform: rotateX(-90deg) translateZ(30px);
 			-o-transform: rotateX(-90deg) translateZ(30px);
+			-ms-transform: rotateX(-90deg) translateZ(30px);
 			transform: rotateX(-90deg) translateZ(30px);
 	    }
 	
@@ -72,6 +83,7 @@
 	    	-webkit-transform: rotateX(90deg) translateZ(30px);
 			-moz-transform: rotateX(90deg) translateZ(30px);
 			-o-transform: rotateX(90deg) translateZ(30px);
+			-ms-transform: rotateX(90deg) translateZ(30px);
 			transform: rotateX(90deg) translateZ(30px);
 	    }
 	
@@ -79,6 +91,7 @@
 			-webkit-transform: rotateX(-180deg) translateZ(30px);	     
 			-moz-transform: rotateX(-180deg) translateZ(30px);	     
 			-o-transform: rotateX(-180deg) translateZ(30px);	     
+			-ms-transform: rotateX(-180deg) translateZ(30px);	     
 			transform: rotateY(180deg) translateZ(30px);	
 	    }
 	    .content {
@@ -103,7 +116,7 @@
 	<g:HTMLPanel>
 	
 		<div id="experiment">
-			<g:FlowPanel styleName="{style.cube}" ui:field="cube">
+			<g:FlowPanel styleName="{style.cube} {style.invisible}" ui:field="cube">
 				<g:FlowPanel styleName="{style.face} {style.one}"><g:Label ui:field="label1" styleName="{style.content}" text="1"/></g:FlowPanel>
 				<g:FlowPanel styleName="{style.face} {style.two}"><g:Label ui:field="label2" styleName="{style.content}" text="2"/></g:FlowPanel>
 				<g:FlowPanel styleName="{style.face} {style.five}"><g:Label ui:field="label5" styleName="{style.content}" text="5"/></g:FlowPanel>

@@ -45,7 +45,7 @@ public class SoundtrackDB implements EntryPoint {
 		LOGGER.info("Starting up with url: " + Window.Location.getHref());
 
 		//Create the client factory
-		ClientFactory clientFactory = new ClientFactory();
+		final ClientFactory clientFactory = new ClientFactory();
 
 		//Create the navigator presenter
 		final NavigatorPresenter navigatorPresenter = new NavigatorPresenter(clientFactory);
@@ -68,7 +68,7 @@ public class SoundtrackDB implements EntryPoint {
 		footerView.setPresenter(footerPresenter);
 		RootPanel.get("footer_area").add(footerView);
 
-		//Create the footer presenter
+		//Create the section info presenter
 		final SectionInfoPresenter sectionInfoPresenter = new SectionInfoPresenter(clientFactory);
 		//Create view and attach it to the corresponding panel
 		SectionInfoView sectionInfoView = clientFactory.getUi().getSectionInfoView();
@@ -80,12 +80,20 @@ public class SoundtrackDB implements EntryPoint {
 		//Create view and attach it to the corresponding panel
 		final ErrorView errorView = clientFactory.getUi().getErrorView();
 		errorView.setPresenter(errorPresenter);
-
+		RootPanel.get("error_area").add(errorView);
 
 		EventBus eventBus = clientFactory.getEventBus();
 
+		eventBus.addHandler(FatalErrorEvent.TYPE, new FatalErrorEventHandler() {
+			@Override public void onFatalError(FatalErrorEvent event) {
+				errorPresenter.showError(event.getTitle(), event.getMessage(), event.getThrowable());
+			}
+		});
+
+		//Setting up display the current content
 		eventBus.addHandler(ContentAreaChangeEvent.TYPE, new ContentAreaChangeEventHandler() {
 			@Override public void onChange(ContentAreaChangeEvent event) {
+				LOGGER.info("onChange start");
 				ContentPresenterType type = event.getContentPresenterType();
 				IsWidget contentWidget = event.getContentWidget();
 
@@ -96,27 +104,23 @@ public class SoundtrackDB implements EntryPoint {
 
 				final RootPanel contentArea = RootPanel.get("content_area");
 
+				//				contentArea.clear();
 				while (contentArea.getWidgetCount() > 0)
 					contentArea.remove(0);
 
 				if (contentWidget != null)
 					contentArea.add(contentWidget);
+
+				LOGGER.info("onChange end");
 			}
 		});
-
-		eventBus.addHandler(FatalErrorEvent.TYPE, new FatalErrorEventHandler() {
-			@Override public void onFatalError(FatalErrorEvent event) {
-				errorPresenter.showError(event.getTitle(), event.getMessage(), event.getThrowable());
-			}
-		});
-
-		//Setting up display the current content
-		clientFactory.getHistoryManager().handleCurrentHistory();
 
 		//Kind of workaround for preventing the error dialog to be shown on application startup.
 		Scheduler.get().scheduleDeferred(new Command() {
 			@Override public void execute() {
-				RootPanel.get("error_area").add(errorView);
+				LOGGER.info("Scheduler before");
+				clientFactory.getHistoryManager().handleCurrentHistory();
+				LOGGER.info("Scheduler after");
 			}
 		});
 	}
