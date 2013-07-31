@@ -75,6 +75,7 @@ public class SectionInfoWidget extends Composite implements SectionInfoView {
 			target = this.label1;
 			this.factor = 0;
 			this.lastFace = 1;
+			this.cube.removeStyleName(this.style.invisible());
 		} else {
 			if (type.compareTo(this.lastType) < 0) {
 				this.lastFace = getNextFace(this.lastFace, invertedRolling);
