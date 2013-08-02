@@ -8,6 +8,7 @@ public class Release extends AbstractEntity<Release> {
 
 	private String type;
 	private Series series;
+	private String artworkUrl;
 	private int episode;
 	//	private String artist;
 	private String title;
@@ -27,10 +28,11 @@ public class Release extends AbstractEntity<Release> {
 		super();
 	}
 
-	public Release(long id, String type, Series series, int episode, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, Date duration, long audioId) {
+	public Release(long id, String type, Series series, String artworkUrl, int episode, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, Date duration, long audioId) {
 		super(id);
 		this.type = type;
 		this.series = series;
+		this.artworkUrl = artworkUrl;
 		this.episode = episode;
 		//		this.artist = artist;
 		this.title = title;
@@ -49,6 +51,10 @@ public class Release extends AbstractEntity<Release> {
 
 	@Override public String toString() {
 		return "Release #" + getId();
+	}
+
+	public String getArtworkUrl() {
+		return this.artworkUrl;
 	}
 
 	@Override public String getMatch() {

@@ -23,7 +23,9 @@ public class ReleasePresenter extends AbstractSearchablePresenter implements Rel
 		super(clientFactory, ContentPresenterType.RELEASE, Flavor.RELEASES);
 	}
 
-	protected QueryView createQueryView(String term) {
+
+
+	@Override protected QueryView createQueryView(String term) {
 		// Create the query widget instance
 		final ReleaseQueryView view = getClientFactory().getUi().getReleaseQueryView();
 		view.setPresenter(this);

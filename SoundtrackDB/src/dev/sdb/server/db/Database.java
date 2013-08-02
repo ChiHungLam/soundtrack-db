@@ -21,9 +21,13 @@ public interface Database {
 
 	Result getSeriesReleaseList(long seriesId, Range range) throws IOException;
 
+	Result getCatalogReleaseList(long catalogId, Range range) throws IOException;
+
 	Result query(Flavor flavor, String term, Range range, boolean ascending) throws IOException;
 
-	Result getCatalogList(long parentId) throws IOException;
+	Result getCatalogList(long parentCatalogId) throws IOException;
 
 	void repairCatalogChildInfo() throws IOException;
+
+
 }

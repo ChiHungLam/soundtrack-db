@@ -7,7 +7,6 @@ public class Catalog extends AbstractEntity<Catalog> {
 	private boolean children;
 	private String title;
 	private String info;
-
 	private int eraBegin;
 	private int eraEnd;
 

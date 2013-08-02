@@ -4,27 +4,33 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
 	<ui:style>
-		
+		.artworkContainer {
+			width: 100px;
+			height: 100px;
+		}
+		.artwork {
+			max-width: 100px;
+			max-height: 100px;
+		}
+		.fieldLabel {
+			
+		}
+		.fieldText {
+			
+		}
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<g:Grid>
-			<g:row>
-				<g:customCell>
-					<g:Label text="Id"/>
-				</g:customCell>
-				<g:customCell>
-					<g:LongBox ui:field="idField"/>
-				</g:customCell>
-			</g:row>
-			<g:row>
-				<g:customCell>
-					<g:Label text="Titel"/>
-				</g:customCell>
-				<g:customCell>
-					<g:TextBox ui:field="titleField"/>
-				</g:customCell>
-			</g:row>
-		</g:Grid>
+		<table>
+			<tr>
+				<td rowspan="2" class="{style.artworkContainer}"><g:Image ui:field="coverArtwork" styleName="{style.artwork}"/></td>
+				<td class="{style.fieldLabel}"><g:Label text="Id"/></td>
+				<td class="{style.fieldText}"><g:LongBox ui:field="idField" readOnly="true"/></td>
+			</tr>
+			<tr>
+				<td class="{style.fieldLabel}"><g:Label text="Titel"/></td>
+				<td class="{style.fieldText}"><g:TextBox ui:field="titleField" readOnly="true"/></td>
+			</tr>
+		</table>
 	</g:HTMLPanel>
 </ui:UiBinder> 
