@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.Range;
 
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.SoundtrackDB;
@@ -13,6 +14,7 @@ import dev.sdb.client.view.CatalogTreeView;
 import dev.sdb.client.view.DetailView;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
+import dev.sdb.shared.model.entity.Catalog;
 import dev.sdb.shared.model.entity.Entity;
 
 public class CatalogPresenter extends AbstractBrowsePresenter implements CatalogTreeView.Presenter,
@@ -27,6 +29,22 @@ public class CatalogPresenter extends AbstractBrowsePresenter implements Catalog
 	@Override public void getCatalogEntriesFromServer(CatalogDetailView view) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override public void getCatalogReleases(final Catalog catalog, Range range, final CatalogTreeView view) {
+		SearchServiceAsync service = getClientFactory().getSearchService();
+
+		// Then, we send the input to the server.
+		service.getCatalogReleaseList(catalog.getId(), range, new AsyncCallback<Result>() {
+
+			public void onSuccess(Result searchResult) {
+				view.showResult(searchResult);
+			}
+
+			public void onFailure(Throwable caught) {
+				handleRpcError("[" + Flavor.CATALOG.name() + "] getting releases of " + catalog.getMatch(), caught);
+			}
+		});
 	}
 
 	@Override public void getCatalogLevelEntries(final long parentId, final AsyncDataProvider<Entity> dataProvider) {

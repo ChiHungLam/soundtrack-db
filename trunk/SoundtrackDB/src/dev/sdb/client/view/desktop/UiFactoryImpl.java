@@ -2,6 +2,7 @@ package dev.sdb.client.view.desktop;
 
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
@@ -183,11 +184,15 @@ public class UiFactoryImpl implements UiFactory {
 					release = (Release) entity;
 
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
+				sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr><td style='width: 50px; height: 50px; text-align: center;'>");
+				sb.appendHtmlConstant("<img style='max-width: 50px; max-height: 50px;' src='" + URL.encode(release.getArtworkUrl()) + "'>");
+				sb.appendHtmlConstant("</td><td>");
 				sb.appendHtmlConstant("<b>" + release.getTitleInfo() + "</b>");
 				sb.appendHtmlConstant("<br>");
 				sb.appendHtmlConstant(release.getCatalogInfo());
 				sb.appendHtmlConstant("<br>");
 				sb.appendHtmlConstant("<i>" + release.getType() + " von " + release.getYearInfo() + "</i>");
+				sb.appendHtmlConstant("</td></tr></table>");
 				return sb.toSafeHtml();
 			}
 		};

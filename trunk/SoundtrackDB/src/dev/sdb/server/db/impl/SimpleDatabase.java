@@ -24,6 +24,16 @@ public class SimpleDatabase extends AbstractDatabase {
 		// TODO SimpleDatabase
 	}
 
+	@Override protected String composeCatalogReleaseList(Range range, boolean ascending) {
+		// TODO SimpleDatabase
+		return null;
+	}
+
+	@Override protected String composeCatalogReleaseListCount() {
+		// TODO SimpleDatabase
+		return null;
+	}
+
 	@Override protected String composeCatalogLevelList() {
 		// TODO SimpleDatabase
 		return null;

@@ -9,7 +9,4 @@ public interface ReleaseDetailView extends DetailView {
 
 	void setPresenter(Presenter presenter);
 
-
-
-
 }

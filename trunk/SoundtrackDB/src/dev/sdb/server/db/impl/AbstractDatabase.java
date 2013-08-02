@@ -52,6 +52,10 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 	protected abstract String composeCatalogLevelList();
 
+	protected abstract String composeCatalogReleaseList(Range range, boolean ascending);
+
+	protected abstract String composeCatalogReleaseListCount();
+
 	protected abstract String composeReleaseList(Range range, boolean ascending);
 
 	protected abstract String composeMusicList(Range range, boolean ascending);
@@ -98,6 +102,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 			listPS = getStatement(composeMusicReleaseList(range));
 			countPS = getStatement(composeMusicReleaseListCount());
+
 			int count = count(countPS, Long.valueOf(versionId));
 			selectMusicReleaseList(listPS, result, versionId, range);
 
@@ -162,7 +167,33 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		}
 	}
 
-	@Override public Result getCatalogList(long parentId) throws IOException {
+	@Override public Result getCatalogReleaseList(long catalogId, Range range) throws IOException {
+		PreparedStatement listPS = null;
+		PreparedStatement countPS = null;
+
+		List<Entity> result = new Vector<Entity>();
+
+		try {
+
+			listPS = getStatement(composeCatalogReleaseList(range, true));
+			countPS = getStatement(composeCatalogReleaseListCount());
+
+			int count = count(countPS, Long.valueOf(catalogId));
+			queryCatalogReleaseList(listPS, result, catalogId);
+
+			return new Result(result, range.getStart(), count);
+
+		} catch (SQLException e) {
+			result.clear();
+			throw new IOException(e);
+		} finally {
+			closeStatement(listPS);
+			closeStatement(countPS);
+		}
+	}
+
+
+	@Override public Result getCatalogList(long parentCatalogId) throws IOException {
 		PreparedStatement listPS = null;
 
 		List<Entity> result = new Vector<Entity>();
@@ -170,7 +201,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		try {
 
 			listPS = getStatement(composeCatalogLevelList());
-			queryCatalogLevelList(listPS, result, parentId);
+			queryCatalogLevelList(listPS, result, parentCatalogId);
 
 			return new Result(result, 0, result.size());
 
@@ -330,13 +361,34 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		return readSoundtrack(rs, true, true);
 	}
 
-	protected void queryCatalogLevelList(PreparedStatement ps, List<Entity> result, long parentId) throws IOException {
+	protected void queryCatalogReleaseList(PreparedStatement ps, List<Entity> result, long catalogId) throws IOException {
 		ResultSet rs = null;
 
 		try {
 
 			ps.clearParameters();
-			ps.setLong(1, parentId);
+			ps.setLong(1, catalogId);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				Release release = readRelease(rs);
+				result.add(release);
+			}
+
+		} catch (SQLException e) {
+			throw new IOException(e);
+		} finally {
+			closeResultSet(rs);
+		}
+	}
+	protected void queryCatalogLevelList(PreparedStatement ps, List<Entity> result, long parentCatalogId) throws IOException {
+		ResultSet rs = null;
+
+		try {
+
+			ps.clearParameters();
+			ps.setLong(1, parentCatalogId);
 
 			rs = ps.executeQuery();
 

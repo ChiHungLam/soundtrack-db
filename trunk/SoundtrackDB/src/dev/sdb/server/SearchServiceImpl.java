@@ -100,8 +100,21 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
-	@Override public Result getCatalogList(long parentId) throws IllegalArgumentException, IOException {
-		assert (parentId >= 0);
+	@Override public Result getCatalogReleaseList(long catalogId, Range range) throws IllegalArgumentException, IOException {
+		assert (catalogId >= 0);
+
+		Database database = getDatabase();
+		database.open();
+
+		try {
+			return database.getCatalogReleaseList(catalogId, range);
+		} finally {
+			database.close();
+		}
+	}
+
+	@Override public Result getCatalogList(long parentCatalogId) throws IllegalArgumentException, IOException {
+		assert (parentCatalogId >= 0);
 
 		Database database = getDatabase();
 		database.open();
@@ -109,9 +122,9 @@ import dev.sdb.shared.model.entity.Entity;
 		try {
 			//database.repairCatalogChildInfo();
 
-			database.getCatalogList(parentId);
+			database.getCatalogList(parentCatalogId);
 
-			return database.getCatalogList(parentId);
+			return database.getCatalogList(parentCatalogId);
 		} finally {
 			database.close();
 		}
