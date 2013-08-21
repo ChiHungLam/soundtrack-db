@@ -26,7 +26,7 @@
 			<g:Label ui:field="selectionInfoLabel"/>
 			<g:Cell>
 				<g:VerticalPanel ui:field="tablePanel" width="100%">
-					<g:Cell height="600">
+					<g:Cell height="700">
 						<g:ResizeLayoutPanel height="100%">
 							<c:DataGrid ui:field='dataGrid'/>
 						</g:ResizeLayoutPanel>
