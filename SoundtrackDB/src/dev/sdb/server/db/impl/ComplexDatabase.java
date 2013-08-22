@@ -22,7 +22,8 @@ import dev.sdb.shared.model.entity.Soundtrack;
 public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 	private static final String ARTWORTK_ROOT = "http://localhost/mimg/";
-	private static final String NO_ARTWORK_URL = "mediawiki/skins/common/images/wiki.png";
+	private static final String NO_ARTWORK_DIRECTORY = "unknown/";
+	private static final String NO_ARTWORK_IMAGE = "missing.png";
 
 	private static final String SERIES_INFO_FIELDS = "" +
 			"`edt_id` , " +
@@ -185,22 +186,33 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 		String artworkRootUrl = rs.getString("cat_artwork_root");
 
-		String artworkUrl = getArtworkUrl(artworkRootUrl, catalogNumber, print);
+		String artworkUrl = getArtworkUrl(artworkRootUrl, label, catalogNumber, print);
 
 		return new Release(id, type, series, artworkUrl, episode, title, label, media, catalogNumber, print, year, typeStatus, productionStatus, releaseStatus, printStatus, duration, audioId);
 	}
 
-	private String getArtworkUrl(String artworkRootUrl, String catalogNumber, int print) {
-		if (artworkRootUrl == null || artworkRootUrl.isEmpty())
-			return ARTWORTK_ROOT + NO_ARTWORK_URL;
+	private String getArtworkUrl(String artworkRootUrl, String label, String catalogNumber, int print) {
+		try {
+			if (artworkRootUrl == null || artworkRootUrl.isEmpty())
+				throw new IllegalStateException();
+			if (catalogNumber == null || catalogNumber.isEmpty())
+				throw new IllegalStateException();
 
-		if (catalogNumber == null || catalogNumber.isEmpty())
-			return ARTWORTK_ROOT + NO_ARTWORK_URL;
+			catalogNumber = catalogNumber.replace("/", "-");
 
-		String url = ARTWORTK_ROOT + artworkRootUrl + catalogNumber;
-		if (print > 1)
-			url += ".P" + print;
-		return url + ".jpg";
+			String url = ARTWORTK_ROOT + artworkRootUrl + catalogNumber;
+			if (print > 1)
+				url += ".P" + print;
+			return url + ".jpg";
+			
+		} catch (IllegalStateException e) {
+			if (label == null || label.isEmpty())
+				return ARTWORTK_ROOT + NO_ARTWORK_DIRECTORY + NO_ARTWORK_IMAGE;
+
+			return ARTWORTK_ROOT + NO_ARTWORK_DIRECTORY + label.toLowerCase() + ".png";
+		}
+
+
 	}
 
 	protected Series readSeries(ResultSet rs) throws SQLException {
