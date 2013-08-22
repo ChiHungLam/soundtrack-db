@@ -66,7 +66,7 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 	/**
 	 * The shared {@link SingleSelectionModel}.
 	 */
-	private final SingleSelectionModel<Entity> selectionModel = new SingleSelectionModel<Entity>(new ProvidesKey<Entity>() {
+	private final SingleSelectionModel<Entity> treeSelectionModel = new SingleSelectionModel<Entity>(new ProvidesKey<Entity>() {
 
 		private final ProvidesKey<Entity> keyProvider = new ProvidesKey<Entity>() {
 			@Override public Long getKey(Entity entity) {
@@ -117,11 +117,11 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 			if (value == null) {
 				// Top level.
 				CatalogListDataProvider dataProvider = new CatalogListDataProvider(0);
-				return new DefaultNodeInfo<Entity>(dataProvider, this.catalogCell, CatalogTreeWidget.this.selectionModel, null);
+				return new DefaultNodeInfo<Entity>(dataProvider, this.catalogCell, CatalogTreeWidget.this.treeSelectionModel, null);
 			} else if (value instanceof Entity) {
 				// Any other level.
 				CatalogListDataProvider dataProvider = new CatalogListDataProvider(((Entity) value).getId());
-				return new DefaultNodeInfo<Entity>(dataProvider, this.catalogCell, CatalogTreeWidget.this.selectionModel, null);
+				return new DefaultNodeInfo<Entity>(dataProvider, this.catalogCell, CatalogTreeWidget.this.treeSelectionModel, null);
 			}
 
 			return null;
@@ -256,13 +256,13 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 	 * Create the {@link CellTree}.
 	 */
 	private void createCatalogTree() {
-		final CatalogTreeViewModel model = new CatalogTreeViewModel();
+		final CatalogTreeViewModel treeViewModel = new CatalogTreeViewModel();
 
 		// Listen for selection. We need to add this handler before the CellBrowser
 		// adds its own handler.
-		this.selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+		this.treeSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
-				Object selected = CatalogTreeWidget.this.selectionModel.getSelectedObject();
+				Object selected = CatalogTreeWidget.this.treeSelectionModel.getSelectedObject();
 				if (selected == null) {
 					CatalogTreeWidget.this.lastCatalog = null;
 				} else if (selected instanceof Entity) {
@@ -280,7 +280,7 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		CellTree.Resources resources = GWT.create(CellTree.BasicResources.class);
 
 		// Create a CellBrowser.
-		this.cellTree = new CellTree(model, null, resources);
+		this.cellTree = new CellTree(treeViewModel, null, resources);
 		this.cellTree.setAnimationEnabled(true);
 
 	}

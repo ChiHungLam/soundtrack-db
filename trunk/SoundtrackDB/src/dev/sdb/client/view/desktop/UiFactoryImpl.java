@@ -183,16 +183,35 @@ public class UiFactoryImpl implements UiFactory {
 				else
 					release = (Release) entity;
 
+				String artworkUrl = URL.encode(release.getArtworkUrl());
+				String title = release.getTitleInfo();
+				String catalogInfo = release.getCatalogInfo();
+				String yearInfo = release.getYearInfo();
+				
+				String era = release.getType() + (yearInfo == null || yearInfo.isEmpty() ? "" : (" von " + yearInfo));
+				
 				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr><td style='width: 50px; height: 50px; text-align: center;'>");
-				sb.appendHtmlConstant("<img style='max-width: 50px; max-height: 50px;' src='" + URL.encode(release.getArtworkUrl()) + "'>");
-				sb.appendHtmlConstant("</td><td>");
-				sb.appendHtmlConstant("<b>" + release.getTitleInfo() + "</b>");
+
+				//Open one-row-table 
+				sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr>");
+
+				//Release artwork cell
+				sb.appendHtmlConstant("<td style='width: 50px; height: 50px; text-align: center;'>");
+				sb.appendHtmlConstant("<img style='max-width: 50px; max-height: 50px;' src='" + artworkUrl + "'>");
+				sb.appendHtmlConstant("</td>");
+
+				//Release info cell
+				sb.appendHtmlConstant("<td>");
+				sb.appendHtmlConstant("<b>" + title + "</b>");
 				sb.appendHtmlConstant("<br>");
-				sb.appendHtmlConstant(release.getCatalogInfo());
+				sb.appendHtmlConstant(catalogInfo);
 				sb.appendHtmlConstant("<br>");
-				sb.appendHtmlConstant("<i>" + release.getType() + " von " + release.getYearInfo() + "</i>");
-				sb.appendHtmlConstant("</td></tr></table>");
+				sb.appendHtmlConstant("<i>" + era + "</i>");
+				sb.appendHtmlConstant("</td>");
+
+				//close one-row-table 
+				sb.appendHtmlConstant("</tr></table>");
+
 				return sb.toSafeHtml();
 			}
 		};
