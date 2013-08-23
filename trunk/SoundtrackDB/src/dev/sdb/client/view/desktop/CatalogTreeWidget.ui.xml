@@ -5,42 +5,75 @@
 	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	
 	<ui:style>
-		.tree {
-			width: 400px;
+		.stage {
+			position:relative;
+			width: 100%;
+			height: 100%;
 		}
+		
 		.treeScrollPanel {
 			width: 420px;
 			height: 100%;
 			border: 1px solid #ccc;
 		}
-		.listPanel {
-			width: 500px;
+		.tree {
+			width: 400px;
 		}
-		.tableScrollPanel {
-			height: 100%;
+		.releaseContainer {
+			position:absolute;
+			top:0px;
+			bottom:0px;
+			left:420px;
+			right:0px;
+		}
+		.releaseLabel {
+			position:absolute;
+			top:10px;
+			left:20px;
+		}
+		.releaseScrollPanel {
+			position:absolute !important;
+
+			top:30px;
+			left:20px;
+			right:20px;
+			bottom:35px;
+			
 			border: 1px solid #ccc;
+		}
+		
+		.releaseTable {
+			position:relative;
+		}
+		
+		.releasePagerContainer {
+			position:absolute;
+			left:20px;
+			right:20px;
+			bottom:0px;
+		}
+		.releasePager {
+			display: inline-block;
 		}
 	</ui:style>
 	
-	<g:HorizontalPanel height="100%" >
+	<g:FlowPanel addStyleNames="{style.stage}">
+	
 		<g:ScrollPanel addStyleNames="{style.treeScrollPanel}">
 			<c:CellTree ui:field="catalogCellTree" addStyleNames="{style.tree}"/>
 		</g:ScrollPanel>
-		<g:VerticalPanel spacing="10" styleName="{style.listPanel}">
-			<g:Label ui:field="selectionInfoLabel"/>
-			<g:Cell>
-				<g:VerticalPanel ui:field="tablePanel" width="100%">
-					<g:Cell height="700">
-						<g:ScrollPanel addStyleNames="{style.tableScrollPanel}">
-							<c:CellTable ui:field="releaseTable"/>
-						</g:ScrollPanel>
-					</g:Cell>
-					<g:Cell horizontalAlignment="ALIGN_CENTER">
-						<c:SimplePager ui:field="releasePager"/>
-					</g:Cell>
-				</g:VerticalPanel>
-			</g:Cell>
-		</g:VerticalPanel>
-	</g:HorizontalPanel>
+		
+		<g:FlowPanel addStyleNames="{style.releaseContainer}">
+			<g:Label ui:field="selectionInfoLabel" addStyleNames="{style.releaseLabel}"/>
+			
+			<g:ScrollPanel ui:field="releaseTableScroll" addStyleNames="{style.releaseScrollPanel}">
+				<c:CellTable ui:field="releaseTable" addStyleNames="{style.releaseTable}"/>
+			</g:ScrollPanel>
+			
+			<g:FlowPanel addStyleNames="{style.releasePagerContainer}">
+				<c:SimplePager ui:field="releasePager" addStyleNames="{style.releasePager}"/>
+			</g:FlowPanel>
+		</g:FlowPanel>
+	</g:FlowPanel>
 	
 </ui:UiBinder> 
