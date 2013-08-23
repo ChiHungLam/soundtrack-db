@@ -72,13 +72,11 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 	protected abstract String composeSeriesCount();
 
-	protected abstract String composeReleaseSoundtrackList(Range range);
+	protected abstract String composeReleaseSoundtrackList();
 
 	protected abstract String composeMusicReleaseList(Range range);
 
 	protected abstract String composeSeriesReleaseList(Range range);
-
-	protected abstract String composeReleaseSoundtrackListCount();
 
 	protected abstract String composeMusicReleaseListCount();
 
@@ -143,7 +141,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 	}
 
 
-	public Result getReleaseSoundtrackList(long audioId, Range range) throws IOException {
+	public Result getReleaseSoundtrackList(long audioId) throws IOException {
 		PreparedStatement listPS = null;
 		PreparedStatement countPS = null;
 
@@ -151,12 +149,12 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 		try {
 
-			listPS = getStatement(composeReleaseSoundtrackList(range));
-			countPS = getStatement(composeReleaseSoundtrackListCount());
-			int count = count(countPS, Long.valueOf(audioId));
-			selectReleaseSoundtrackList(listPS, result, audioId, range);
+			listPS = getStatement(composeReleaseSoundtrackList());
+			//			countPS = getStatement(composeReleaseSoundtrackListCount());
+			//			int count = count(countPS, Long.valueOf(audioId));
+			selectReleaseSoundtrackList(listPS, result, audioId);
 
-			return new Result(result, range.getStart(), count);
+			return new Result(result, 0, result.size());
 
 		} catch (SQLException e) {
 			result.clear();
@@ -533,7 +531,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		}
 	}
 
-	protected void selectReleaseSoundtrackList(PreparedStatement ps, List<Entity> result, long audioId, Range range) throws IOException {
+	protected void selectReleaseSoundtrackList(PreparedStatement ps, List<Entity> result, long audioId) throws IOException {
 		ResultSet rs = null;
 
 		try {

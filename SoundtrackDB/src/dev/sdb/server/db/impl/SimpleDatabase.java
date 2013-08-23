@@ -114,7 +114,7 @@ public class SimpleDatabase extends AbstractDatabase {
 		return null;
 	}
 
-	@Override protected String composeReleaseSoundtrackList(Range range) {
+	@Override protected String composeReleaseSoundtrackList() {
 		// TODO SimpleDatabase
 		return null;
 	}
@@ -125,11 +125,6 @@ public class SimpleDatabase extends AbstractDatabase {
 	}
 
 	@Override protected String composeSoundtrackCount() {
-		// TODO SimpleDatabase
-		return null;
-	}
-
-	@Override protected String composeReleaseSoundtrackListCount() {
 		// TODO SimpleDatabase
 		return null;
 	}

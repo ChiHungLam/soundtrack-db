@@ -8,7 +8,7 @@
 		.tree {
 			width: 400px;
 		}
-		.treePanel {
+		.treeScrollPanel {
 			width: 420px;
 			height: 100%;
 			border: 1px solid #ccc;
@@ -16,23 +16,27 @@
 		.listPanel {
 			width: 500px;
 		}
+		.tableScrollPanel {
+			height: 100%;
+			border: 1px solid #ccc;
+		}
 	</ui:style>
 	
 	<g:HorizontalPanel height="100%" >
-		<g:ScrollPanel ui:field="scrollPanel" addStyleNames='{style.treePanel}'>
-			<c:CellTree ui:field="cellTree" addStyleNames='{style.tree}'/>
+		<g:ScrollPanel addStyleNames="{style.treeScrollPanel}">
+			<c:CellTree ui:field="catalogCellTree" addStyleNames="{style.tree}"/>
 		</g:ScrollPanel>
 		<g:VerticalPanel spacing="10" styleName="{style.listPanel}">
 			<g:Label ui:field="selectionInfoLabel"/>
 			<g:Cell>
 				<g:VerticalPanel ui:field="tablePanel" width="100%">
 					<g:Cell height="700">
-						<g:ResizeLayoutPanel height="100%">
-							<c:DataGrid ui:field='dataGrid'/>
-						</g:ResizeLayoutPanel>
+						<g:ScrollPanel addStyleNames="{style.tableScrollPanel}">
+							<c:CellTable ui:field="releaseTable"/>
+						</g:ScrollPanel>
 					</g:Cell>
 					<g:Cell horizontalAlignment="ALIGN_CENTER">
-						<c:SimplePager ui:field="pager"/>
+						<c:SimplePager ui:field="releasePager"/>
 					</g:Cell>
 				</g:VerticalPanel>
 			</g:Cell>

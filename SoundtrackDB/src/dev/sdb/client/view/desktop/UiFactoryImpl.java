@@ -1,13 +1,16 @@
 package dev.sdb.client.view.desktop;
 
+import java.util.List;
+import java.util.Vector;
+
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 
 import dev.sdb.client.ClientFactory;
@@ -42,22 +45,59 @@ import dev.sdb.shared.model.entity.Soundtrack;
 
 public class UiFactoryImpl implements UiFactory {
 
-	private static class RowColumConfig {
-		private final Column<?, ?> column;
-		private final double width;
+	private static class ColumConfig {
 
-		private RowColumConfig(Column<?, ?> column, double width) {
+		private final Column<Entity, ?> column;
+		private final String title;
+		private final double width;
+		private final boolean sortable;
+
+		private ColumConfig(Column<Entity, ?> column, String title, double width, boolean sortable) {
 			super();
 			this.column = column;
+			this.title = title;
 			this.width = width;
+			this.sortable = sortable;
 		}
 
-		private Column<?, ?> getPushColumn() {
+		private Column<Entity, ?> getColumn() {
 			return this.column;
 		}
-
-		private double getTotalWidth() {
+		private String getTitle() {
+			return this.title;
+		}
+		private double getWidth() {
 			return this.width;
+		}
+		private boolean isSortable() {
+			return this.sortable;
+		}
+	}
+
+	private static class ColumSetConfig {
+		private List<ColumConfig> columns;
+		private Column<Entity, ?> pushColumn;
+
+		private ColumSetConfig() {
+			super();
+			this.columns = new Vector<ColumConfig>();
+			this.pushColumn = null;
+		}
+
+		private void addColumn(Column<Entity, ?> column, String title, double width, boolean sortable) {
+			this.columns.add(new ColumConfig(column, title, width, sortable));
+		}
+
+		private void setPushColumn(Column<Entity, ?> pushColumn) {
+			this.pushColumn = pushColumn;
+		}
+
+		private Column<Entity, ?> getPushColumn() {
+			return this.pushColumn;
+		}
+
+		private List<ColumConfig> getColumns() {
+			return this.columns;
 		}
 	}
 
@@ -77,6 +117,415 @@ public class UiFactoryImpl implements UiFactory {
 		protected abstract long getId(Entity entity);
 	}
 
+	private class ColumnFactory {
+		private static final String IMG_STATIC_ROOT_URL = "http://localhost/mimg/static/";
+
+		private static final double COLUMN_WIDTH_GOTO = 40.0;
+		private static final double COLUMN_WIDTH_ID = 80.0;
+
+		protected String formatTime(int time) {
+			if (time == 0)
+				return "00:00";
+
+			String prefix = (time < 0) ? "(-)" : "";
+
+			long minute = time / 60;
+			long second = time - (minute * 60);
+
+			return prefix + ((minute < 10) ? "0" : "") + minute + ":" + ((second < 10) ? "0" : "") + second;
+		}
+
+		protected void appendSublistReleaseSoundtrackColumns(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.MUSIC) {
+				@Override protected long getId(Entity entity) {
+					return ((Soundtrack) entity).getMusic().getId();
+				}
+			});
+			addSublistReleaseSoundtrackColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		protected void appendSublistSeriesReleaseColumns(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+				@Override protected long getId(Entity entity) {
+					return entity.getId();
+				}
+			});
+			addReleaseColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		protected void appendSublistMusicReleaseColumns(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+				@Override protected long getId(Entity entity) {
+					return entity.getId();
+				}
+			});
+			addReleaseColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		protected void appendSublistCatalogReleaseColumns(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+				@Override protected long getId(Entity entity) {
+					return entity.getId();
+				}
+			});
+			addReleaseColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		protected void appendQuerySeriesColums(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.SERIES) {
+				@Override protected long getId(Entity entity) {
+					return entity.getId();
+				}
+			});
+			addSeriesColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		protected void appendQuerySoundtrackColums(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.SOUNDTRACK) {
+				@Override protected long getId(Entity entity) {
+					return entity.getId();
+				}
+			});
+			addSoundtrackColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		protected void appendQueryReleaseColums(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+				@Override protected long getId(Entity entity) {
+					return entity.getId();
+				}
+			});
+			addReleaseColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		protected void appendQueryMusicColums(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.MUSIC) {
+				@Override protected long getId(Entity entity) {
+					return entity.getId();
+				}
+			});
+			addMusicColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		protected void appendCatalogTreeReleaseColumns(CellTable<Entity> table) {
+			ColumSetConfig config = new ColumSetConfig();
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+				@Override protected long getId(Entity entity) {
+					return entity.getId();
+				}
+			});
+			addReleaseColumns(table, config);
+
+			setTableConfig(table, config);
+		}
+
+		private void setTableConfig(CellTable<Entity> table, ColumSetConfig config) {
+			List<ColumConfig> columns = config.getColumns();
+			Column<Entity, ?> pushColumn = config.getPushColumn();
+			boolean tableSortable = (pushColumn != null);
+
+			for (ColumConfig colConfig : columns) {
+				Column<Entity, ?> col = colConfig.getColumn();
+				String title = colConfig.getTitle();
+				double width = colConfig.getWidth();
+				boolean sortable = colConfig.isSortable();
+
+				col.setSortable(sortable && tableSortable);
+				table.addColumn(col, title);// Add the column.
+
+				if (width >= 0)
+					table.setColumnWidth(col, width, Unit.PX);
+			}
+
+			table.setWidth("100%", true);
+
+			if (tableSortable)
+				table.getColumnSortList().push(pushColumn);
+		}
+
+		private Column<Entity, ?> createGotoColumn(final BrowseConfig config) {
+			ActionCell.Delegate<Entity> delegate = new ActionCell.Delegate<Entity>() {
+				@Override public void execute(Entity entity) {
+					String entityToken = config.getType().getToken() + "?id=" + config.getId(entity);
+					UiFactoryImpl.this.clientFactory.getHistoryManager().createHistory(entityToken, true);
+				}
+			};
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+			sb.appendHtmlConstant("<img style='margin-top: 4px; width: 16px; height: 16px;' src='" + IMG_STATIC_ROOT_URL + "goto16.png' alt='Gehe zu' title='Details anzeigen'>");
+
+			ActionCell<Entity> cell = new ActionCell<Entity>(sb.toSafeHtml(), delegate);
+
+			Column<Entity, Entity> column = new Column<Entity, Entity>(cell) {
+				@Override public Entity getValue(Entity entity) {
+					return entity;
+				}
+			};
+
+			column.setCellStyleNames("gotoColumn");
+
+			return column;
+		}
+
+		private Column<Entity, ?> createReleaseColumn() {
+			final SafeHtmlCell cell = new SafeHtmlCell();
+			Column<Entity, SafeHtml> column = new Column<Entity, SafeHtml>(cell) {
+				@Override public SafeHtml getValue(Entity entity) {
+					if (entity == null)
+						return null;
+
+					Release release;
+					if (entity instanceof Soundtrack)
+						release = ((Soundtrack) entity).getRelease();
+					else
+						release = (Release) entity;
+
+					String artworkUrl = URL.encode(release.getArtworkUrl());
+					String title = release.getTitleInfo();
+					String catalogInfo = release.getCatalogInfo();
+					String yearInfo = release.getYearInfo();
+
+					String era = release.getType() + (yearInfo == null || yearInfo.isEmpty() ? "" : (" von " + yearInfo));
+
+					SafeHtmlBuilder sb = new SafeHtmlBuilder();
+
+					//Open one-row-table 
+					sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr>");
+
+					//Release artwork cell
+					sb.appendHtmlConstant("<td style='width: 50px; height: 50px; text-align: center;'>");
+					sb.appendHtmlConstant("<img style='max-width: 50px; max-height: 50px;' src='" + artworkUrl + "'>");
+					sb.appendHtmlConstant("</td>");
+
+					//Release info cell
+					sb.appendHtmlConstant("<td>");
+					sb.appendHtmlConstant("<b>" + title + "</b>");
+					sb.appendHtmlConstant("<br>");
+					sb.appendHtmlConstant(catalogInfo);
+					sb.appendHtmlConstant("<br>");
+					sb.appendHtmlConstant("<i>" + era + "</i>");
+					sb.appendHtmlConstant("</td>");
+
+					//close one-row-table 
+					sb.appendHtmlConstant("</tr></table>");
+
+					return sb.toSafeHtml();
+				}
+			};
+			return column;
+		}
+
+		private Column<Entity, ?> createMusicColumn() {
+			final SafeHtmlCell cell = new SafeHtmlCell();
+			Column<Entity, SafeHtml> column = new Column<Entity, SafeHtml>(cell) {
+				@Override public SafeHtml getValue(Entity entity) {
+					if (entity == null)
+						return null;
+
+					Music music;
+					if (entity instanceof Soundtrack)
+						music = ((Soundtrack) entity).getMusic();
+					else
+						music = (Music) entity;
+
+					String artist = null;
+					String authors = null;
+					String title = null;
+
+					if (music != null) {
+						artist = music.getArtist();
+						title = music.getTitleInfo();
+						if (artist != null)
+							artist += " (" + music.getYearInfo() + ")";
+						authors = music.getAuthors();
+						if (authors == null && artist != null)
+							authors = "Komponist unbekannt";
+					}
+
+					SafeHtmlBuilder sb = new SafeHtmlBuilder();
+					sb.appendHtmlConstant((artist == null) ? "&nbsp;" : artist);
+					sb.appendHtmlConstant("<br>");
+					sb.appendHtmlConstant((title == null) ? ("<i>keine Angabe</i>") : ("<b>" + title + "</b>"));
+					sb.appendHtmlConstant("<br>");
+					sb.appendHtmlConstant((authors == null) ? "&nbsp;" : ("<i>(" + authors + ")</i>"));
+
+					return sb.toSafeHtml();
+				}
+			};
+			return column;
+		}
+
+		private Column<Entity, ?> createSeriesColumn() {
+			final SafeHtmlCell cell = new SafeHtmlCell();
+			Column<Entity, SafeHtml> column = new Column<Entity, SafeHtml>(cell) {
+				@Override public SafeHtml getValue(Entity entity) {
+					if (entity == null)
+						return null;
+
+					Series series = (Series) entity;
+
+					SafeHtmlBuilder sb = new SafeHtmlBuilder();
+					sb.appendHtmlConstant("<b>" + series.getTitle() + "</b>");
+					return sb.toSafeHtml();
+				}
+			};
+			return column;
+		}
+
+		private Column<Entity, ?> createSoundtrackSeqNumColumn() {
+			final SafeHtmlCell cell = new SafeHtmlCell();
+			Column<Entity, SafeHtml> column = new Column<Entity, SafeHtml>(cell) {
+				@Override public SafeHtml getValue(Entity entity) {
+					if (entity == null)
+						return null;
+
+					Soundtrack soundtrack = (Soundtrack) entity;
+
+					String seqColor = getSequenceColor(soundtrack.getMediaIndex());
+
+					SafeHtmlBuilder sb = new SafeHtmlBuilder();
+					sb.appendHtmlConstant("<div style='" +
+							"position: absolute;" +
+							"width: 100%;" +
+							"height: 100%;" +
+							"top: 0px;" +
+							seqColor +
+							"text-align: center;" +
+							"'>&nbsp;<br><b>" + soundtrack.getSeqNum() + "</b></div>");
+					return sb.toSafeHtml();
+				}
+
+				private String getSequenceColor(int mediaIndex) {
+					if (mediaIndex == 0) {
+						return "background-color: red;";
+					}
+					if (mediaIndex == -1) {
+						return "background-color: darkgray;";
+					}
+					if ((mediaIndex & 1) != 0) {
+						return "background-color: cadetblue;";
+					}
+					if ((mediaIndex & 1) == 0) {
+						return "background-color: burlywood;";
+					}
+					return "";
+				}
+			};
+
+			column.setCellStyleNames("sequenceColumn");
+
+			return column;
+		}
+
+		private Column<Entity, ?> createSoundtrackTimeColumn() {
+			final SafeHtmlCell cell = new SafeHtmlCell();
+			Column<Entity, SafeHtml> column = new Column<Entity, SafeHtml>(cell) {
+				@Override public SafeHtml getValue(Entity entity) {
+					if (entity == null)
+						return null;
+
+					Soundtrack soundtrack = (Soundtrack) entity;
+
+					String time = formatSoundtrackTime(soundtrack);
+
+					SafeHtmlBuilder sb = new SafeHtmlBuilder();
+					sb.appendHtmlConstant((time == null) ? "<i>k.A.</i>" : "" + time + "");
+					return sb.toSafeHtml();
+				}
+
+				private String formatSoundtrackTime(Soundtrack soundtrack) {
+					int start = soundtrack.getStartTime();
+					int stop = soundtrack.getStopTime();
+					if (start == 0 && stop == 0)
+						return null;
+					
+					String time = formatTime(start) + "&nbsp;-&nbsp;" + formatTime(stop);
+					
+					return time;
+				}
+			};
+			return column;
+		}
+
+		private Column<Entity, ?> createSoundtrackIdColumn() {
+			TextColumn<Entity> column = new TextColumn<Entity>() {
+				@Override public String getValue(Entity entity) {
+					return "#" + ((Soundtrack) entity).getId();
+				}
+			};
+			return column;
+		}
+
+		private void addGotoColumn(CellTable<Entity> table, ColumSetConfig config, BrowseConfig browseConfig) {
+			Column<Entity, ?> gotoColumn = createGotoColumn(browseConfig);
+			config.addColumn(gotoColumn, "", COLUMN_WIDTH_GOTO, false);
+		}
+
+		private void addReleaseColumns(CellTable<Entity> table, ColumSetConfig config) {
+			Column<Entity, ?> releaseColumn = createReleaseColumn();
+			config.addColumn(releaseColumn, "Veröffentlichung", -1, true);
+			config.setPushColumn(releaseColumn);
+		}
+
+		private void addMusicColumns(CellTable<Entity> table, ColumSetConfig config) {
+			Column<Entity, ?> musicColumn = createMusicColumn();
+			config.addColumn(musicColumn, "Musik", -1, true);
+			config.setPushColumn(musicColumn);
+		}
+
+		private void addSeriesColumns(CellTable<Entity> table, ColumSetConfig config) {
+			Column<Entity, ?> seriesColumn = createSeriesColumn();
+			config.addColumn(seriesColumn, "Serien", -1, true);
+			config.setPushColumn(seriesColumn);
+		}
+
+		private void addSoundtrackColumns(CellTable<Entity> table, ColumSetConfig config) {
+			Column<Entity, ?> soundtrackIdColumn = createSoundtrackIdColumn();
+			config.addColumn(soundtrackIdColumn, "ID", COLUMN_WIDTH_ID, true);
+
+			addReleaseColumns(table, config); // Add the release column(s)
+			config.addColumn(createSoundtrackSeqNumColumn(), "Sequenz", 80.0, false);
+			addMusicColumns(table, config); // Add the music column(s)
+			config.addColumn(createSoundtrackTimeColumn(), "Zeit", 110.0, false);
+
+			config.setPushColumn(soundtrackIdColumn);
+		}
+
+		private void addSublistReleaseSoundtrackColumns(CellTable<Entity> table, ColumSetConfig config) {
+			//			config.addColumn(createSoundtrackIdColumn(), "ID", COLUMN_WIDTH_ID, false);
+			config.addColumn(createSoundtrackSeqNumColumn(), "Sequenz", 80.0, false);
+
+			addMusicColumns(table, config); // Add the music column(s)
+
+			config.addColumn(createSoundtrackTimeColumn(), "Zeit", 110.0, false);
+
+			config.setPushColumn(null);
+		}
+	}
 	public static String getBrowserPrefixedCssDefinition(String attribute, String value) {
 		String all = "";
 		all += "-webkit-" + attribute + ": " + value + "; ";
@@ -85,11 +534,6 @@ public class UiFactoryImpl implements UiFactory {
 		all += attribute + ": " + value + ";";
 		return all;
 	}
-
-	private static final double COLUMN_WIDTH_GOTO = 40.0;
-	private static final double COLUMN_WIDTH_ID = 80.0;
-	private static final double COLUMN_WIDTH_COMPACT_CELL = 500.0;
-	private static final double COLUMN_WIDTH_COMPACT_CELL_MAX = 1400.0;
 
 	private NavigatorView navigatorView;
 	private HeaderView headerView;
@@ -113,9 +557,11 @@ public class UiFactoryImpl implements UiFactory {
 	private CatalogDetailView catalogDetailView;
 
 	private ClientFactory clientFactory;
+	private ColumnFactory columnFactory;
 
 	public UiFactoryImpl() {
 		super();
+		this.columnFactory = new ColumnFactory();
 	}
 
 	@Override public void setClientFactory(ClientFactory clientFactory) {
@@ -164,7 +610,7 @@ public class UiFactoryImpl implements UiFactory {
 	@Override public ReleaseQueryView getReleaseQueryView() {
 		if (this.releaseQueryView == null) {
 			this.releaseQueryView = new ReleaseQueryWidget();
-			appendQueryReleaseColums(this.releaseQueryView.getResultTable());
+			this.columnFactory.appendQueryReleaseColums(this.releaseQueryView.getResultTable());
 		}
 		return this.releaseQueryView;
 	}
@@ -172,7 +618,7 @@ public class UiFactoryImpl implements UiFactory {
 	@Override public MusicQueryView getMusicQueryView() {
 		if (this.musicQueryView == null) {
 			this.musicQueryView = new MusicQueryWidget();
-			appendQueryMusicColums(this.musicQueryView.getResultTable());
+			this.columnFactory.appendQueryMusicColums(this.musicQueryView.getResultTable());
 
 		}
 		return this.musicQueryView;
@@ -181,136 +627,23 @@ public class UiFactoryImpl implements UiFactory {
 	@Override public SoundtrackQueryView getSoundtrackQueryView() {
 		if (this.soundtrackQueryView == null) {
 			this.soundtrackQueryView = new SoundtrackQueryWidget();
-			appendQuerySoundtrackColums(this.soundtrackQueryView.getResultTable());
+			this.columnFactory.appendQuerySoundtrackColums(this.soundtrackQueryView.getResultTable());
 		}
 		return this.soundtrackQueryView;
-	}
-
-	private void setTableConfig(DataGrid<Entity> table, RowColumConfig config) {
-		double minWidth = config.getTotalWidth() + COLUMN_WIDTH_GOTO;
-
-		table.setWidth("100%");
-		table.setTableWidth(100.0, Unit.PCT);
-		table.setMinimumTableWidth(minWidth, Unit.PX);
-
-		Column<?, ?> pushColumn = config.getPushColumn();
-		if (pushColumn != null)
-			table.getColumnSortList().push(pushColumn);
-	}
-
-	protected void appendSublistReleaseSoundtrackColumns(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.MUSIC) {
-			@Override protected long getId(Entity entity) {
-				return ((Soundtrack) entity).getMusic().getId();
-			}
-		});
-		RowColumConfig config = addCompactSublistReleaseSoundtrackColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
-	}
-
-	protected void appendSublistSeriesReleaseColumns(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.RELEASE) {
-			@Override protected long getId(Entity entity) {
-				return entity.getId();
-			}
-		});
-		RowColumConfig config = addCompactReleaseColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
-	}
-
-	protected void appendSublistMusicReleaseColumns(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.RELEASE) {
-			@Override protected long getId(Entity entity) {
-				return entity.getId();
-			}
-		});
-		RowColumConfig config = addCompactReleaseColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
-	}
-
-	protected void appendSublistCatalogReleaseColumns(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.RELEASE) {
-			@Override protected long getId(Entity entity) {
-				return entity.getId();
-			}
-		});
-		RowColumConfig config = addCompactReleaseColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
-	}
-
-	protected void appendQuerySeriesColums(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.SERIES) {
-			@Override protected long getId(Entity entity) {
-				return entity.getId();
-			}
-		});
-		RowColumConfig config = addCompactSeriesColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
-	}
-
-	protected void appendQuerySoundtrackColums(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.SOUNDTRACK) {
-			@Override protected long getId(Entity entity) {
-				return entity.getId();
-			}
-		});
-		RowColumConfig config = addCompactSoundtrackColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
-	}
-
-	protected void appendQueryReleaseColums(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.RELEASE) {
-			@Override protected long getId(Entity entity) {
-				return entity.getId();
-			}
-		});
-		RowColumConfig config = addCompactReleaseColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
-	}
-
-	protected void appendQueryMusicColums(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.MUSIC) {
-			@Override protected long getId(Entity entity) {
-				return entity.getId();
-			}
-		});
-		RowColumConfig config = addCompactMusicColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
-	}
-
-	protected void appendCatalogTreeReleaseColumns(DataGrid<Entity> table) {
-		addGotoColumn(table, new BrowseConfig(ContentPresenterType.RELEASE) {
-			@Override protected long getId(Entity entity) {
-				return entity.getId();
-			}
-		});
-		RowColumConfig config = addCompactReleaseColumns(table, COLUMN_WIDTH_COMPACT_CELL_MAX);
-
-		setTableConfig(table, config);
 	}
 
 	@Override public SeriesQueryView getSeriesQueryView() {
 		if (this.seriesQueryView == null) {
 			this.seriesQueryView = new SeriesQueryWidget();
-			appendQuerySeriesColums(this.seriesQueryView.getResultTable());
+			this.columnFactory.appendQuerySeriesColums(this.seriesQueryView.getResultTable());
 		}
 		return this.seriesQueryView;
 	}
 
-
-
 	@Override public CatalogTreeView getCatalogTreeView(CatalogTreeView.Presenter presenter) {
 		if (this.catalogTreeView == null) {
 			this.catalogTreeView = new CatalogTreeWidget(presenter);
-			appendCatalogTreeReleaseColumns(this.catalogTreeView.getReleaseTable());
+			this.columnFactory.appendCatalogTreeReleaseColumns(this.catalogTreeView.getReleaseTable());
 		}
 		return this.catalogTreeView;
 	}
@@ -318,17 +651,15 @@ public class UiFactoryImpl implements UiFactory {
 	@Override public ReleaseDetailView getReleaseDetailView() {
 		if (this.releaseDetailView == null) {
 			this.releaseDetailView = new ReleaseDetailWidget();
-			appendSublistReleaseSoundtrackColumns(this.releaseDetailView.getSublistTable());
+			this.columnFactory.appendSublistReleaseSoundtrackColumns(this.releaseDetailView.getSublistTable());
 		}
 		return this.releaseDetailView;
 	}
 
-
-
 	@Override public MusicDetailView getMusicDetailView() {
 		if (this.musicDetailView == null) {
 			this.musicDetailView = new MusicDetailWidget();
-			appendSublistMusicReleaseColumns(this.musicDetailView.getSublistTable());
+			this.columnFactory.appendSublistMusicReleaseColumns(this.musicDetailView.getSublistTable());
 		}
 		return this.musicDetailView;
 	}
@@ -344,7 +675,7 @@ public class UiFactoryImpl implements UiFactory {
 	@Override public SeriesDetailView getSeriesDetailView() {
 		if (this.seriesDetailView == null) {
 			this.seriesDetailView = new SeriesDetailWidget();
-			appendSublistSeriesReleaseColumns(this.seriesDetailView.getSublistTable());
+			this.columnFactory.appendSublistSeriesReleaseColumns(this.seriesDetailView.getSublistTable());
 		}
 		return this.seriesDetailView;
 	}
@@ -352,369 +683,8 @@ public class UiFactoryImpl implements UiFactory {
 	@Override public CatalogDetailView getCatalogDetailView() {
 		if (this.catalogDetailView == null) {
 			this.catalogDetailView = new CatalogDetailWidget();
-			appendSublistCatalogReleaseColumns(this.catalogDetailView.getSublistTable());
+			this.columnFactory.appendSublistCatalogReleaseColumns(this.catalogDetailView.getSublistTable());
 		}
 		return this.catalogDetailView;
-	}
-
-	private Column<Entity, SafeHtml> createCompactReleaseColumn() {
-		final SafeHtmlCell releaseCell = new SafeHtmlCell();
-		Column<Entity, SafeHtml> releaseColumn = new Column<Entity, SafeHtml>(releaseCell) {
-			@Override public SafeHtml getValue(Entity entity) {
-				if (entity == null)
-					return null;
-
-				Release release;
-				if (entity instanceof Soundtrack)
-					release = ((Soundtrack) entity).getRelease();
-				else
-					release = (Release) entity;
-
-				String artworkUrl = URL.encode(release.getArtworkUrl());
-				String title = release.getTitleInfo();
-				String catalogInfo = release.getCatalogInfo();
-				String yearInfo = release.getYearInfo();
-				
-				String era = release.getType() + (yearInfo == null || yearInfo.isEmpty() ? "" : (" von " + yearInfo));
-				
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-
-				//Open one-row-table 
-				sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr>");
-
-				//Release artwork cell
-				sb.appendHtmlConstant("<td style='width: 50px; height: 50px; text-align: center;'>");
-				sb.appendHtmlConstant("<img style='max-width: 50px; max-height: 50px;' src='" + artworkUrl + "'>");
-				sb.appendHtmlConstant("</td>");
-
-				//Release info cell
-				sb.appendHtmlConstant("<td>");
-				sb.appendHtmlConstant("<b>" + title + "</b>");
-				sb.appendHtmlConstant("<br>");
-				sb.appendHtmlConstant(catalogInfo);
-				sb.appendHtmlConstant("<br>");
-				sb.appendHtmlConstant("<i>" + era + "</i>");
-				sb.appendHtmlConstant("</td>");
-
-				//close one-row-table 
-				sb.appendHtmlConstant("</tr></table>");
-
-				return sb.toSafeHtml();
-			}
-		};
-		return releaseColumn;
-	}
-
-	private Column<Entity, SafeHtml> createCompactMusicColumn() {
-		final SafeHtmlCell musicCell = new SafeHtmlCell();
-		Column<Entity, SafeHtml> musicColumn = new Column<Entity, SafeHtml>(musicCell) {
-			@Override public SafeHtml getValue(Entity entity) {
-				if (entity == null)
-					return null;
-
-				Music music;
-				if (entity instanceof Soundtrack)
-					music = ((Soundtrack) entity).getMusic();
-				else
-					music = (Music) entity;
-
-				String artist = null;
-				String authors = null;
-				String title = null;
-
-				if (music != null) {
-					artist = music.getArtist();
-					title = music.getTitleInfo();
-					if (artist != null)
-						artist += " (" + music.getYearInfo() + ")";
-					authors = music.getAuthors();
-				}
-
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				sb.appendHtmlConstant((artist == null) ? "&nbsp;" : artist);
-				sb.appendHtmlConstant("<br>");
-				sb.appendHtmlConstant((title == null) ? ("<i>keine Angabe</i>") : ("<b>" + title + "</b>"));
-				sb.appendHtmlConstant("<br>");
-				sb.appendHtmlConstant((authors == null) ? "&nbsp;" : ("<i>(" + authors + ")</i>"));
-				return sb.toSafeHtml();
-			}
-		};
-		return musicColumn;
-	}
-
-	private Column<Entity, SafeHtml> createCompactSeriesColumn() {
-		final SafeHtmlCell seriesCell = new SafeHtmlCell();
-		Column<Entity, SafeHtml> seriesColumn = new Column<Entity, SafeHtml>(seriesCell) {
-			@Override public SafeHtml getValue(Entity entity) {
-				if (entity == null)
-					return null;
-
-				Series series = (Series) entity;
-
-				SafeHtmlBuilder sb = new SafeHtmlBuilder();
-				sb.appendHtmlConstant("<b>" + series.getTitle() + "</b>");
-				return sb.toSafeHtml();
-			}
-		};
-		return seriesColumn;
-	}
-
-
-
-	private static final String IMG_STATIC_ROOT_URL = "http://localhost/mimg/static/";
-
-	private Column<Entity, Entity> createGotoColumn(final BrowseConfig config) {
-
-
-		ActionCell.Delegate<Entity> delegate = new ActionCell.Delegate<Entity>() {
-			@Override public void execute(Entity entity) {
-				String entityToken = config.getType().getToken() + "?id=" + config.getId(entity);
-				UiFactoryImpl.this.clientFactory.getHistoryManager().createHistory(entityToken, true);
-				//				Window.alert("You clicked " + entity.getMatch());
-			}
-		};
-
-		SafeHtmlBuilder sb = new SafeHtmlBuilder();
-		sb.appendHtmlConstant("<img width='16' height='16' src='" + IMG_STATIC_ROOT_URL + "goto16.png' alt='Gehe zu' title='Details anzeigen'>");
-
-		ActionCell<Entity> gotoCell = new ActionCell<Entity>(sb.toSafeHtml(), delegate);
-
-		Column<Entity, Entity> gotoColumn = new Column<Entity, Entity>(gotoCell) {
-			@Override public Entity getValue(Entity entity) {
-				return entity;
-			}
-		};
-
-		gotoColumn.setCellStyleNames("gotoColumn");
-
-		return gotoColumn;
-	}
-
-	private void addGotoColumn(DataGrid<Entity> table, BrowseConfig config) {
-		Column<Entity, Entity> gotoColumn = createGotoColumn(config);
-		// Make the columns non-sortable.
-		gotoColumn.setSortable(false);
-
-		table.addColumn(gotoColumn, "");
-		table.setColumnWidth(gotoColumn, COLUMN_WIDTH_GOTO, Unit.PX);
-	}
-
-	private RowColumConfig addCompactSoundtrackColumns(DataGrid<Entity> table, double width) {
-		TextColumn<Entity> soundtrackColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return "#" + ((Soundtrack) entity).getId();
-			}
-		};
-		// Make the columns sortable.
-		soundtrackColumn.setSortable(true);
-
-		// Add the column.
-		table.addColumn(soundtrackColumn, "ID");
-		table.setColumnWidth(soundtrackColumn, COLUMN_WIDTH_ID, Unit.PX);
-
-		// Add the release column(s)
-		RowColumConfig releaseConfig = addCompactReleaseColumns(table, COLUMN_WIDTH_COMPACT_CELL);
-
-		// Add the music column(s)
-		RowColumConfig musicConfig = addCompactMusicColumns(table, width);
-
-		return new RowColumConfig(soundtrackColumn, COLUMN_WIDTH_ID + releaseConfig.getTotalWidth() + musicConfig.getTotalWidth());
-	}
-
-	@SuppressWarnings("unused") private RowColumConfig addExpandedSoundtrackColumns(DataGrid<Entity> table) {
-		TextColumn<Entity> soundtrackColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return "#" + ((Soundtrack) entity).getId();
-			}
-		};
-		// Make the columns sortable.
-		soundtrackColumn.setSortable(true);
-
-		// Add the column.
-		table.addColumn(soundtrackColumn, "ID");
-		table.setColumnWidth(soundtrackColumn, COLUMN_WIDTH_ID, Unit.PX);
-
-		// Add the release column(s)
-		RowColumConfig releaseConfig = addExpandedReleaseColumns(table);
-
-		// Add the music column(s)
-		RowColumConfig musicConfig = addExpandedMusicColumns(table);
-
-		return new RowColumConfig(soundtrackColumn, COLUMN_WIDTH_ID + releaseConfig.getTotalWidth() + musicConfig.getTotalWidth());
-	}
-
-	private RowColumConfig addCompactReleaseColumns(DataGrid<Entity> table, double width) {
-		Column<Entity, SafeHtml> releaseColumn = createCompactReleaseColumn();
-		// Make the columns sortable.
-		releaseColumn.setSortable(true);
-
-		table.addColumn(releaseColumn, "Veröffentlichung");
-		table.setColumnWidth(releaseColumn, width, Unit.PX);
-
-		return new RowColumConfig(releaseColumn, width);
-	}
-
-	private RowColumConfig addExpandedReleaseColumns(DataGrid<Entity> table) {
-		TextColumn<Entity> typeColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getType();
-			}
-		};
-
-		TextColumn<Entity> catColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getCatalogInfo();
-			}
-		};
-
-		TextColumn<Entity> yearColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getYearInfo();
-			}
-		};
-
-		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Release) entity).getTitleInfo();
-			}
-		};
-
-		//		 Make the columns sortable.
-		titleColumn.setSortable(true);
-
-		// Add the columns.
-		table.addColumn(typeColumn, "Typ");
-		table.setColumnWidth(typeColumn, 50.0, Unit.PX);
-
-		table.addColumn(catColumn, "Kat.-Nr.");
-		table.setColumnWidth(catColumn, 150.0, Unit.PX);
-
-		table.addColumn(yearColumn, "Jahr");
-		table.setColumnWidth(yearColumn, 50.0, Unit.PX);
-
-		table.addColumn(titleColumn, "Titel");
-		table.setColumnWidth(titleColumn, 150.0, Unit.PX);
-
-		return new RowColumConfig(titleColumn, 400.0);
-	}
-
-	private RowColumConfig addCompactMusicColumns(DataGrid<Entity> table, double width) {
-		Column<Entity, SafeHtml> musicColumn = createCompactMusicColumn();
-
-		musicColumn.setSortable(true); // Make the column sortable.
-
-		table.addColumn(musicColumn, "Musik");
-		table.setColumnWidth(musicColumn, width, Unit.PX);
-
-		return new RowColumConfig(musicColumn, width);
-	}
-
-	private RowColumConfig addExpandedMusicColumns(DataGrid<Entity> table) {
-		TextColumn<Entity> genreColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Music) entity).getGenre().getChildName();
-			}
-		};
-
-		TextColumn<Entity> yearColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return "" + ((Music) entity).getYear();
-			}
-		};
-
-		TextColumn<Entity> artistColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Music) entity).getArtist();
-			}
-		};
-
-		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Music) entity).getTitleInfo();
-			}
-		};
-
-		// Make the columns sortable.
-		titleColumn.setSortable(true);
-
-		// Add the columns.
-		table.addColumn(genreColumn, "Genre");
-		table.setColumnWidth(genreColumn, 50.0, Unit.PX);
-
-		table.addColumn(yearColumn, "Jahr");
-		table.setColumnWidth(yearColumn, 50.0, Unit.PX);
-
-		table.addColumn(artistColumn, "Interpret");
-		table.setColumnWidth(artistColumn, 150.0, Unit.PX);
-
-		table.addColumn(titleColumn, "Titel");
-		table.setColumnWidth(titleColumn, 200.0, Unit.PX);
-
-		return new RowColumConfig(titleColumn, 450.0);
-	}
-
-	private RowColumConfig addCompactSublistReleaseSoundtrackColumns(DataGrid<Entity> table, double width) {
-		TextColumn<Entity> soundtrackColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return "#" + ((Soundtrack) entity).getId();
-			}
-		};
-		// Make the columns sortable.
-		soundtrackColumn.setSortable(true);
-
-		// Add the column.
-		table.addColumn(soundtrackColumn, "ID");
-		table.setColumnWidth(soundtrackColumn, COLUMN_WIDTH_ID, Unit.PX);
-
-		// Add the music column(s)
-		RowColumConfig musicConfig = addCompactMusicColumns(table, width);
-
-		return new RowColumConfig(soundtrackColumn, COLUMN_WIDTH_ID + musicConfig.getTotalWidth());
-	}
-
-	@SuppressWarnings("unused") private RowColumConfig addExpandedSublistReleaseSoundtrackColumns(DataGrid<Entity> table) {
-		TextColumn<Entity> soundtrackColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return "#" + ((Soundtrack) entity).getId();
-			}
-		};
-		// Make the columns sortable.
-		soundtrackColumn.setSortable(true);
-
-		// Add the column.
-		table.addColumn(soundtrackColumn, "ID");
-		table.setColumnWidth(soundtrackColumn, COLUMN_WIDTH_ID, Unit.PX);
-
-		// Add the music column(s)
-		RowColumConfig musicConfig = addExpandedMusicColumns(table);
-
-		return new RowColumConfig(soundtrackColumn, COLUMN_WIDTH_ID + musicConfig.getTotalWidth());
-	}
-
-	private RowColumConfig addCompactSeriesColumns(DataGrid<Entity> table, double width) {
-		Column<Entity, SafeHtml> seriesColumn = createCompactSeriesColumn();
-		// Make the columns sortable.
-		seriesColumn.setSortable(true);
-
-		table.addColumn(seriesColumn, "Serien");
-		table.setColumnWidth(seriesColumn, width, Unit.PX);
-
-		return new RowColumConfig(seriesColumn, width);
-	}
-
-	@SuppressWarnings("unused") private RowColumConfig addExpandedSeriesColumns(DataGrid<Entity> table) {
-		TextColumn<Entity> titleColumn = new TextColumn<Entity>() {
-			@Override public String getValue(Entity entity) {
-				return ((Series) entity).getTitle();
-			}
-		};
-
-		// Make the columns sortable.
-		titleColumn.setSortable(true);
-
-		table.addColumn(titleColumn, "Titel");
-		table.setColumnWidth(titleColumn, 200.0, Unit.PX);
-
-		return new RowColumConfig(titleColumn, 200.0);
 	}
 }

@@ -1,7 +1,7 @@
 package dev.sdb.client.view.desktop.detail;
 
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.Range;
@@ -34,7 +34,7 @@ public abstract class DetailWidget extends Composite implements DetailView {
 
 	protected void initSublist() {
 
-		DataGrid<Entity> table = getSublistTable();
+		CellTable<Entity> table = getSublistTable();
 
 		// Set the total row count. You might send an RPC request to determine the
 		// total row count.

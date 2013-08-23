@@ -5,7 +5,10 @@
 	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	
 	<ui:style>
-		
+		.tableScrollPanel {
+			height: 100%;
+			border: 1px solid #ccc;
+		}
 	</ui:style>
 
 	<g:HTMLPanel>
@@ -14,9 +17,9 @@
 			<g:Cell>
 				<g:VerticalPanel ui:field="tablePanel" width="100%">
 				<g:Cell height="600">
-					<g:ResizeLayoutPanel height="100%">
-						<c:DataGrid ui:field='dataGrid'/>
-					</g:ResizeLayoutPanel>
+					<g:ScrollPanel addStyleNames="{style.tableScrollPanel}">
+						<c:CellTable ui:field='table'/>
+					</g:ScrollPanel>
 				</g:Cell>
 				<g:Cell horizontalAlignment="ALIGN_CENTER">
 					<c:SimplePager ui:field="pager"/>

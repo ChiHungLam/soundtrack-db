@@ -3,7 +3,6 @@ package dev.sdb.client.presenter;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.Range;
 
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.service.SearchServiceAsync;
@@ -77,12 +76,12 @@ public class ReleasePresenter extends AbstractSearchablePresenter implements Rel
 			return;
 		}
 
-		final Range range = view.getSublistRange();
+		//		final Range range = view.getSublistRange();
 
 		SearchServiceAsync service = getClientFactory().getSearchService();
 
 		// Then, we send the input to the server.
-		service.getReleaseSoundtrackList(audioId, range, new AsyncCallback<Result>() {
+		service.getReleaseSoundtrackList(audioId, new AsyncCallback<Result>() {
 
 			public void onSuccess(Result searchResult) {
 				int total = searchResult.getTotalLength();

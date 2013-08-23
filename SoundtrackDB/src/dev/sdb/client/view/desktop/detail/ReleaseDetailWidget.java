@@ -3,13 +3,14 @@ package dev.sdb.client.view.desktop.detail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.view.ReleaseDetailView;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.client.view.desktop.detail.master.ReleaseMasterData;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
+import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Release;
 
@@ -28,7 +29,12 @@ public class ReleaseDetailWidget extends DetailWidget implements ReleaseDetailVi
 		initSublist();
 	}
 
-	@Override public DataGrid<Entity> getSublistTable() {
+	@Override public void showSublistResult(String resultInfo, Result searchResult) {
+		getSublistTable().setVisibleRange(0, searchResult.getTotalLength());
+		super.showSublistResult(resultInfo, searchResult);
+	}
+
+	@Override public CellTable<Entity> getSublistTable() {
 		return this.releaseSoundtrackList.getTable();
 	}
 
@@ -58,6 +64,4 @@ public class ReleaseDetailWidget extends DetailWidget implements ReleaseDetailVi
 	@Override protected ReleaseDetailView.Presenter getPresenter() {
 		return (ReleaseDetailView.Presenter) super.getPresenter();
 	}
-
-
 }

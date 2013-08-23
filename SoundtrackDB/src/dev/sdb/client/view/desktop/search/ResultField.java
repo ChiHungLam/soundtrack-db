@@ -3,7 +3,7 @@ package dev.sdb.client.view.desktop.search;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Composite;
@@ -18,7 +18,7 @@ public class ResultField extends Composite {
 	interface ResultFieldUiBinder extends UiBinder<Widget, ResultField> {}
 	private static ResultFieldUiBinder uiBinder = GWT.create(ResultFieldUiBinder.class);
 
-	@UiField(provided = true) DataGrid<Entity> dataGrid;
+	@UiField(provided = true) CellTable<Entity> table;
 	@UiField(provided = true) SimplePager pager;
 
 	@UiField Label lastSearchLabel;
@@ -27,20 +27,20 @@ public class ResultField extends Composite {
 
 	public ResultField() {
 		super();
-		this.dataGrid = new DataGrid<Entity>();
+		this.table = new CellTable<Entity>();
 
 		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
 		this.pager = new SimplePager(TextLocation.CENTER, pagerResources, true, 1000, true);
 
-		this.pager.setDisplay(this.dataGrid);
+		this.pager.setDisplay(this.table);
 
 		initWidget(uiBinder.createAndBindUi(this));
 
 		setElementVisibility(-1);
 	}
 
-	public DataGrid<Entity> getDataGrid() {
-		return this.dataGrid;
+	public CellTable<Entity> getTable() {
+		return this.table;
 	}
 
 	public void setLastSearchText(String text) {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -59,6 +60,20 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 			"`gen_status` , " +
 			"`gen_hierar_parent_name` , " +
 			"`gen_hierar_child_name`";
+
+	private static final String SOUNDTRACK_INFO_FIELDS = "" +
+			"`stk_id` , " +
+			"`stk_order` , " +
+			"`stk_start_time` , " +
+			"`stk_stop_time` , " +
+			"`stk_status` , " +
+			"`seq_amount` , " +
+			"`seq_order` , " +
+			"`seq_status` , " +
+			"`aus_side_index` , " +
+			"`aus_offset_seq` , " +
+			"`aus_offset_time` , " +
+			"`aus_shortage`";
 
 	private static final String MUSIC_INFO_FIELDS = "" +
 			"`vers_id` , " +
@@ -283,13 +298,129 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 	protected Soundtrack readSoundtrack(ResultSet rs, boolean readRelease, boolean readMusic) throws SQLException {
 		long id = rs.getLong("stk_id");
+
 		if (id <= 0)
 			return null;
+
+		int stkOrder = rs.getInt("stk_order");
+		// int stkStatus = rs.getInt("stk_status");
+		Time startTime = rs.getTime("stk_start_time");
+		Time stopTime = rs.getTime("stk_stop_time");
+
+		int seqOrder = rs.getInt("seq_order");
+		// int seqStatus = rs.getInt("seq_status");
+		int seqAmount = rs.getInt("seq_amount");
+
+		int ausSideIndex = rs.getInt("aus_side_index");
+		int ausSeqOffset = rs.getInt("aus_offset_seq");
+		Time ausTimeOffset = rs.getTime("aus_offset_time");
+		long ausTimeShortageSec = rs.getLong("aus_shortage");
+
+		int startSec = getSecondsFromTime(startTime);
+		int stopSec = getSecondsFromTime(stopTime);
+		int ausTimeOffsetSec = getSecondsFromTime(ausTimeOffset);
+		
+		startSec += ausTimeOffsetSec;
+		stopSec += ausTimeOffsetSec;
+
+		if (seqOrder == 1 && ausTimeShortageSec > 0) {
+			//startTime -= ausTimeShortageSec;
+		}
+
+		seqOrder += ausSeqOffset;
+
+		String seqNum;
+
+		switch (ausSideIndex) {
+		case -1:
+			seqNum = "";
+			break;
+		case 0:
+			seqNum = "?";
+			break;
+		default:
+			seqNum = Character.toString((char) (64 + ausSideIndex));
+			break;
+		}
+
+		if (seqOrder > 0)
+			seqNum += seqOrder;
+		if (seqAmount > 1 && stkOrder > 0)
+			seqNum += (seqNum.isEmpty() ? "" : "-") + getRomanNumeral(stkOrder);
 
 		Release release = readRelease ? readRelease(rs) : null;
 		Music music = readMusic ? readMusic(rs) : null;
 
-		return new Soundtrack(id, release, music);
+		return new Soundtrack(id, release, music, ausSideIndex, seqNum, startSec, stopSec);
+	}
+
+	private int getSecondsFromTime(Time time) {
+		if (time == null)
+			return -1;
+			
+		String timeString = time.toString();
+		if (timeString.length() != 8)
+			return -1;
+
+		//01:34:67
+		
+		int seconds = Integer.parseInt(timeString.substring(6));
+		int minutes = Integer.parseInt(timeString.substring(3, 5));
+		int hours = Integer.parseInt(timeString.substring(0, 2));
+		
+		return seconds + (60 * minutes) + (3600 * hours);
+	}
+
+	private String getRomanNumeral(int stkOrder) {
+		if (stkOrder <= 0)
+			return "";
+
+		switch (stkOrder) {
+		case 1:
+			return "I";
+		case 2:
+			return "II";
+		case 3:
+			return "III";
+		case 4:
+			return "IV";
+		case 5:
+			return "V";
+		case 6:
+			return "VI";
+		case 7:
+			return "VII";
+		case 8:
+			return "VIII";
+		case 9:
+			return "IX";
+		case 10:
+			return "X";
+		case 11:
+			return "XI";
+		case 12:
+			return "XII";
+		case 13:
+			return "XIII";
+		case 14:
+			return "XIV";
+		case 15:
+			return "XV";
+		case 16:
+			return "XVI";
+		case 17:
+			return "XVII";
+		case 18:
+			return "XVIII";
+		case 19:
+			return "XIX";
+		case 20:
+			return "XX";
+
+		default:
+			return "" + stkOrder;
+		}
+
 	}
 
 	private String composePrintOrder(boolean ascending) {
@@ -353,7 +484,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 	}
 
 	protected String composeSoundtrackGet() {
-		String sql = "SELECT `soundtrack`.* , " + MUSIC_INFO_FIELDS + " , " + RELEASE_INFO_FIELDS + " "
+		String sql = "SELECT " + SOUNDTRACK_INFO_FIELDS + " , " + MUSIC_INFO_FIELDS + " , " + RELEASE_INFO_FIELDS + " "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
@@ -369,6 +500,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `print` ON `print_id` = `rel_main_print_id` "
 				+ "LEFT JOIN `calendar` ON `cal_id` = `print_calendar_id` "
 				+ "LEFT JOIN `audio` ON `au_id` = `print_audio_id` "
+				+ "LEFT JOIN `audio_set` ON ( `aus_seqset_id` = `seq_seqset_id` AND `aus_audio_id` = `print_audio_id` ) "
 				+ "LEFT JOIN `label` ON `lab_id` = `print_label_id` "
 				//				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
 				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
@@ -417,14 +549,14 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		return sql;
 	}
 
-	protected String composeReleaseSoundtrackListCount() {
-		String sql = "SELECT COUNT( * ) AS `rows` "
-				+ "FROM `soundtrack` "
-				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
-				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
-				+ "WHERE `aus_audio_id` LIKE ? ;";
-		return sql;
-	}
+	//	protected String composeReleaseSoundtrackListCount() {
+	//		String sql = "SELECT COUNT( * ) AS `rows` "
+	//				+ "FROM `soundtrack` "
+	//				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
+	//				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
+	//				+ "WHERE `aus_audio_id` LIKE ? ;";
+	//		return sql;
+	//	}
 
 	protected String composeMusicReleaseListCount() {
 		String inSelect = "SELECT `aus_audio_id` "
@@ -526,7 +658,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 	}
 
 	protected String composeSoundtrackList(Range range, boolean ascending) {
-		String sql = "SELECT `soundtrack`.* , " + MUSIC_INFO_FIELDS + " , " + RELEASE_INFO_FIELDS + " "
+		String sql = "SELECT " + SOUNDTRACK_INFO_FIELDS + " , " + MUSIC_INFO_FIELDS + " , " + RELEASE_INFO_FIELDS + " "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
@@ -542,6 +674,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `print` ON `print_id` = `rel_main_print_id` "
 				+ "LEFT JOIN `calendar` ON `cal_id` = `print_calendar_id` "
 				+ "LEFT JOIN `audio` ON `au_id` = `print_audio_id` "
+				+ "LEFT JOIN `audio_set` ON ( `aus_seqset_id` = `seq_seqset_id` AND `aus_audio_id` = `print_audio_id` ) "
 				+ "LEFT JOIN `label` ON `lab_id` = `print_label_id` "
 				//				+ "LEFT JOIN `lineup` ON `lin_id` = `print_lineup_id` "
 				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
@@ -551,14 +684,17 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
 				+ "WHERE `rec_title` LIKE ? "
-				+ "ORDER BY `rec_title` " + getOrderDirection(ascending) + " "
+				+ "ORDER BY " + composePrintOrder(ascending) + " , "
+					+ "`aus_order` " + getOrderDirection(ascending) + " , "
+					+ "`seq_order` " + getOrderDirection(ascending) + " , "
+					+ "`stk_order` " + getOrderDirection(ascending) + " "
 				+ getLimit(range);
 		return sql;
 	}
 
 
-	protected String composeReleaseSoundtrackList(Range range) {
-		String sql = "SELECT `soundtrack`.* , " + MUSIC_INFO_FIELDS + " "
+	protected String composeReleaseSoundtrackList() {
+		String sql = "SELECT " + SOUNDTRACK_INFO_FIELDS + " , " + MUSIC_INFO_FIELDS + " "
 				+ "FROM `soundtrack` "
 				+ "LEFT JOIN `version` ON `vers_id` = `stk_version_id` "
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
@@ -570,8 +706,8 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `sequence` ON `seq_id` = `stk_sequence_id` "
 				+ "LEFT JOIN `audio_set` ON `aus_seqset_id` = `seq_seqset_id` "
 				+ "WHERE `aus_audio_id` LIKE ? "
-				+ "ORDER BY `aus_order` ASC , `seq_order` ASC , `stk_order` ASC "
-				+ getLimit(range);
+				+ "ORDER BY `aus_order` ASC , `seq_order` ASC , `stk_order` ASC ;";
+
 		return sql;
 	}
 

@@ -1,6 +1,6 @@
 package dev.sdb.client.view;
 
-import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -30,5 +30,5 @@ public interface QueryView extends IsWidget, HasText, HasEnabled {
 
 	Range getRange();
 
-	DataGrid<Entity> getResultTable();
+	CellTable<Entity> getResultTable();
 }

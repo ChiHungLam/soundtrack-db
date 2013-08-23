@@ -8,8 +8,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTree;
-import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Composite;
@@ -149,10 +149,10 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		}
 	}
 
-	@UiField(provided = true) CellTree cellTree;
+	@UiField(provided = true) CellTree catalogCellTree;
 
-	@UiField(provided = true) DataGrid<Entity> dataGrid;
-	@UiField(provided = true) SimplePager pager;
+	@UiField(provided = true) CellTable<Entity> releaseTable;
+	@UiField(provided = true) SimplePager releasePager;
 
 	@UiField Label selectionInfoLabel;
 	@UiField HasVisibility tablePanel;
@@ -177,11 +177,11 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 
 		// Set the total row count. You might send an RPC request to determine the
 		//		 total row count.
-		this.dataGrid.setRowCount(0, true);
+		this.releaseTable.setRowCount(0, true);
 
 		// Set the range to display. In this case, our visible range is smaller than
 		// the data set.
-		this.dataGrid.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
+		this.releaseTable.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
 
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
@@ -190,27 +190,27 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 					return;
 				CatalogTreeWidget.this.presenter.getCatalogReleases(
 						CatalogTreeWidget.this.lastCatalog,
-						CatalogTreeWidget.this.dataGrid.getVisibleRange(),
+						CatalogTreeWidget.this.releaseTable.getVisibleRange(),
 						CatalogTreeWidget.this);
 			}
 		};
 
-		dataProvider.addDataDisplay(this.dataGrid);
+		dataProvider.addDataDisplay(this.releaseTable);
 
 		this.tablePanel.setVisible(false);
 	}
 
-	@Override public DataGrid<Entity> getReleaseTable() {
-		return this.dataGrid;
+	@Override public CellTable<Entity> getReleaseTable() {
+		return this.releaseTable;
 	}
 
 	private void createReleaseGrid() {
-		this.dataGrid = new DataGrid<Entity>();
+		this.releaseTable = new CellTable<Entity>();
 
 		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
-		this.pager = new SimplePager(TextLocation.CENTER, pagerResources, true, 1000, true);
+		this.releasePager = new SimplePager(TextLocation.CENTER, pagerResources, true, 1000, true);
 
-		this.pager.setDisplay(this.dataGrid);
+		this.releasePager.setDisplay(this.releaseTable);
 
 
 	}
@@ -225,28 +225,26 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 			resultInfo = "Es " + (total == 1 ? "wurde 1 Eintrag" : ("wurden " + total + " Einträge")) + " gefunden.";
 		}
 
-		this.dataGrid.setRowCount(total, true);
-		this.dataGrid.setRowData(catalogResult.getRangeStart(), catalogResult.getResultChunk());
+		this.releaseTable.setRowCount(total, true);
+		this.releaseTable.setRowData(catalogResult.getRangeStart(), catalogResult.getResultChunk());
 		this.selectionInfoLabel.setText(resultInfo);
-		this.dataGrid.setVisible((total > 0));
-		this.pager.setVisible((total > 0));
 
-		this.tablePanel.setVisible(true);
+		this.tablePanel.setVisible((total > 0));
 	}
 
 	protected void onCatalogSelection() {
 		this.tablePanel.setVisible(this.lastCatalog != null);
 		if (this.lastCatalog == null) {
 			this.tablePanel.setVisible(false);
-			this.dataGrid.setRowCount(0, true);
-			this.dataGrid.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
-			//			this.dataGrid.setRowData(0, );
+			this.releaseTable.setRowCount(0, true);
+			this.releaseTable.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
+			//			this.releaseTable.setRowData(0, );
 			return;
 		}
 
 		this.presenter.getCatalogReleases(
 				this.lastCatalog,
-				this.dataGrid.getVisibleRange(),
+				this.releaseTable.getVisibleRange(),
 				this);
 	}
 
@@ -282,8 +280,8 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		CellTree.Resources resources = GWT.create(CellTree.BasicResources.class);
 
 		// Create a CellBrowser.
-		this.cellTree = new CellTree(treeViewModel, null, resources);
-		this.cellTree.setAnimationEnabled(true);
+		this.catalogCellTree = new CellTree(treeViewModel, null, resources);
+		this.catalogCellTree.setAnimationEnabled(true);
 
 	}
 
