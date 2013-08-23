@@ -322,7 +322,7 @@ public class UiFactoryImpl implements UiFactory {
 					sb.appendHtmlConstant("</td>");
 
 					//Release info cell
-					sb.appendHtmlConstant("<td>");
+					sb.appendHtmlConstant("<td style='text-align: left;'>");
 					sb.appendHtmlConstant("<b>" + title + "</b>");
 					sb.appendHtmlConstant("<br>");
 					sb.appendHtmlConstant(catalogInfo);

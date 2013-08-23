@@ -153,9 +153,9 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 
 	@UiField(provided = true) CellTable<Entity> releaseTable;
 	@UiField(provided = true) SimplePager releasePager;
+	@UiField HasVisibility releaseTableScroll;
 
 	@UiField Label selectionInfoLabel;
-	@UiField HasVisibility tablePanel;
 
 	/**
 	 * The last selected catalog.
@@ -170,7 +170,7 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 
 		createCatalogTree();
 
-		createReleaseGrid();
+		createReleaseTable();
 
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -197,22 +197,25 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 
 		dataProvider.addDataDisplay(this.releaseTable);
 
-		this.tablePanel.setVisible(false);
+		setReleaseTableVisibility(false);
+	}
+
+	private void setReleaseTableVisibility(boolean visible) {
+		this.releaseTableScroll.setVisible(visible);
+		this.releasePager.setVisible(visible);
 	}
 
 	@Override public CellTable<Entity> getReleaseTable() {
 		return this.releaseTable;
 	}
 
-	private void createReleaseGrid() {
+	private void createReleaseTable() {
 		this.releaseTable = new CellTable<Entity>();
 
 		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
 		this.releasePager = new SimplePager(TextLocation.CENTER, pagerResources, true, 1000, true);
 
 		this.releasePager.setDisplay(this.releaseTable);
-
-
 	}
 
 	@Override public void showResult(Result catalogResult) {
@@ -229,13 +232,13 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		this.releaseTable.setRowData(catalogResult.getRangeStart(), catalogResult.getResultChunk());
 		this.selectionInfoLabel.setText(resultInfo);
 
-		this.tablePanel.setVisible((total > 0));
+		setReleaseTableVisibility(total > 0);
 	}
 
 	protected void onCatalogSelection() {
-		this.tablePanel.setVisible(this.lastCatalog != null);
+		setReleaseTableVisibility(this.lastCatalog != null);
+
 		if (this.lastCatalog == null) {
-			this.tablePanel.setVisible(false);
 			this.releaseTable.setRowCount(0, true);
 			this.releaseTable.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
 			//			this.releaseTable.setRowData(0, );
