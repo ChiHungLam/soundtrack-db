@@ -6,15 +6,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.view.ReleaseDetailView;
-import dev.sdb.client.view.desktop.UiFactoryImpl;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.client.view.desktop.detail.master.ReleaseMasterData;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Release;
-import dev.sdb.shared.model.entity.Soundtrack;
 
 public class ReleaseDetailWidget extends DetailWidget implements ReleaseDetailView {
 
@@ -28,25 +25,11 @@ public class ReleaseDetailWidget extends DetailWidget implements ReleaseDetailVi
 		super();
 		initWidget(uiBinder.createAndBindUi(this));
 
-		DataGrid<Entity> table = this.releaseSoundtrackList.getTable();
-
-		initSublist(table);
+		initSublist();
 	}
 
-	@Override protected Entity getSublistEntity(Entity entity) {
-		Soundtrack soundtrack = (Soundtrack) entity;
-		if (soundtrack != null) {
-			return soundtrack.getMusic();
-		}
-		return null;
-	}
-
-	@Override protected ContentPresenterType getSublistContentPresenterType() {
-		return ContentPresenterType.MUSIC;
-	}
-
-	protected void addSublistColumns(DataGrid<Entity> table) {
-		UiFactoryImpl.addReleaseMusicColumns(table, true, true);
+	@Override public DataGrid<Entity> getSublistTable() {
+		return this.releaseSoundtrackList.getTable();
 	}
 
 	@Override protected MasterDataWidget getMasterDataWidget() {

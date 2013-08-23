@@ -1,6 +1,10 @@
 package dev.sdb.client.view;
 
+import dev.sdb.client.ClientFactory;
+
 public interface UiFactory {
+
+	void setClientFactory(ClientFactory clientFactory);
 
 	NavigatorView getNavigatorView();
 	HeaderView getHeaderView();
@@ -22,5 +26,5 @@ public interface UiFactory {
 	SoundtrackDetailView getSoundtrackDetailView();
 	SeriesDetailView getSeriesDetailView();
 	CatalogDetailView getCatalogDetailView();
-
+	
 }
