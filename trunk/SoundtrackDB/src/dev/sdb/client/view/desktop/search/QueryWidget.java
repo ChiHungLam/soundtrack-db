@@ -3,8 +3,8 @@ package dev.sdb.client.view.desktop.search;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
-import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -35,7 +35,7 @@ public abstract class QueryWidget extends Composite implements QueryView {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		// Get the result table
-		final DataGrid<Entity> table = getResultTable();
+		final CellTable<Entity> table = getResultTable();
 
 		// Set the total row count. You might send an RPC request to determine the
 		//		 total row count.
@@ -68,8 +68,8 @@ public abstract class QueryWidget extends Composite implements QueryView {
 
 	protected abstract ContentPresenterType getContentPresenterType();
 
-	@Override public DataGrid<Entity> getResultTable() {
-		return this.resultField.getDataGrid();
+	@Override public CellTable<Entity> getResultTable() {
+		return this.resultField.getTable();
 	}
 
 	@Override public void setEnabled(boolean enabled) {
@@ -83,7 +83,7 @@ public abstract class QueryWidget extends Composite implements QueryView {
 
 
 	@Override public Range getRange() {
-		return this.resultField.getDataGrid().getVisibleRange();
+		return this.resultField.getTable().getVisibleRange();
 	}
 
 	@Override public boolean isSortAscending() {
@@ -99,7 +99,7 @@ public abstract class QueryWidget extends Composite implements QueryView {
 
 	@Override public void reset() {
 		this.resultField.setElementVisibility(-1);
-		this.resultField.getDataGrid().setVisibleRange(0, VISIBLE_RANGE_LENGTH);
+		this.resultField.getTable().setVisibleRange(0, VISIBLE_RANGE_LENGTH);
 		//Disable search
 		this.searchField.setEnabled(true);
 	}
@@ -109,7 +109,7 @@ public abstract class QueryWidget extends Composite implements QueryView {
 	}
 
 	@Override public void setDataProvider(AsyncDataProvider<Entity> dataProvider) {
-		dataProvider.addDataDisplay(this.resultField.getDataGrid());
+		dataProvider.addDataDisplay(this.resultField.getTable());
 	}
 
 	public SearchField getSearchField() {
@@ -140,7 +140,7 @@ public abstract class QueryWidget extends Composite implements QueryView {
 			resultInfo = "Es " + (total == 1 ? "wurde 1 Eintrag" : ("wurden " + total + " Einträge")) + " gefunden.";
 		}
 
-		DataGrid<Entity> table = this.resultField.getDataGrid();
+		CellTable<Entity> table = this.resultField.getTable();
 
 		//				table.setPageSize(10);
 		//				table.setPageStart(0);

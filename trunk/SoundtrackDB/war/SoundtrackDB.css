@@ -117,5 +117,9 @@
 .error_style {}
 
 .gotoColumn {
-	padding:0px !important;
+	padding: 0px !important;
+}
+.sequenceColumn {
+	padding: 0px !important;
+	position: relative;
 }

@@ -86,15 +86,14 @@ import dev.sdb.shared.model.entity.Entity;
 		}
 	}
 
-	@Override public Result getReleaseSoundtrackList(long id, Range range) throws IllegalArgumentException, IOException {
+	@Override public Result getReleaseSoundtrackList(long id) throws IllegalArgumentException, IOException {
 		assert (id > 0);
-		assert (range != null);
 
 		Database database = getDatabase();
 		database.open();
 
 		try {
-			return database.getReleaseSoundtrackList(id, range);
+			return database.getReleaseSoundtrackList(id);
 		} finally {
 			database.close();
 		}

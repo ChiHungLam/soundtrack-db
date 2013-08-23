@@ -1,6 +1,6 @@
 package dev.sdb.client.view;
 
-import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -27,5 +27,5 @@ public interface DetailView extends IsWidget, HasEnabled {
 
 	void showSublistResult(String resultInfo, Result searchResult);
 
-	DataGrid<Entity> getSublistTable();
+	CellTable<Entity> getSublistTable();
 }

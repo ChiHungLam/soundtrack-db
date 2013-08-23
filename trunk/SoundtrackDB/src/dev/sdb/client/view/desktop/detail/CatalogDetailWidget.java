@@ -3,7 +3,7 @@ package dev.sdb.client.view.desktop.detail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.view.CatalogDetailView;
@@ -28,7 +28,7 @@ public class CatalogDetailWidget extends DetailWidget implements CatalogDetailVi
 		initSublist();
 	}
 
-	@Override public DataGrid<Entity> getSublistTable() {
+	@Override public CellTable<Entity> getSublistTable() {
 		return this.catalogEntryList.getTable();
 	}
 

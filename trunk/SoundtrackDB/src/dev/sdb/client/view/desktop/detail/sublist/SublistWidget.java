@@ -3,7 +3,7 @@ package dev.sdb.client.view.desktop.detail.sublist;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Composite;
@@ -15,10 +15,10 @@ import dev.sdb.shared.model.entity.Entity;
 
 public class SublistWidget extends Composite {
 
-	interface ReleaseListUiBinder extends UiBinder<Widget, SublistWidget> {}
-	private static ReleaseListUiBinder uiBinder = GWT.create(ReleaseListUiBinder.class);
+	interface SublistWidgetUiBinder extends UiBinder<Widget, SublistWidget> {}
+	private static SublistWidgetUiBinder uiBinder = GWT.create(SublistWidgetUiBinder.class);
 
-	@UiField(provided = true) DataGrid<Entity> dataGrid;
+	@UiField(provided = true) CellTable<Entity> table;
 	@UiField(provided = true) SimplePager pager;
 
 	@UiField Label selectionInfoLabel;
@@ -26,18 +26,18 @@ public class SublistWidget extends Composite {
 
 	public SublistWidget() {
 		super();
-		this.dataGrid = new DataGrid<Entity>();
+		this.table = new CellTable<Entity>();
 
 		SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
 		this.pager = new SimplePager(TextLocation.CENTER, pagerResources, true, 1000, true);
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		this.pager.setDisplay(this.dataGrid);
+		this.pager.setDisplay(this.table);
 	}
 
-	public DataGrid<Entity> getTable() {
-		return this.dataGrid;
+	public CellTable<Entity> getTable() {
+		return this.table;
 	}
 
 	public void setSelectionInfoText(String text) {
