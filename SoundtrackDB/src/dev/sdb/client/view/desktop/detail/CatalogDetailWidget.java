@@ -6,9 +6,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.view.CatalogDetailView;
-import dev.sdb.client.view.desktop.UiFactoryImpl;
 import dev.sdb.client.view.desktop.detail.master.CatalogMasterData;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
@@ -17,9 +15,8 @@ import dev.sdb.shared.model.entity.Entity;
 
 public class CatalogDetailWidget extends DetailWidget implements CatalogDetailView {
 
-	private static CatalogDetailWidgetUiBinder uiBinder = GWT.create(CatalogDetailWidgetUiBinder.class);
-
 	interface CatalogDetailWidgetUiBinder extends UiBinder<Widget, CatalogDetailWidget> {}
+	private static CatalogDetailWidgetUiBinder uiBinder = GWT.create(CatalogDetailWidgetUiBinder.class);
 
 	@UiField CatalogMasterData catalogMasterData;
 	@UiField SublistWidget catalogEntryList;
@@ -28,7 +25,11 @@ public class CatalogDetailWidget extends DetailWidget implements CatalogDetailVi
 		super();
 		initWidget(uiBinder.createAndBindUi(this));
 
-		initSublist(this.catalogEntryList.getTable());
+		initSublist();
+	}
+
+	@Override public DataGrid<Entity> getSublistTable() {
+		return this.catalogEntryList.getTable();
 	}
 
 	@Override public void setPresenter(CatalogDetailView.Presenter presenter) {
@@ -56,18 +57,6 @@ public class CatalogDetailWidget extends DetailWidget implements CatalogDetailVi
 			this.catalogMasterData.initEntity(catalog);
 			getPresenter().getCatalogEntriesFromServer(this);
 		}
-	}
-
-	@Override protected ContentPresenterType getSublistContentPresenterType() {
-		return ContentPresenterType.RELEASE;
-	}
-
-	@Override protected Entity getSublistEntity(Entity entity) {
-		return entity;
-	}
-
-	@Override protected void addSublistColumns(DataGrid<Entity> table) {
-		UiFactoryImpl.addReleaseColumns(table, true, true);
 	}
 
 }

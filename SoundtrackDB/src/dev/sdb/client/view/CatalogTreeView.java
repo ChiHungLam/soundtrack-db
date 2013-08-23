@@ -1,5 +1,6 @@
 package dev.sdb.client.view;
 
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.Range;
@@ -17,5 +18,7 @@ public interface CatalogTreeView extends IsWidget {
 	}
 
 	void showResult(Result catalogResult);
+
+	DataGrid<Entity> getReleaseTable();
 
 }

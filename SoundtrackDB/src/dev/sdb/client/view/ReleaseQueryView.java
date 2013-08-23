@@ -7,5 +7,4 @@ public interface ReleaseQueryView extends QueryView {
 
 	void setPresenter(Presenter presenter);
 
-
 }

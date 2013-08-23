@@ -183,8 +183,6 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		// the data set.
 		this.dataGrid.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
 
-		UiFactoryImpl.addReleaseColumns(this.dataGrid, true, false);
-
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
 			@Override protected void onRangeChanged(HasData<Entity> display) {
@@ -200,6 +198,10 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		dataProvider.addDataDisplay(this.dataGrid);
 
 		this.tablePanel.setVisible(false);
+	}
+
+	@Override public DataGrid<Entity> getReleaseTable() {
+		return this.dataGrid;
 	}
 
 	private void createReleaseGrid() {

@@ -1,7 +1,5 @@
 package dev.sdb.client.view.desktop.detail;
 
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Composite;
@@ -9,7 +7,6 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.view.DetailView;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
@@ -35,9 +32,9 @@ public abstract class DetailWidget extends Composite implements DetailView {
 		this.presenter = presenter;
 	}
 
-	protected void initSublist(DataGrid<Entity> table) {
+	protected void initSublist() {
 
-		table.setWidth("100%");
+		DataGrid<Entity> table = getSublistTable();
 
 		// Set the total row count. You might send an RPC request to determine the
 		// total row count.
@@ -48,8 +45,6 @@ public abstract class DetailWidget extends Composite implements DetailView {
 		int rangeLength = 10;
 		table.setVisibleRange(0, rangeLength);
 
-		addSublistColumns(table);
-
 		// Add a ColumnSortEvent.AsyncHandler to connect sorting to the
 		// AsyncDataPRrovider.
 		AsyncHandler columnSortHandler = new AsyncHandler(table);
@@ -57,15 +52,6 @@ public abstract class DetailWidget extends Composite implements DetailView {
 
 		final SingleSelectionModel<Entity> selectionModel = new SingleSelectionModel<Entity>();
 		table.setSelectionModel(selectionModel);
-
-		table.addDomHandler(new DoubleClickHandler() {
-			@Override public void onDoubleClick(final DoubleClickEvent event) {
-				Entity entity = getSublistEntity(selectionModel.getSelectedObject());
-				if (entity != null) {
-					DetailWidget.this.presenter.onBrowse(getSublistContentPresenterType(), entity);
-				}
-			}
-		}, DoubleClickEvent.getType());
 	}
 
 	@Override public void setSublistDataProvider(AsyncDataProvider<Entity> dataProvider) {
@@ -89,12 +75,6 @@ public abstract class DetailWidget extends Composite implements DetailView {
 	}
 
 	protected abstract SublistWidget getSublist();
-
-	protected abstract ContentPresenterType getSublistContentPresenterType();
-
-	protected abstract Entity getSublistEntity(Entity entity);
-
-	protected abstract void addSublistColumns(DataGrid<Entity> table);
 
 	@Override public boolean isEnabled() {
 		// TODO Auto-generated method stub

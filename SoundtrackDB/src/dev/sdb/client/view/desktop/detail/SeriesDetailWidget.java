@@ -6,9 +6,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.view.SeriesDetailView;
-import dev.sdb.client.view.desktop.UiFactoryImpl;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.client.view.desktop.detail.master.SeriesMasterData;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
@@ -27,19 +25,11 @@ public class SeriesDetailWidget extends DetailWidget implements SeriesDetailView
 		super();
 		initWidget(uiBinder.createAndBindUi(this));
 
-		initSublist(this.seriesReleaseList.getTable());
+		initSublist();
 	}
 
-	@Override protected Entity getSublistEntity(Entity entity) {
-		return entity;
-	}
-
-	@Override protected ContentPresenterType getSublistContentPresenterType() {
-		return ContentPresenterType.RELEASE;
-	}
-
-	@Override protected void addSublistColumns(DataGrid<Entity> table) {
-		UiFactoryImpl.addReleaseColumns(table, true, true);
+	@Override public DataGrid<Entity> getSublistTable() {
+		return this.seriesReleaseList.getTable();
 	}
 
 	@Override protected MasterDataWidget getMasterDataWidget() {

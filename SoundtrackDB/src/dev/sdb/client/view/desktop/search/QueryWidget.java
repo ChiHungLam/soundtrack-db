@@ -1,8 +1,6 @@
 package dev.sdb.client.view.desktop.search;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
@@ -37,9 +35,7 @@ public abstract class QueryWidget extends Composite implements QueryView {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		// Get the result table
-		final DataGrid<Entity> table = this.resultField.getDataGrid();
-
-		table.setWidth("100%");
+		final DataGrid<Entity> table = getResultTable();
 
 		// Set the total row count. You might send an RPC request to determine the
 		//		 total row count.
@@ -49,8 +45,6 @@ public abstract class QueryWidget extends Composite implements QueryView {
 		// the data set.
 		table.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
 
-		addSearchResultColumns(table);
-
 		// Add a ColumnSortEvent.AsyncHandler to connect sorting to the
 		// AsyncDataPRrovider.
 		AsyncHandler columnSortHandler = new AsyncHandler(table);
@@ -58,15 +52,6 @@ public abstract class QueryWidget extends Composite implements QueryView {
 
 		final SingleSelectionModel<Entity> selectionModel = new SingleSelectionModel<Entity>();
 		table.setSelectionModel(selectionModel);
-
-		table.addDomHandler(new DoubleClickHandler() {
-			@Override public void onDoubleClick(final DoubleClickEvent event) {
-				Entity entity = selectionModel.getSelectedObject();
-				if (entity != null) {
-					QueryWidget.this.presenter.onBrowse(getContentPresenterType(), entity);
-				}
-			}
-		}, DoubleClickEvent.getType());
 
 		//Add a search event handler to send the search to the server, when the user chooses to
 		this.searchField.addSearchEventHandler(new SearchEventHandler() {
@@ -83,6 +68,10 @@ public abstract class QueryWidget extends Composite implements QueryView {
 
 	protected abstract ContentPresenterType getContentPresenterType();
 
+	@Override public DataGrid<Entity> getResultTable() {
+		return this.resultField.getDataGrid();
+	}
+
 	@Override public void setEnabled(boolean enabled) {
 		this.searchField.setEnabled(enabled);
 	}
@@ -91,9 +80,7 @@ public abstract class QueryWidget extends Composite implements QueryView {
 		return this.searchField.isEnabled();
 	}
 
-	protected boolean isSearchResultCompactView() {
-		return true;
-	}
+
 
 	@Override public Range getRange() {
 		return this.resultField.getDataGrid().getVisibleRange();
@@ -116,8 +103,6 @@ public abstract class QueryWidget extends Composite implements QueryView {
 		//Disable search
 		this.searchField.setEnabled(true);
 	}
-
-	protected abstract void addSearchResultColumns(DataGrid<Entity> table);
 
 	@Override public void setPresenter(QueryView.Presenter presenter) {
 		this.presenter = presenter;

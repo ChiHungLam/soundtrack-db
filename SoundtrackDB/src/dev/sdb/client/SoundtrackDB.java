@@ -46,6 +46,7 @@ public class SoundtrackDB implements EntryPoint {
 
 		//Create the client factory
 		final ClientFactory clientFactory = new ClientFactory();
+		clientFactory.getUi().setClientFactory(clientFactory);
 
 		//Create the navigator presenter
 		final NavigatorPresenter navigatorPresenter = new NavigatorPresenter(clientFactory);

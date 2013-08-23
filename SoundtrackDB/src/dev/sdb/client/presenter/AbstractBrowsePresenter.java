@@ -56,9 +56,9 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 
 
 
-	protected String getEntityToken(ContentPresenterType type, Entity entity) {
-		return type.getToken() + "?id=" + entity.getId();
-	}
+	//	protected String getEntityToken(ContentPresenterType type, Entity entity) {
+	//		return type.getToken() + "?id=" + entity.getId();
+	//	}
 
 
 
@@ -141,14 +141,12 @@ public abstract class AbstractBrowsePresenter extends AbstractContentPresenter i
 		getClientFactory().getEventBus().fireEventFromSource(new FatalErrorEvent(title, message, caught), this);
 	}
 
-	@Override public void onBrowse(ContentPresenterType type, Entity entity) {
-		addHistoryNavigation(type, entity);
-	}
-
-
-
-	protected void addHistoryNavigation(ContentPresenterType type, Entity entity) {
-		String token = getEntityToken(type, entity);
-		getClientFactory().getHistoryManager().createHistory(token, true);
-	}
+	//	@Override public void onBrowse(ContentPresenterType type, Entity entity) {
+	//		addHistoryNavigation(type, entity);
+	//	}
+	//
+	//	protected void addHistoryNavigation(ContentPresenterType type, Entity entity) {
+	//		String token = getEntityToken(type, entity);
+	//		getClientFactory().getHistoryManager().createHistory(token, true);
+	//	}
 }

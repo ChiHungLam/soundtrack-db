@@ -115,3 +115,7 @@
 
 .sectioninfo_style {}
 .error_style {}
+
+.gotoColumn {
+	padding:0px !important;
+}

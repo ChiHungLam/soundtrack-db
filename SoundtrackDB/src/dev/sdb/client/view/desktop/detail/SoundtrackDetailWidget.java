@@ -6,7 +6,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Widget;
 
-import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.view.SoundtrackDetailView;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
 import dev.sdb.client.view.desktop.detail.master.MusicMasterData;
@@ -30,15 +29,7 @@ public class SoundtrackDetailWidget extends DetailWidget implements SoundtrackDe
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
-	@Override protected void addSublistColumns(DataGrid<Entity> table) {
-		// soundtrack detail has no sublist.
-	}
-
-	@Override protected Entity getSublistEntity(Entity entity) {
-		return null;// soundtrack detail has no sublist.
-	}
-
-	@Override protected ContentPresenterType getSublistContentPresenterType() {
+	@Override public DataGrid<Entity> getSublistTable() {
 		return null;// soundtrack detail has no sublist.
 	}
 
