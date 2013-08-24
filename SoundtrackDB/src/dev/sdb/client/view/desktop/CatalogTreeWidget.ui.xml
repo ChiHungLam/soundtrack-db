@@ -9,37 +9,68 @@
 			position:relative;
 			width: 100%;
 			height: 100%;
+			
+			background-color: #6b6fa2;
+			border: 1px solid #9b9ec6;
 		}
 		
-		.treeScrollPanel {
+		.treeContainer {
+			position:absolute;
+			top: 10px;
+			left: 10px;
 			width: 420px;
-			height: 100%;
-			border: 1px solid #ccc;
+			bottom: 10px;
+			
+			background-color: #d5d4f7;
+			border: 1px solid #9b9ec6;
+		}
+		.treeLabel {
+			position:absolute;
+			top:7px;
+			left:10px;
+			
+			font-weight: bold;
+			font-size: 12pt;
+		}
+		.treeScrollPanel {
+			position:absolute !important;
+			top: 35px;
+			bottom: 5px;
+			left: 5px;
+			right: 5px;
+			
+			background-color: #cbcef6;
+			border: 1px solid #9b9ec6;
 		}
 		.tree {
-			width: 400px;
+			width: 100%;
 		}
+		
 		.releaseContainer {
 			position:absolute;
-			top:0px;
-			bottom:0px;
-			left:420px;
-			right:0px;
+			top:10px;
+			bottom:10px;
+			left:440px;
+			right:10px;
+			
+			background-color: #d5d4f7;
+			border: 1px solid #9b9ec6;
 		}
 		.releaseLabel {
 			position:absolute;
 			top:10px;
-			left:20px;
+			left:10px;
 		}
 		.releaseScrollPanel {
 			position:absolute !important;
 
-			top:30px;
-			left:20px;
-			right:20px;
-			bottom:35px;
+			top:35px;
+			left:5px;
+			right:5px;
+			bottom:30px;
 			
-			border: 1px solid #ccc;
+			background-color: #cbcef6;
+			border: 1px solid #9b9ec6;
 		}
 		
 		.releaseTable {
@@ -48,9 +79,10 @@
 		
 		.releasePagerContainer {
 			position:absolute;
-			left:20px;
-			right:20px;
+			left:5px;
+			right:5px;
 			bottom:0px;
+			height:30px;
 		}
 		.releasePager {
 			display: inline-block;
@@ -59,9 +91,13 @@
 	
 	<g:FlowPanel addStyleNames="{style.stage}">
 	
-		<g:ScrollPanel addStyleNames="{style.treeScrollPanel}">
-			<c:CellTree ui:field="catalogCellTree" addStyleNames="{style.tree}"/>
-		</g:ScrollPanel>
+		<g:FlowPanel addStyleNames="{style.treeContainer}">
+			<g:Label addStyleNames="{style.treeLabel}" text="Katalog-Auswahl"/>
+			
+			<g:ScrollPanel addStyleNames="{style.treeScrollPanel}">
+				<c:CellTree ui:field="catalogCellTree" addStyleNames="{style.tree}"/>
+			</g:ScrollPanel>
+		</g:FlowPanel>
 		
 		<g:FlowPanel addStyleNames="{style.releaseContainer}">
 			<g:Label ui:field="selectionInfoLabel" addStyleNames="{style.releaseLabel}"/>

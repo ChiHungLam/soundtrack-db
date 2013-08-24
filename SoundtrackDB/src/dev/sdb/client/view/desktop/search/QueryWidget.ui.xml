@@ -61,7 +61,7 @@
 	
 	<g:FlowPanel addStyleNames="{style.stage}">
 		<s:SearchField ui:field="searchField" addStyleNames="{style.searchField}"/>
-		<s:ResultField elementVisibility="-1" ui:field="resultField" addStyleNames="{style.resultField}"/>
+		<s:ResultField ui:field="resultField" addStyleNames="{style.resultField}" elementVisibility="-1"/>
 	</g:FlowPanel>
 	
 </ui:UiBinder> 
