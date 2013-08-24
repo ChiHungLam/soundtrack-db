@@ -1,6 +1,7 @@
 package dev.sdb.client.view.desktop.search;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -12,6 +13,7 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import dev.sdb.client.event.SearchEvent;
+import dev.sdb.client.event.SearchEvent.Mode;
 import dev.sdb.client.event.SearchEventHandler;
 import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.view.QueryView;
@@ -20,10 +22,16 @@ import dev.sdb.shared.model.entity.Entity;
 
 public abstract class QueryWidget extends Composite implements QueryView {
 
+	private static final int VISIBLE_RANGE_LENGTH = 20;
+
 	interface QueryWidgetUiBinder extends UiBinder<Widget, QueryWidget> {}
 	private static QueryWidgetUiBinder uiBinder = GWT.create(QueryWidgetUiBinder.class);
 
-	private static final int VISIBLE_RANGE_LENGTH = 20;
+	public interface Style extends CssResource {
+		String error();
+	}
+
+	@UiField protected Style style;
 
 	@UiField SearchField searchField;
 	@UiField ResultField resultField;
@@ -60,13 +68,35 @@ public abstract class QueryWidget extends Composite implements QueryView {
 			 * from the nameField to the server and waits for a response.
 			 */
 			@Override public void onSearch(SearchEvent event) {
-				String term = event.getSearchTerm();
-				QueryWidget.this.presenter.onSearch(term);
+				SearchEvent.Mode mode = event.getMode();
+				String value = event.getValue();
+
+				if (mode == Mode.VALID) {
+					// Clear any previous error message
+					clearErrorDisplay();
+					QueryWidget.this.presenter.onSearch(value);
+				} else {
+					// Show error message
+					showErrorDisplay(value);
+				}
 			}
 		});
 	}
 
+	protected void showErrorDisplay(String message) {
+		this.searchField.showErrorDisplay(message);
+		this.searchField.addStyleName(this.style.error());
+		this.resultField.addStyleName(this.style.error());
+	}
+
+	protected void clearErrorDisplay() {
+		this.searchField.clearErrorDisplay();
+		this.searchField.removeStyleName(this.style.error());
+		this.resultField.removeStyleName(this.style.error());
+	}
+
 	protected abstract ContentPresenterType getContentPresenterType();
+
 
 	@Override public CellTable<Entity> getResultTable() {
 		return this.resultField.getTable();
