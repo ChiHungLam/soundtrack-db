@@ -41,9 +41,8 @@
 			right:0px;
 			bottom:25px;
 			
-			border: 1px solid #9b9ec6;
-			
 			background-color: #cbcef6;
+			border: 1px solid #9b9ec6;
 		}
 		.table {
 			position:relative;

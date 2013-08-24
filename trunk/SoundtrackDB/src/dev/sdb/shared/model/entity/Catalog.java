@@ -45,11 +45,17 @@ public class Catalog extends AbstractEntity<Catalog> {
 	}
 
 	public String getEra() {
-		if (this.eraBegin > 0 && this.eraEnd > 0)
-			return this.eraBegin + " - " + this.eraEnd;
+		if (this.eraBegin > 0) {
 
-		if (this.eraBegin > 0)
+			if (this.eraBegin == this.eraEnd)
+				return String.valueOf(this.eraBegin);
+
+			if (this.eraEnd > 0)
+				return this.eraBegin + " - " + this.eraEnd;
+
 			return "Ab " + this.eraBegin;
+
+		}
 
 		if (this.eraEnd > 0)
 			return "Bis " + this.eraEnd;
