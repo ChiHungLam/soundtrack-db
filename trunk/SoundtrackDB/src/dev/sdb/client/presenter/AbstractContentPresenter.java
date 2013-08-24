@@ -1,6 +1,7 @@
 package dev.sdb.client.presenter;
 
 import dev.sdb.client.ClientFactory;
+import dev.sdb.client.view.UiFactory.HtmlFactory;
 
 public abstract class AbstractContentPresenter implements ContentPresenter {
 
@@ -15,6 +16,10 @@ public abstract class AbstractContentPresenter implements ContentPresenter {
 
 	protected ClientFactory getClientFactory() {
 		return this.clientFactory;
+	}
+
+	public HtmlFactory getHtmlFactory() {
+		return getClientFactory().getUi().getHtmlFactory();
 	}
 
 	/*

@@ -3,7 +3,6 @@ package dev.sdb.client.view.desktop.detail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.view.MusicDetailView;
@@ -18,37 +17,23 @@ public class MusicDetailWidget extends DetailWidget implements MusicDetailView {
 	interface MusicDetailWidgetUiBinder extends UiBinder<Widget, MusicDetailWidget> {}
 	private static MusicDetailWidgetUiBinder uiBinder = GWT.create(MusicDetailWidgetUiBinder.class);
 
-	@UiField MusicMasterData musicMasterData;
-	@UiField SublistWidget musicReleaseList;
+	@UiField(provided = true) MasterDataWidget masterData;
+	@UiField SublistWidget sublist;
 
 	public MusicDetailWidget() {
 		super();
+		this.masterData = GWT.create(MusicMasterData.class);
 		initWidget(uiBinder.createAndBindUi(this));
 
 		initSublist();
 	}
 
-	@Override public CellTable<Entity> getSublistTable() {
-		return this.musicReleaseList.getTable();
-	}
-
 	@Override protected MasterDataWidget getMasterDataWidget() {
-		return this.musicMasterData;
+		return this.masterData;
 	}
 
 	@Override protected SublistWidget getSublist() {
-		return this.musicReleaseList;
-	}
-
-	public void initEntity(Entity entity) {
-		if (entity == null) {
-			this.musicMasterData.initEntity(null);
-			this.musicReleaseList.setElementVisibility(-1);
-		} else {
-			Music music = (Music) entity;
-			this.musicMasterData.initEntity(music);
-			getPresenter().getMusicReleaseListFromServer(this);
-		}
+		return this.sublist;
 	}
 
 	@Override public void setPresenter(MusicDetailView.Presenter presenter) {
@@ -57,6 +42,17 @@ public class MusicDetailWidget extends DetailWidget implements MusicDetailView {
 
 	@Override protected MusicDetailView.Presenter getPresenter() {
 		return (MusicDetailView.Presenter) super.getPresenter();
+	}
+
+	@Override public void initEntity(Entity entity) {
+		if (entity == null) {
+			this.masterData.initEntity(null);
+			this.sublist.setElementVisibility(-1);
+		} else {
+			Music music = (Music) entity;
+			this.masterData.initEntity(music);
+			getPresenter().getMusicReleaseListFromServer(this);
+		}
 	}
 
 }

@@ -35,7 +35,6 @@
 		}
 		.tableScroll {
 			position:absolute !important;
-
 			top:0px;
 			left:0px;
 			right:0px;
@@ -57,7 +56,6 @@
 		.pager {
 			display: inline-block;
 		}
-		
 	</ui:style>
 			
 	<g:FlowPanel addStyleNames="{style.stage}">
@@ -75,5 +73,7 @@
 		</g:FlowPanel>
 		
 		<g:Label ui:field="selectionInfoLabel" addStyleNames="{style.selectionInfo}"/>
+
 	</g:FlowPanel>
+	
 </ui:UiBinder> 

@@ -6,15 +6,46 @@
 	xmlns:s="urn:import:dev.sdb.client.view.desktop.detail.sublist">
 	
 	<ui:style>
-		
+		.stage {
+			position: relative;
+			width: 100%;			
+			height: 100%;
+			
+			background-color: #6b6fa2;
+			border: 1px solid #9b9ec6;
+		}
+		.master {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			right: 10px;
+			height:90px;
+			
+			background-color: #d5d4f7;
+			border: 1px solid #9b9ec6;
+		}
+		.sublist {
+			position: absolute;
+			top: 110px;
+			left: 10px;
+			right: 10px;
+			bottom: 10px;
+			
+			background-color: #d5d4f7;
+			border: 1px solid #9b9ec6;
+		}
 	</ui:style>
 
-	<g:HTMLPanel>
-		<g:VerticalPanel width="100%">
-			<g:Label text="Serien-Details"/>
-			<m:SeriesMasterData ui:field="seriesMasterData"/>
-			<g:Label text="Veröffentlichungen dieser Serie"/>
-			<s:SublistWidget ui:field="seriesReleaseList"/>
-		</g:VerticalPanel>
-	</g:HTMLPanel>
+	<g:FlowPanel addStyleNames="{style.stage}">
+	
+		<g:FlowPanel addStyleNames="{style.master}">
+			<m:MasterDataWidget ui:field="masterData"/>
+		</g:FlowPanel>
+		
+		<g:FlowPanel addStyleNames="{style.sublist}">
+			<s:SublistWidget ui:field="sublist"/>
+		</g:FlowPanel>
+		
+	</g:FlowPanel>
+	
 </ui:UiBinder> 

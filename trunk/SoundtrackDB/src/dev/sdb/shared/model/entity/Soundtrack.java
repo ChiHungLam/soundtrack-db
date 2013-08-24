@@ -1,5 +1,6 @@
 package dev.sdb.shared.model.entity;
 
+import dev.sdb.shared.model.db.Flavor;
 
 public class Soundtrack extends AbstractEntity<Soundtrack> {
 
@@ -23,6 +24,10 @@ public class Soundtrack extends AbstractEntity<Soundtrack> {
 		this.seqNum = seqNum;
 		this.startTime = startTime;
 		this.stopTime = stopTime;
+	}
+
+	@Override public Flavor getFlavor() {
+		return Flavor.SOUNDTRACK;
 	}
 
 	@Override public String getMatch() {
@@ -59,9 +64,5 @@ public class Soundtrack extends AbstractEntity<Soundtrack> {
 
 	public void setMusic(Music music) {
 		this.music = music;
-	}
-
-	@Override public String toString() {
-		return "Soundtrack #" + getId();
 	}
 }

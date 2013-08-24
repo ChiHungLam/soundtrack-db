@@ -15,6 +15,8 @@ public class SoundtrackMasterData extends MasterDataWidget {
 	private static SoundtrackMasterDataUiBinder uiBinder = GWT.create(SoundtrackMasterDataUiBinder.class);
 
 	@UiField LongBox idField;
+	@UiField ReleaseMasterData releaseMasterData;
+	@UiField MusicMasterData musicMasterData;
 
 	public SoundtrackMasterData() {
 		super();
@@ -24,9 +26,13 @@ public class SoundtrackMasterData extends MasterDataWidget {
 	public void initEntity(Entity entity) {
 		if (entity == null) {
 			this.idField.setValue(null);
+			this.releaseMasterData.initEntity(null);
+			this.musicMasterData.initEntity(null);
 		} else {
 			Soundtrack soundtrack = (Soundtrack) entity;
 			this.idField.setValue(Long.valueOf(soundtrack.getId()));
+			this.releaseMasterData.initEntity(soundtrack.getRelease());
+			this.musicMasterData.initEntity(soundtrack.getMusic());
 		}
 	}
 }

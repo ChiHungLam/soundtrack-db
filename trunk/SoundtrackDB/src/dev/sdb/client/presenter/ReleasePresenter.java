@@ -19,7 +19,7 @@ public class ReleasePresenter extends AbstractSearchablePresenter implements Rel
 		ReleaseDetailView.Presenter {
 
 	public ReleasePresenter(ClientFactory clientFactory) {
-		super(clientFactory, ContentPresenterType.RELEASE, Flavor.RELEASES);
+		super(clientFactory, ContentPresenterType.RELEASE, Flavor.RELEASE);
 	}
 
 
@@ -97,7 +97,7 @@ public class ReleasePresenter extends AbstractSearchablePresenter implements Rel
 			}
 
 			public void onFailure(Throwable caught) {
-				handleRpcError("Sequence list for [" + Flavor.RELEASES.name() + "] audioId=" + audioId, caught);
+				handleRpcError("Sequence list for [" + Flavor.RELEASE.name() + "] audioId=" + audioId, caught);
 				view.clearSublist();
 			}
 		});

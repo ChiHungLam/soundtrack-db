@@ -224,7 +224,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 			int count;
 
 			switch (flavor) {
-			case RELEASES:
+			case RELEASE:
 				listPS = getStatement(composeReleaseList(range, ascending));
 				countPS = getStatement(composeReleaseCount());
 				count = count(countPS, wildcardedTerm);
@@ -277,7 +277,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 
 		try {
 			switch (flavor) {
-			case RELEASES:
+			case RELEASE:
 				ps = getStatement(composeReleaseGet());
 				ps.setLong(1, id);
 

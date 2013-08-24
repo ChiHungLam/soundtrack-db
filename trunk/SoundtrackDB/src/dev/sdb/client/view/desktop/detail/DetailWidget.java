@@ -30,6 +30,14 @@ public abstract class DetailWidget extends Composite implements DetailView {
 	}
 	@Override public void setPresenter(DetailView.Presenter presenter) {
 		this.presenter = presenter;
+		getMasterDataWidget().setPresenter(presenter);
+	}
+
+	@Override public CellTable<Entity> getSublistTable() {
+		SublistWidget sublist = getSublist();
+		if (sublist == null)
+			return null;
+		return sublist.getTable();
 	}
 
 	protected void initSublist() {

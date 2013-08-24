@@ -11,7 +11,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
 
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.presenter.ContentPresenterType;
@@ -37,6 +36,7 @@ import dev.sdb.client.view.desktop.detail.MusicDetailWidget;
 import dev.sdb.client.view.desktop.detail.ReleaseDetailWidget;
 import dev.sdb.client.view.desktop.detail.SeriesDetailWidget;
 import dev.sdb.client.view.desktop.detail.SoundtrackDetailWidget;
+import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
@@ -84,8 +84,12 @@ public class UiFactoryImpl implements UiFactory {
 			this.pushColumn = null;
 		}
 
-		private void addColumn(Column<Entity, ?> column, String title, double width, boolean sortable) {
+		private Column<Entity, ?> addColumn(Column<Entity, ?> column, String title, double width, boolean sortable) {
+			if (column == null)
+				return null;
+
 			this.columns.add(new ColumConfig(column, title, width, sortable));
+			return column;
 		}
 
 		private void setPushColumn(Column<Entity, ?> pushColumn) {
@@ -104,26 +108,247 @@ public class UiFactoryImpl implements UiFactory {
 	private static abstract class BrowseConfig {
 
 		private ContentPresenterType type;
+		private Flavor flavor;
 
-		private BrowseConfig(ContentPresenterType type) {
+		private BrowseConfig(ContentPresenterType type, Flavor flavor) {
 			super();
 			this.type = type;
+			this.flavor = flavor;
 		}
 
-		private ContentPresenterType getType() {
+		protected ContentPresenterType getType() {
 			return this.type;
+		}
+
+		protected Flavor getFlavor() {
+			return this.flavor;
 		}
 
 		protected abstract long getId(Entity entity);
 	}
 
-	private class ColumnFactory {
+	private class HtmlFactory implements UiFactory.HtmlFactory {
+
 		private static final String IMG_STATIC_ROOT_URL = "http://localhost/mimg/static/";
 
-		private static final double COLUMN_WIDTH_GOTO = 40.0;
-		private static final double COLUMN_WIDTH_ID = 80.0;
+		@Override public SafeHtml getMusicInfoCompact(Music music) {
 
-		protected String formatTime(int time) {
+			String artist = null;
+			String authors = null;
+			String title = null;
+
+			if (music != null) {
+				artist = music.getArtist();
+				title = music.getTitleInfo();
+				if (artist != null)
+					artist += " (" + music.getYearInfo() + ")";
+				authors = music.getAuthors();
+				if (authors == null && artist != null)
+					authors = "Komponist unbekannt";
+			}
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+
+			//Open one-row-table 
+			sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr>");
+
+			//Music info cell
+			sb.appendHtmlConstant("<td style='padding-left: 5px; text-align: left;'>");
+			sb.appendHtmlConstant((artist == null) ? "&nbsp;" : artist);
+			sb.appendHtmlConstant("<br>");
+			sb.appendHtmlConstant((title == null) ? ("<i>keine Angabe</i>") : ("<b>" + title + "</b>"));
+			sb.appendHtmlConstant("<br>");
+			sb.appendHtmlConstant((authors == null) ? "&nbsp;" : ("<i>(" + authors + ")</i>"));
+			sb.appendHtmlConstant("</td>");
+
+			//close one-row-table 
+			sb.appendHtmlConstant("</tr></table>");
+
+			return sb.toSafeHtml();
+		}
+
+		@Override public SafeHtml getSeriesInfo(Series series) {
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+			sb.appendHtmlConstant("<div style='text-align: left;'>");
+			sb.appendHtmlConstant("<b>" + series.getTitle() + "</b>");
+			sb.appendHtmlConstant("</div>");
+
+			return sb.toSafeHtml();
+		}
+
+		@Override public SafeHtml getReleaseInfoCompact(Release release) {
+
+			String artworkUrl = URL.encode(release.getArtworkUrl());
+			String title = release.getTitleInfo();
+			String catalogInfo = release.getCatalogInfo();
+			String yearInfo = release.getYearInfo();
+
+			String era = release.getType() + (yearInfo == null || yearInfo.isEmpty() ? "" : (" von " + yearInfo));
+
+			String sizePx = "50px";
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+
+			//Open one-row-table 
+			sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr>");
+
+			//Release artwork cell
+			sb.appendHtmlConstant("<td style='width: " + sizePx + "; height: " + sizePx + "; text-align: center;'>");
+			sb.appendHtmlConstant("<img style='max-width: " + sizePx + "; max-height: " + sizePx + ";' src='" + artworkUrl + "'>");
+			sb.appendHtmlConstant("</td>");
+
+			//Release info cell
+			sb.appendHtmlConstant("<td style='padding-left: 5px; text-align: left;'>");
+			sb.appendHtmlConstant("<b>" + title + "</b>");
+			sb.appendHtmlConstant("<br>");
+			sb.appendHtmlConstant(catalogInfo);
+			sb.appendHtmlConstant("<br>");
+			sb.appendHtmlConstant("<i>" + era + "</i>");
+			sb.appendHtmlConstant("</td>");
+
+			//close one-row-table 
+			sb.appendHtmlConstant("</tr></table>");
+
+			return sb.toSafeHtml();
+		}
+
+		@Override public SafeHtml getMusicInfoDetailed(Music music) {
+
+			String artist = null;
+			String authors = null;
+			String title = null;
+			String duration = null;
+
+			if (music != null) {
+				artist = music.getArtist();
+				title = music.getTitleInfo();
+				if (artist != null)
+					artist += " (" + music.getYearInfo() + ")";
+				authors = music.getAuthors();
+				if (authors == null && artist != null)
+					authors = "Komponist unbekannt";
+
+				int durationSeconds = music.getDurationSeconds();
+				duration = (durationSeconds <= 0) ? null : formatTime(durationSeconds);
+			}
+
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+
+			//Open one-row-table 
+			sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr>");
+
+			//Music info cell
+			sb.appendHtmlConstant("<td style='padding-left: 5px; text-align: left; vertical-align: top;'>");
+			sb.appendHtmlConstant("<span style='font-size:10pt;'>");
+			sb.appendHtmlConstant((artist == null) ? "&nbsp;" : artist);
+			sb.appendHtmlConstant("<br>");
+			sb.appendHtmlConstant((title == null) ? ("<i>keine Angabe</i>") : ("<span style='font-size:14pt;'><b>" + title + "</b></span>"));
+			sb.appendHtmlConstant("<br>");
+			sb.appendHtmlConstant((authors == null) ? "&nbsp;" : ("<i>(" + authors + ")</i>"));
+			sb.appendHtmlConstant("<br><br>");
+			sb.appendHtmlConstant("Spielzeit: " + (duration == null ? "unbekannt" : (" ca. " + duration + " min.")));
+			sb.appendHtmlConstant("</span>");
+			sb.appendHtmlConstant("</td>");
+
+			//close one-row-table 
+			sb.appendHtmlConstant("</tr></table>");
+
+			return sb.toSafeHtml();
+		}
+
+		@Override public SafeHtml getReleaseInfoDetailed(Release release) {
+
+			String artworkUrl = URL.encode(release.getArtworkUrl());
+			String title = release.getTitleInfo();
+			String catalogInfo = release.getCatalogInfo();
+			String yearInfo = release.getYearInfo();
+			int durationSeconds = release.getDurationSeconds();
+
+			String era = release.getType() + (yearInfo == null || yearInfo.isEmpty() ? "" : (" von " + yearInfo));
+
+			String duration = (durationSeconds <= 0) ? null : formatTime(durationSeconds);
+
+			String sizePx = "100px";
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+
+			//Open one-row-table 
+			sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr>");
+
+			//Release artwork cell
+			sb.appendHtmlConstant("<td style='width: " + sizePx + "; height: " + sizePx + "; padding: 0px; text-align: center;'>");
+			sb.appendHtmlConstant("<img style='max-width: " + sizePx + "; max-height: " + sizePx + ";' src='" + artworkUrl + "'>");
+			sb.appendHtmlConstant("</td>");
+
+			//Release info cell
+			sb.appendHtmlConstant("<td style='padding: 0px; padding-left: 10px; text-align: left; vertical-align: top;'>");
+			sb.appendHtmlConstant("<span style='font-size:14pt;'><b>" + title + "</b></span>");
+			sb.appendHtmlConstant("<br>");
+			sb.appendHtmlConstant("<span style='font-size:10pt;'>");
+			sb.appendHtmlConstant(catalogInfo);
+			sb.appendHtmlConstant("<br>");
+			sb.appendHtmlConstant("<i>" + era + "</i>");
+			sb.appendHtmlConstant("<br><br>");
+			sb.appendHtmlConstant("Spielzeit: " + (duration == null ? "unbekannt" : (" ca. " + duration + " min.")));
+			sb.appendHtmlConstant("</span>");
+			sb.appendHtmlConstant("</td>");
+
+			//close one-row-table 
+			sb.appendHtmlConstant("</tr></table>");
+
+			return sb.toSafeHtml();
+		}
+
+		@Override public SafeHtml getSoundtrackTime(Soundtrack soundtrack) {
+
+			String time = formatSoundtrackTime(soundtrack);
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+			sb.appendHtmlConstant((time == null) ? "<i>k.A.</i>" : "" + time + "");
+
+			return sb.toSafeHtml();
+		}
+
+		@Override public SafeHtml getSoundtrackSeqNum(Soundtrack soundtrack) {
+
+			String seqColor = getSequenceColor(soundtrack.getMediaIndex());
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+			sb.appendHtmlConstant("<div style='" +
+					"position: absolute;" +
+					"width: 100%;" +
+					"height: 100%;" +
+					"top: 0px;" +
+					seqColor +
+					"text-align: center;" +
+					"'>&nbsp;<br><b>" + soundtrack.getSeqNum() + "</b></div>");
+
+			return sb.toSafeHtml();
+		}
+
+		protected SafeHtml getGotoImage(Flavor flavor) {
+
+			String title = flavor.getPrefix() + "-Details anzeigen";
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+			sb.appendHtmlConstant("<img style='margin-top: 4px; width: 16px; height: 16px;' src='" + IMG_STATIC_ROOT_URL + "goto16.png' alt='Gehe zu' title='" + title + "'>");
+
+			return sb.toSafeHtml();
+		}
+
+		public SafeHtml getIdSpan(Entity entity) {
+
+			String title = entity.getFlavor().getPrefix() + "-ID: #" + entity.getId();
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+			sb.appendHtmlConstant("<span title='" + title + "'>#" + entity.getId() + "</span>");
+
+			return sb.toSafeHtml();
+		}
+
+		private String formatTime(int time) {
 			if (time == 0)
 				return "00:00";
 
@@ -135,9 +360,42 @@ public class UiFactoryImpl implements UiFactory {
 			return prefix + ((minute < 10) ? "0" : "") + minute + ":" + ((second < 10) ? "0" : "") + second;
 		}
 
+		private String formatSoundtrackTime(Soundtrack soundtrack) {
+			int start = soundtrack.getStartTime();
+			int stop = soundtrack.getStopTime();
+			if (start == 0 && stop == 0)
+				return null;
+
+			String time = formatTime(start) + "&nbsp;-&nbsp;" + formatTime(stop);
+
+			return time;
+		}
+
+		private String getSequenceColor(int mediaIndex) {
+			if (mediaIndex == 0) {
+				return "background-color: red;";
+			}
+			if (mediaIndex == -1) {
+				return "background-color: darkgray;";
+			}
+			if ((mediaIndex & 1) != 0) {
+				return "background-color: cadetblue;";
+			}
+			if ((mediaIndex & 1) == 0) {
+				return "background-color: burlywood;";
+			}
+			return "";
+		}
+	}
+
+	private class ColumnFactory {
+
+		private static final double COLUMN_WIDTH_GOTO = 40.0;
+		private static final double COLUMN_WIDTH_ID = 80.0;
+
 		protected void appendSublistReleaseSoundtrackColumns(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.MUSIC) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.MUSIC, Flavor.MUSIC) {
 				@Override protected long getId(Entity entity) {
 					return ((Soundtrack) entity).getMusic().getId();
 				}
@@ -149,11 +407,12 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected void appendSublistSeriesReleaseColumns(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE, Flavor.RELEASE) {
 				@Override protected long getId(Entity entity) {
 					return entity.getId();
 				}
 			});
+			config.addColumn(createIdColumn(), "ID", COLUMN_WIDTH_ID, true);
 			addReleaseColumns(table, config);
 
 			setTableConfig(table, config);
@@ -161,11 +420,12 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected void appendSublistMusicReleaseColumns(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE, Flavor.RELEASE) {
 				@Override protected long getId(Entity entity) {
 					return entity.getId();
 				}
 			});
+			config.addColumn(createIdColumn(), "ID", COLUMN_WIDTH_ID, true);
 			addReleaseColumns(table, config);
 
 			setTableConfig(table, config);
@@ -173,7 +433,7 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected void appendSublistCatalogReleaseColumns(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE, Flavor.RELEASE) {
 				@Override protected long getId(Entity entity) {
 					return entity.getId();
 				}
@@ -185,11 +445,12 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected void appendQuerySeriesColums(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.SERIES) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.SERIES, Flavor.SERIES) {
 				@Override protected long getId(Entity entity) {
 					return entity.getId();
 				}
 			});
+			config.addColumn(createIdColumn(), "ID", COLUMN_WIDTH_ID, true);
 			addSeriesColumns(table, config);
 
 			setTableConfig(table, config);
@@ -197,11 +458,12 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected void appendQuerySoundtrackColums(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.SOUNDTRACK) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.SOUNDTRACK, Flavor.SOUNDTRACK) {
 				@Override protected long getId(Entity entity) {
 					return entity.getId();
 				}
 			});
+			config.addColumn(createIdColumn(), "ID", COLUMN_WIDTH_ID, true);
 			addSoundtrackColumns(table, config);
 
 			setTableConfig(table, config);
@@ -209,11 +471,12 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected void appendQueryReleaseColums(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE, Flavor.RELEASE) {
 				@Override protected long getId(Entity entity) {
 					return entity.getId();
 				}
 			});
+			config.addColumn(createIdColumn(), "ID", COLUMN_WIDTH_ID, true);
 			addReleaseColumns(table, config);
 
 			setTableConfig(table, config);
@@ -221,11 +484,12 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected void appendQueryMusicColums(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.MUSIC) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.MUSIC, Flavor.MUSIC) {
 				@Override protected long getId(Entity entity) {
 					return entity.getId();
 				}
 			});
+			config.addColumn(createIdColumn(), "ID", COLUMN_WIDTH_ID, true);
 			addMusicColumns(table, config);
 
 			setTableConfig(table, config);
@@ -233,11 +497,12 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected void appendCatalogTreeReleaseColumns(CellTable<Entity> table) {
 			ColumSetConfig config = new ColumSetConfig();
-			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE) {
+			addGotoColumn(table, config, new BrowseConfig(ContentPresenterType.RELEASE, Flavor.RELEASE) {
 				@Override protected long getId(Entity entity) {
 					return entity.getId();
 				}
 			});
+			config.addColumn(createIdColumn(), "ID", COLUMN_WIDTH_ID, true);
 			addReleaseColumns(table, config);
 
 			setTableConfig(table, config);
@@ -275,10 +540,10 @@ public class UiFactoryImpl implements UiFactory {
 				}
 			};
 
-			SafeHtmlBuilder sb = new SafeHtmlBuilder();
-			sb.appendHtmlConstant("<img style='margin-top: 4px; width: 16px; height: 16px;' src='" + IMG_STATIC_ROOT_URL + "goto16.png' alt='Gehe zu' title='Details anzeigen'>");
+			
+			SafeHtml imageHtml = UiFactoryImpl.this.htmlFactory.getGotoImage(config.getFlavor());
 
-			ActionCell<Entity> cell = new ActionCell<Entity>(sb.toSafeHtml(), delegate);
+			ActionCell<Entity> cell = new ActionCell<Entity>(imageHtml, delegate);
 
 			Column<Entity, Entity> column = new Column<Entity, Entity>(cell) {
 				@Override public Entity getValue(Entity entity) {
@@ -288,6 +553,22 @@ public class UiFactoryImpl implements UiFactory {
 
 			column.setCellStyleNames("gotoColumn");
 
+			return column;
+		}
+
+		private Column<Entity, ?> createIdColumn() {
+			if (!SHOW_ID_UI)
+				return null;
+			
+			final SafeHtmlCell cell = new SafeHtmlCell();
+			Column<Entity, SafeHtml> column = new Column<Entity, SafeHtml>(cell) {
+				@Override public SafeHtml getValue(Entity entity) {
+					if (entity == null)
+						return null;
+
+					return UiFactoryImpl.this.htmlFactory.getIdSpan(entity);
+				}
+			};
 			return column;
 		}
 
@@ -304,36 +585,7 @@ public class UiFactoryImpl implements UiFactory {
 					else
 						release = (Release) entity;
 
-					String artworkUrl = URL.encode(release.getArtworkUrl());
-					String title = release.getTitleInfo();
-					String catalogInfo = release.getCatalogInfo();
-					String yearInfo = release.getYearInfo();
-
-					String era = release.getType() + (yearInfo == null || yearInfo.isEmpty() ? "" : (" von " + yearInfo));
-
-					SafeHtmlBuilder sb = new SafeHtmlBuilder();
-
-					//Open one-row-table 
-					sb.appendHtmlConstant("<table style='padding: 0px; margin: 0px; border-spacing: 0px;'><tr>");
-
-					//Release artwork cell
-					sb.appendHtmlConstant("<td style='width: 50px; height: 50px; text-align: center;'>");
-					sb.appendHtmlConstant("<img style='max-width: 50px; max-height: 50px;' src='" + artworkUrl + "'>");
-					sb.appendHtmlConstant("</td>");
-
-					//Release info cell
-					sb.appendHtmlConstant("<td style='text-align: left;'>");
-					sb.appendHtmlConstant("<b>" + title + "</b>");
-					sb.appendHtmlConstant("<br>");
-					sb.appendHtmlConstant(catalogInfo);
-					sb.appendHtmlConstant("<br>");
-					sb.appendHtmlConstant("<i>" + era + "</i>");
-					sb.appendHtmlConstant("</td>");
-
-					//close one-row-table 
-					sb.appendHtmlConstant("</tr></table>");
-
-					return sb.toSafeHtml();
+					return UiFactoryImpl.this.htmlFactory.getReleaseInfoCompact(release);
 				}
 			};
 			return column;
@@ -352,30 +604,7 @@ public class UiFactoryImpl implements UiFactory {
 					else
 						music = (Music) entity;
 
-					String artist = null;
-					String authors = null;
-					String title = null;
-
-					if (music != null) {
-						artist = music.getArtist();
-						title = music.getTitleInfo();
-						if (artist != null)
-							artist += " (" + music.getYearInfo() + ")";
-						authors = music.getAuthors();
-						if (authors == null && artist != null)
-							authors = "Komponist unbekannt";
-					}
-
-					SafeHtmlBuilder sb = new SafeHtmlBuilder();
-					sb.appendHtmlConstant("<div style='text-align: left;'>");
-					sb.appendHtmlConstant((artist == null) ? "&nbsp;" : artist);
-					sb.appendHtmlConstant("<br>");
-					sb.appendHtmlConstant((title == null) ? ("<i>keine Angabe</i>") : ("<b>" + title + "</b>"));
-					sb.appendHtmlConstant("<br>");
-					sb.appendHtmlConstant((authors == null) ? "&nbsp;" : ("<i>(" + authors + ")</i>"));
-					sb.appendHtmlConstant("</div>");
-
-					return sb.toSafeHtml();
+					return UiFactoryImpl.this.htmlFactory.getMusicInfoCompact(music);
 				}
 			};
 			return column;
@@ -390,9 +619,7 @@ public class UiFactoryImpl implements UiFactory {
 
 					Series series = (Series) entity;
 
-					SafeHtmlBuilder sb = new SafeHtmlBuilder();
-					sb.appendHtmlConstant("<b>" + series.getTitle() + "</b>");
-					return sb.toSafeHtml();
+					return UiFactoryImpl.this.htmlFactory.getSeriesInfo(series);
 				}
 			};
 			return column;
@@ -407,34 +634,7 @@ public class UiFactoryImpl implements UiFactory {
 
 					Soundtrack soundtrack = (Soundtrack) entity;
 
-					String seqColor = getSequenceColor(soundtrack.getMediaIndex());
-
-					SafeHtmlBuilder sb = new SafeHtmlBuilder();
-					sb.appendHtmlConstant("<div style='" +
-							"position: absolute;" +
-							"width: 100%;" +
-							"height: 100%;" +
-							"top: 0px;" +
-							seqColor +
-							"text-align: center;" +
-							"'>&nbsp;<br><b>" + soundtrack.getSeqNum() + "</b></div>");
-					return sb.toSafeHtml();
-				}
-
-				private String getSequenceColor(int mediaIndex) {
-					if (mediaIndex == 0) {
-						return "background-color: red;";
-					}
-					if (mediaIndex == -1) {
-						return "background-color: darkgray;";
-					}
-					if ((mediaIndex & 1) != 0) {
-						return "background-color: cadetblue;";
-					}
-					if ((mediaIndex & 1) == 0) {
-						return "background-color: burlywood;";
-					}
-					return "";
+					return UiFactoryImpl.this.htmlFactory.getSoundtrackSeqNum(soundtrack);
 				}
 			};
 
@@ -452,69 +652,40 @@ public class UiFactoryImpl implements UiFactory {
 
 					Soundtrack soundtrack = (Soundtrack) entity;
 
-					String time = formatSoundtrackTime(soundtrack);
-
-					SafeHtmlBuilder sb = new SafeHtmlBuilder();
-					sb.appendHtmlConstant((time == null) ? "<i>k.A.</i>" : "" + time + "");
-					return sb.toSafeHtml();
-				}
-
-				private String formatSoundtrackTime(Soundtrack soundtrack) {
-					int start = soundtrack.getStartTime();
-					int stop = soundtrack.getStopTime();
-					if (start == 0 && stop == 0)
-						return null;
-					
-					String time = formatTime(start) + "&nbsp;-&nbsp;" + formatTime(stop);
-					
-					return time;
-				}
-			};
-			return column;
-		}
-
-		private Column<Entity, ?> createSoundtrackIdColumn() {
-			TextColumn<Entity> column = new TextColumn<Entity>() {
-				@Override public String getValue(Entity entity) {
-					return "#" + ((Soundtrack) entity).getId();
+					return UiFactoryImpl.this.htmlFactory.getSoundtrackTime(soundtrack);
 				}
 			};
 			return column;
 		}
 
 		private void addGotoColumn(CellTable<Entity> table, ColumSetConfig config, BrowseConfig browseConfig) {
-			Column<Entity, ?> gotoColumn = createGotoColumn(browseConfig);
-			config.addColumn(gotoColumn, "", COLUMN_WIDTH_GOTO, false);
+			config.addColumn(createGotoColumn(browseConfig), "", COLUMN_WIDTH_GOTO, false);
 		}
 
 		private void addReleaseColumns(CellTable<Entity> table, ColumSetConfig config) {
-			Column<Entity, ?> releaseColumn = createReleaseColumn();
-			config.addColumn(releaseColumn, "Veröffentlichung", -1, true);
+			Column<Entity, ?> releaseColumn = config.addColumn(createReleaseColumn(), "Veröffentlichung", -1, true);
 			config.setPushColumn(releaseColumn);
 		}
 
 		private void addMusicColumns(CellTable<Entity> table, ColumSetConfig config) {
-			Column<Entity, ?> musicColumn = createMusicColumn();
-			config.addColumn(musicColumn, "Musik", -1, true);
+			Column<Entity, ?> musicColumn = config.addColumn(createMusicColumn(), "Musik", -1, true);
 			config.setPushColumn(musicColumn);
 		}
 
 		private void addSeriesColumns(CellTable<Entity> table, ColumSetConfig config) {
-			Column<Entity, ?> seriesColumn = createSeriesColumn();
-			config.addColumn(seriesColumn, "Serien", -1, true);
+			Column<Entity, ?> seriesColumn = config.addColumn(createSeriesColumn(), "Serien", -1, true);
 			config.setPushColumn(seriesColumn);
 		}
 
 		private void addSoundtrackColumns(CellTable<Entity> table, ColumSetConfig config) {
-			Column<Entity, ?> soundtrackIdColumn = createSoundtrackIdColumn();
-			config.addColumn(soundtrackIdColumn, "ID", COLUMN_WIDTH_ID, true);
-
 			addReleaseColumns(table, config); // Add the release column(s)
-			config.addColumn(createSoundtrackSeqNumColumn(), "Sequenz", 80.0, false);
+
+			Column<Entity, ?> soundtrackColumn = config.addColumn(createSoundtrackSeqNumColumn(), "Sequenz", 80.0, false);
+
 			addMusicColumns(table, config); // Add the music column(s)
 			config.addColumn(createSoundtrackTimeColumn(), "Zeit", 110.0, false);
 
-			config.setPushColumn(soundtrackIdColumn);
+			config.setPushColumn(soundtrackColumn);
 		}
 
 		private void addSublistReleaseSoundtrackColumns(CellTable<Entity> table, ColumSetConfig config) {
@@ -528,6 +699,13 @@ public class UiFactoryImpl implements UiFactory {
 			config.setPushColumn(null);
 		}
 	}
+
+	private static final boolean SHOW_ID_UI;
+
+	static {
+		SHOW_ID_UI = false;
+	}
+
 	public static String getBrowserPrefixedCssDefinition(String attribute, String value) {
 		String all = "";
 		all += "-webkit-" + attribute + ": " + value + "; ";
@@ -559,11 +737,17 @@ public class UiFactoryImpl implements UiFactory {
 	private CatalogDetailView catalogDetailView;
 
 	private ClientFactory clientFactory;
+	private HtmlFactory htmlFactory;
 	private ColumnFactory columnFactory;
 
 	public UiFactoryImpl() {
 		super();
+		this.htmlFactory = new HtmlFactory();
 		this.columnFactory = new ColumnFactory();
+	}
+
+	@Override public dev.sdb.client.view.UiFactory.HtmlFactory getHtmlFactory() {
+		return this.htmlFactory;
 	}
 
 	@Override public void setClientFactory(ClientFactory clientFactory) {
@@ -689,4 +873,5 @@ public class UiFactoryImpl implements UiFactory {
 		}
 		return this.catalogDetailView;
 	}
+
 }

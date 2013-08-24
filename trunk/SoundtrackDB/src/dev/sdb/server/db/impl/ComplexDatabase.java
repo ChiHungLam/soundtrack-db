@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -188,22 +187,22 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		String label = rs.getString("lab_titel");
 		String media = rs.getString("mm_name");
 		//		String artist = rs.getString("perf_name");
-		Date date = rs.getDate("cal_date_1st");
-		Date duration = rs.getDate("au_total_length");
+		java.sql.Date date = rs.getDate("cal_date_1st");
+		Time duration = rs.getTime("au_total_length");
 
 		String type = rs.getString("typ_name");
 
 		int episode = rs.getInt("prod_episode");
 
-		@SuppressWarnings("deprecation") int year = (date == null) ? 0 : date.getYear() + 1900;
+		String artworkRootUrl = rs.getString("cat_artwork_root");
 
 		Series series = readSeries(rs);
 
-		String artworkRootUrl = rs.getString("cat_artwork_root");
-
+		int year = getYearFromDate(date);
+		int durationSeconds = getSecondsFromTime(duration);
 		String artworkUrl = getArtworkUrl(artworkRootUrl, label, catalogNumber, print);
 
-		return new Release(id, type, series, artworkUrl, episode, title, label, media, catalogNumber, print, year, typeStatus, productionStatus, releaseStatus, printStatus, duration, audioId);
+		return new Release(id, type, series, artworkUrl, episode, title, label, media, catalogNumber, print, year, typeStatus, productionStatus, releaseStatus, printStatus, durationSeconds, audioId);
 	}
 
 	private String getArtworkUrl(String artworkRootUrl, String label, String catalogNumber, int print) {
@@ -279,9 +278,13 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		String authors = rs.getString("auts_display");
 		String artist = rs.getString("perf_name");
 
+		Time duration = null;
+
 		Genre genre = readGenre(rs);
 
-		return new Music(id, genre, title, versionName, year, authors, artist, partOrder, versionOrder, recStatus, partStatus, versionStatus);
+		int durationSeconds = getSecondsFromTime(duration);
+
+		return new Music(id, genre, title, versionName, year, authors, artist, partOrder, versionOrder, recStatus, partStatus, versionStatus, durationSeconds);
 	}
 
 	protected Genre readGenre(ResultSet rs) throws SQLException {
@@ -369,6 +372,10 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		int hours = Integer.parseInt(timeString.substring(0, 2));
 		
 		return seconds + (60 * minutes) + (3600 * hours);
+	}
+
+	@SuppressWarnings("deprecation") private int getYearFromDate(java.sql.Date date) {
+		return (date == null) ? 0 : date.getYear() + 1900;
 	}
 
 	private String getRomanNumeral(int stkOrder) {
