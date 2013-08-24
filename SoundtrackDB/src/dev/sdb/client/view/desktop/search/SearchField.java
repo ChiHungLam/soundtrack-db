@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -29,6 +30,12 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 
 	interface SearchFieldUiBinder extends UiBinder<Widget, SearchField> {}
 	private static SearchFieldUiBinder uiBinder = GWT.create(SearchFieldUiBinder.class);
+
+	public interface Style extends CssResource {
+		String error();
+	}
+
+	@UiField protected Style style;
 
 	@UiField Button findButton;
 	@UiField TextBox searchTerm;
@@ -77,21 +84,17 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 	}
 
 	private void prepareSearch() {
-		// Clear any previous error message
-		this.errorLabel.setText("");
-
 		// Get the input
 		String searchText = this.searchTerm.getText();
 
 		// Validate the input
 		if (!SearchTermVerifier.isValidSearchTerm(searchText)) {
-			// Show error message
-			this.errorLabel.setText("Bitte mindestens " + SearchTermVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben.");
-			return; //cancel here!
+			// Fire search event for invalid user entry 
+			fireEvent(new SearchEvent(SearchEvent.Mode.INVALID, "Bitte mindestens " + SearchTermVerifier.SEARCH_TERM_MIN_LENGTH + " Zeichen angeben."));
+		} else {
+			// Fire search event
+			fireEvent(new SearchEvent(SearchEvent.Mode.VALID, searchText));
 		}
-
-		// Fire search event
-		fireEvent(new SearchEvent(searchText));
 	}
 
 	public HandlerRegistration addSearchEventHandler(SearchEventHandler handler) {
@@ -107,6 +110,16 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 		this.searchTerm.setEnabled(enabled);
 
 		this.searchTerm.setFocus(true);
+	}
+
+	protected void showErrorDisplay(String message) {
+		this.errorLabel.setText(message);
+		this.errorLabel.addStyleName(this.style.error());
+	}
+
+	protected void clearErrorDisplay() {
+		this.errorLabel.setText("");
+		this.errorLabel.removeStyleName(this.style.error());
 	}
 
 }

@@ -3,29 +3,58 @@
 	xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
-	<ui:style>
-		.searchTermStyle {
+	<ui:style type="dev.sdb.client.view.desktop.search.SearchField.Style">
+		.stage {
+			padding-top: 5px;
+		}
+		.searchContainer {
+		}
+		.searchLabel {
+			display: inline;
+			
+			margin-right: 5px;
+		}
+		.searchTerm {
+			font-family: Arial Unicode MS, Arial, sans-serif;
+			font-size: 10pt;
+			
+			margin-right: 5px;
+		}
+		.findButton {
+			display: inline;
+			
+			font-family: Arial Unicode MS, Arial, sans-serif;
+			font-size: 10pt;
 			font-weight: bold;
 		}
-		.errorLabelStyle {
+		.errorLabel {
+			font-family: Arial Unicode MS, Arial, sans-serif;
+			font-size: 10pt;
+			
+			margin-top: 3px;
+			
+			color: black;
+			opacity: 0;
+			
+			-webkit-transition: opacity 0.2s 0.1s, color 0.2s 0.1s;
+			-moz-transition: opacity 0.2s 0.1s, color 0.2s 0.1s;
+			-o-transition: opacity 0.2s 0.1s, color 0.2s 0.1s;
+			-ms-transition: opacity 0.2s 0.1s, color 0.2s 0.1s;
+			transition: opacity 0.2s 0.1s, color 0.2s 0.1s;
+		}
+		.errorLabel.error {
 			color: red;
-		}
-		.findButtonStyle {
-			display: block;
-			font-size: 16pt;
-			font-weight: bold;
+			opacity: 1;
 		}
 	</ui:style>
 	
-	<g:HTMLPanel>
-		<g:VerticalPanel>
-			<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" spacing="5">
-				<g:Label text="Suche:"/>
-				<g:TextBox ui:field="searchTerm" styleName="{style.searchTermStyle}"/>
-				<g:Button ui:field="findButton" styleName="{style.findButtonStyle}">Finde</g:Button>
-			</g:HorizontalPanel>			
-			<g:Label ui:field="errorLabel" styleName="{style.errorLabelStyle}"/>
-		</g:VerticalPanel>
-	</g:HTMLPanel>
+	<g:FlowPanel addStyleNames="{style.stage}">
+		<g:FlowPanel addStyleNames="{style.searchContainer}">
+			<g:Label text="Suche:" addStyleNames="{style.searchLabel}"/>
+			<g:TextBox ui:field="searchTerm" addStyleNames="{style.searchTerm}"/>
+			<g:Button ui:field="findButton" addStyleNames="{style.findButton}">Finde</g:Button>
+		</g:FlowPanel>			
+		<g:Label ui:field="errorLabel" addStyleNames="{style.errorLabel}"/>
+	</g:FlowPanel>
 	
 </ui:UiBinder> 

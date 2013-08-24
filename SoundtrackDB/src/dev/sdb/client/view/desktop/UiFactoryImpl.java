@@ -367,11 +367,13 @@ public class UiFactoryImpl implements UiFactory {
 					}
 
 					SafeHtmlBuilder sb = new SafeHtmlBuilder();
+					sb.appendHtmlConstant("<div style='text-align: left;'>");
 					sb.appendHtmlConstant((artist == null) ? "&nbsp;" : artist);
 					sb.appendHtmlConstant("<br>");
 					sb.appendHtmlConstant((title == null) ? ("<i>keine Angabe</i>") : ("<b>" + title + "</b>"));
 					sb.appendHtmlConstant("<br>");
 					sb.appendHtmlConstant((authors == null) ? "&nbsp;" : ("<i>(" + authors + ")</i>"));
+					sb.appendHtmlConstant("</div>");
 
 					return sb.toSafeHtml();
 				}

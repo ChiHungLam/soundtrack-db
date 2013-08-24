@@ -110,7 +110,10 @@
 
 .content_style {
 	background-color: #D5D4F7;
-	padding: 15px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 7px;
 }
 
 .sectioninfo_style {}

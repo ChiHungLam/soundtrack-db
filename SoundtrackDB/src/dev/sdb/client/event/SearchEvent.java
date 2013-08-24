@@ -4,12 +4,19 @@ import com.google.gwt.event.shared.GwtEvent;
 
 public class SearchEvent extends GwtEvent<SearchEventHandler> {
 
+	public enum Mode {
+		VALID,
+		INVALID
+	}
+
 	public static Type<SearchEventHandler> TYPE = new Type<SearchEventHandler>();
 
-	private final String searchTerm;
+	private final Mode mode;
+	private final String value;
 
-	public SearchEvent(String searchTerm) {
-		this.searchTerm = searchTerm;
+	public SearchEvent(Mode mode, String value) {
+		this.mode = mode;
+		this.value = value;
 	}
 
 	@Override public GwtEvent.Type<SearchEventHandler> getAssociatedType() {
@@ -20,7 +27,11 @@ public class SearchEvent extends GwtEvent<SearchEventHandler> {
 		handler.onSearch(this);
 	}
 
-	public String getSearchTerm() {
-		return this.searchTerm;
+	public Mode getMode() {
+		return this.mode;
+	}
+
+	public String getValue() {
+		return this.value;
 	}
 }
