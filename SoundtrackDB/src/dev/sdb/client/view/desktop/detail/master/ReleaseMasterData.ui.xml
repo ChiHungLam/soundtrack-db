@@ -4,33 +4,16 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
 	<ui:style>
-		.artworkContainer {
-			width: 100px;
-			height: 100px;
-		}
-		.artwork {
-			max-width: 100px;
-			max-height: 100px;
-		}
-		.fieldLabel {
-			
-		}
-		.fieldText {
-			
+		.content {
+			position: absolute;
+			top: 10px;
+			bottom: 10px;
+			left: 10px;
+			right: 10px;
 		}
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<table>
-			<tr>
-				<td rowspan="2" class="{style.artworkContainer}"><g:Image ui:field="coverArtwork" styleName="{style.artwork}"/></td>
-				<td class="{style.fieldLabel}"><g:Label text="Id"/></td>
-				<td class="{style.fieldText}"><g:LongBox ui:field="idField" readOnly="true"/></td>
-			</tr>
-			<tr>
-				<td class="{style.fieldLabel}"><g:Label text="Titel"/></td>
-				<td class="{style.fieldText}"><g:TextBox ui:field="titleField" readOnly="true"/></td>
-			</tr>
-		</table>
+		<g:HTML wordWrap="false" ui:field="content" addStyleNames="{style.content}"></g:HTML>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -5,27 +5,66 @@
 	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	
 	<ui:style>
-		.tableScrollPanel {
+		.stage {
+			position:relative;
+			width: 100%;
 			height: 100%;
-			border: 1px solid #ccc;
+		}
+		.selectionInfo {
+			position:absolute;
+			top:10px;
+			left:10px;
+			right:10px;
+			height:20px;
+			
+			text-align: left;
+		}
+		.tableContainer {
+			position:absolute;
+			top:35px;
+			bottom:5px;
+			left:5px;
+			right:5px;
+		}
+		.tableScroll {
+			position:absolute !important;
+			top:0px;
+			left:0px;
+			right:0px;
+			bottom:25px;
+			
+			background-color: #cbcef6;
+			border: 1px solid #9b9ec6;
+		}
+		.table {
+			position:relative;
+		}
+		.pagerContainer {
+			position:absolute;
+			left:0px;
+			right:0px;
+			bottom:0px;
+			height:25px;
+		}
+		.pager {
+			display: inline-block;
 		}
 	</ui:style>
 
-	<g:HTMLPanel>
-		<g:VerticalPanel width="100%" height="100%" spacing="10">
-			<g:Label ui:field="selectionInfoLabel"/>
-			<g:Cell>
-				<g:VerticalPanel ui:field="tablePanel" width="100%">
-				<g:Cell height="600">
-					<g:ScrollPanel addStyleNames="{style.tableScrollPanel}">
-						<c:CellTable ui:field='table'/>
-					</g:ScrollPanel>
-				</g:Cell>
-				<g:Cell horizontalAlignment="ALIGN_CENTER">
-					<c:SimplePager ui:field="pager"/>
-				</g:Cell>
-			</g:VerticalPanel>
-			</g:Cell>
-		</g:VerticalPanel>
-	</g:HTMLPanel>
+	<g:FlowPanel addStyleNames="{style.stage}">
+	
+		<g:FlowPanel ui:field="tablePanel" addStyleNames="{style.tableContainer}">
+			<g:ScrollPanel ui:field="tableScroll" addStyleNames="{style.tableScroll}">
+				<c:CellTable ui:field='table' addStyleNames="{style.table}"/>
+			</g:ScrollPanel>
+			
+			<g:FlowPanel addStyleNames="{style.pagerContainer}">
+				<c:SimplePager ui:field="pager" addStyleNames="{style.pager}"/>
+			</g:FlowPanel>
+		</g:FlowPanel>
+		
+		<g:Label ui:field="selectionInfoLabel" addStyleNames="{style.selectionInfo}"/>
+		
+	</g:FlowPanel>
+	
 </ui:UiBinder> 

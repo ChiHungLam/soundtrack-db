@@ -1,6 +1,7 @@
 package dev.sdb.shared.model.entity;
 
 import dev.sdb.shared.model.StatusChecker;
+import dev.sdb.shared.model.db.Flavor;
 
 public class Music extends AbstractEntity<Music> {
 
@@ -15,12 +16,13 @@ public class Music extends AbstractEntity<Music> {
 	private int recStatus;
 	private int partStatus;
 	private int versionStatus;
+	private int durationSeconds;
 
 	public Music() {
 		super();
 	}
 
-	public Music(long id, Genre genre, String title, String version, int year, String authors, String artist, int partOrder, int versionOrder, int recStatus, int partStatus, int versionStatus) {
+	public Music(long id, Genre genre, String title, String version, int year, String authors, String artist, int partOrder, int versionOrder, int recStatus, int partStatus, int versionStatus, int durationSeconds) {
 		super(id);
 		this.genre = genre;
 		this.title = title;
@@ -33,14 +35,15 @@ public class Music extends AbstractEntity<Music> {
 		this.recStatus = recStatus;
 		this.partStatus = partStatus;
 		this.versionStatus = versionStatus;
+		this.durationSeconds = durationSeconds;
+	}
+
+	@Override public Flavor getFlavor() {
+		return Flavor.MUSIC;
 	}
 
 	@Override public String getMatch() {
 		return getTitleInfo();
-	}
-
-	@Override public String toString() {
-		return "Music #" + getId();
 	}
 
 	public String getTitleInfo() {
@@ -100,6 +103,10 @@ public class Music extends AbstractEntity<Music> {
 	 */
 	public String getArtist() {
 		return this.artist;
+	}
+
+	public int getDurationSeconds() {
+		return this.durationSeconds;
 	}
 
 	public boolean isOriginalSoundtrack() {

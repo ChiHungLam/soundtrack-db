@@ -26,8 +26,46 @@ public class CatalogPresenter extends AbstractBrowsePresenter implements Catalog
 		super(clientFactory, ContentPresenterType.CATALOG, Flavor.CATALOG);
 	}
 
-	@Override public void getCatalogEntriesFromServer(CatalogDetailView view) {
-		// TODO Auto-generated method stub
+	@Override public void getCatalogEntriesFromServer(final CatalogDetailView view) {
+		Catalog catalog = (Catalog) getCurrentDetailEntity();
+		if (catalog == null) {
+			view.clearSublist();
+			return;
+		}
+
+		final long id = catalog.getId();
+
+		//if there's no id, cancel the action
+		if (id <= 0) {
+			view.clearSublist();
+			return;
+		}
+
+		final Range range = view.getSublistRange();
+
+		SearchServiceAsync service = getClientFactory().getSearchService();
+
+		// Then, we send the input to the server.
+		service.getCatalogReleaseList(id, range, new AsyncCallback<Result>() {
+
+			public void onSuccess(Result searchResult) {
+				int total = searchResult.getTotalLength();
+
+				String resultInfo = "";
+				if (total == 0) {
+					resultInfo = "Für diesen Katalog sind keine Veröffentlichungen bekannt.";
+				} else if (total > 0) {
+					resultInfo = "Für diesen Katalog " + (total == 1 ? "ist 1 Veröffentlichung" : ("sind " + total + " Veröffentlichungen")) + " bekannt.";
+				}
+
+				view.showSublistResult(resultInfo, searchResult);
+			}
+
+			public void onFailure(Throwable caught) {
+				handleRpcError("Release list for [" + Flavor.CATALOG.name() + "] id=" + id, caught);
+				view.clearSublist();
+			}
+		});
 
 	}
 

@@ -4,27 +4,16 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	
 	<ui:style>
-		
+		.content {
+			position: absolute;
+			top: 10px;
+			bottom: 10px;
+			left: 10px;
+			right: 10px;
+		}
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<g:Grid>
-			<g:row>
-				<g:customCell>
-					<g:Label text="Id"/>
-				</g:customCell>
-				<g:customCell>
-					<g:LongBox ui:field="idField"/>
-				</g:customCell>
-			</g:row>
-			<g:row>
-				<g:customCell>
-					<g:Label text="Titel"/>
-				</g:customCell>
-				<g:customCell>
-					<g:TextBox ui:field="titleField"/>
-				</g:customCell>
-			</g:row>
-		</g:Grid>
+		<g:HTML wordWrap="false" ui:field="content" addStyleNames="{style.content}"></g:HTML>
 	</g:HTMLPanel>
 </ui:UiBinder> 

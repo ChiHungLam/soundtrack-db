@@ -1,5 +1,6 @@
 package dev.sdb.shared.model.entity;
 
+import dev.sdb.shared.model.db.Flavor;
 
 public class Catalog extends AbstractEntity<Catalog> {
 
@@ -22,6 +23,17 @@ public class Catalog extends AbstractEntity<Catalog> {
 		this.info = info;
 		this.eraBegin = eraBegin;
 		this.eraEnd = eraEnd;
+	}
+
+	@Override public Flavor getFlavor() {
+		return Flavor.CATALOG;
+	}
+
+	@Override public String getMatch() {
+		String match = getTitle();
+		if ((this.info != null) && !this.info.isEmpty())
+			match += " [" + this.info + "]";
+		return match;
 	}
 
 	public boolean hasChildren() {
@@ -63,19 +75,8 @@ public class Catalog extends AbstractEntity<Catalog> {
 		return null;
 	}
 
-	@Override public String getMatch() {
-		String match = getTitle();
-		if ((this.info != null) && !this.info.isEmpty())
-			match += " [" + this.info + "]";
-		return match;
-	}
-
 	public long getParentId() {
 		return this.parentId;
-	}
-
-	@Override public String toString() {
-		return "Katalog #" + getId();
 	}
 
 }

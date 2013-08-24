@@ -8,13 +8,14 @@
 	</ui:style>
 	
 	<g:HTMLPanel>
+		<g:Label text="Katalog-Details"/>
 		<g:Grid>
 			<g:row>
 				<g:customCell>
 					<g:Label text="Id"/>
 				</g:customCell>
 				<g:customCell>
-					<g:LongBox ui:field="idField"/>
+					<g:LongBox ui:field="idField" readOnly="true"/>
 				</g:customCell>
 			</g:row>
 			<g:row>
@@ -22,7 +23,7 @@
 					<g:Label text="Titel"/>
 				</g:customCell>
 				<g:customCell>
-					<g:TextBox ui:field="titleField"/>
+					<g:TextBox ui:field="titleField" readOnly="true"/>
 				</g:customCell>
 			</g:row>
 		</g:Grid>

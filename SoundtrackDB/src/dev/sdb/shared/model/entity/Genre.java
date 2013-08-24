@@ -1,6 +1,7 @@
 package dev.sdb.shared.model.entity;
 
 import dev.sdb.shared.model.StatusChecker;
+import dev.sdb.shared.model.db.Flavor;
 
 public class Genre extends AbstractEntity<Genre> {
 
@@ -17,6 +18,10 @@ public class Genre extends AbstractEntity<Genre> {
 		this.status = status;
 		this.parentName = parentName;
 		this.childName = childName;
+	}
+
+	@Override public Flavor getFlavor() {
+		return Flavor.GENRE;
 	}
 
 	@Override public String getMatch() {
@@ -48,9 +53,5 @@ public class Genre extends AbstractEntity<Genre> {
 
 	public boolean isSoundtrackContainer() {
 		return StatusChecker.isBitSet(this.status, 0);
-	}
-
-	@Override public String toString() {
-		return "Genre #" + getId();
 	}
 }

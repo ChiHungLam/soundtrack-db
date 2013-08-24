@@ -1,6 +1,7 @@
 package dev.sdb.shared.model.entity;
 
 import dev.sdb.shared.model.StatusChecker;
+import dev.sdb.shared.model.db.Flavor;
 
 public class Series extends AbstractEntity<Series> {
 
@@ -19,6 +20,10 @@ public class Series extends AbstractEntity<Series> {
 		this.shortTitle = shortTitle;
 		this.editionStatus = editionStatus;
 		this.singles = singles;
+	}
+
+	@Override public Flavor getFlavor() {
+		return Flavor.SERIES;
 	}
 
 	@Override public String getMatch() {
@@ -54,9 +59,5 @@ public class Series extends AbstractEntity<Series> {
 
 	public boolean isBlacklisted() {
 		return StatusChecker.isBitSet(this.editionStatus, 0);
-	}
-
-	@Override public String toString() {
-		return "Series #" + getId();
 	}
 }

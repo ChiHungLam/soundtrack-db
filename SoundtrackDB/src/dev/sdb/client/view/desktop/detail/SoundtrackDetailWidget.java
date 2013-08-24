@@ -3,13 +3,10 @@ package dev.sdb.client.view.desktop.detail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.view.SoundtrackDetailView;
 import dev.sdb.client.view.desktop.detail.master.MasterDataWidget;
-import dev.sdb.client.view.desktop.detail.master.MusicMasterData;
-import dev.sdb.client.view.desktop.detail.master.ReleaseMasterData;
 import dev.sdb.client.view.desktop.detail.master.SoundtrackMasterData;
 import dev.sdb.client.view.desktop.detail.sublist.SublistWidget;
 import dev.sdb.shared.model.entity.Entity;
@@ -20,17 +17,12 @@ public class SoundtrackDetailWidget extends DetailWidget implements SoundtrackDe
 	interface SoundtrackDetailWidgetUiBinder extends UiBinder<Widget, SoundtrackDetailWidget> {}
 	private static SoundtrackDetailWidgetUiBinder uiBinder = GWT.create(SoundtrackDetailWidgetUiBinder.class);
 
-	@UiField SoundtrackMasterData soundtrackMasterData;
-	@UiField ReleaseMasterData releaseMasterData;
-	@UiField MusicMasterData musicMasterData;
+	@UiField(provided = true) MasterDataWidget masterData;
 
 	public SoundtrackDetailWidget() {
 		super();
+		this.masterData = GWT.create(SoundtrackMasterData.class);
 		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	@Override public CellTable<Entity> getSublistTable() {
-		return null;// soundtrack detail has no sublist.
 	}
 
 	@Override protected SublistWidget getSublist() {
@@ -38,19 +30,15 @@ public class SoundtrackDetailWidget extends DetailWidget implements SoundtrackDe
 	}
 
 	@Override protected MasterDataWidget getMasterDataWidget() {
-		return this.soundtrackMasterData;
+		return this.masterData;
 	}
 
 	public void initEntity(Entity entity) {
 		if (entity == null) {
-			this.soundtrackMasterData.initEntity(null);
-			this.releaseMasterData.initEntity(null);
-			this.musicMasterData.initEntity(null);
+			this.masterData.initEntity(null);
 		} else {
 			Soundtrack soundtrack = (Soundtrack) entity;
-			this.soundtrackMasterData.initEntity(soundtrack);
-			this.releaseMasterData.initEntity(soundtrack.getRelease());
-			this.musicMasterData.initEntity(soundtrack.getMusic());
+			this.masterData.initEntity(soundtrack);
 		}
 	}
 

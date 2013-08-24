@@ -3,7 +3,6 @@ package dev.sdb.client.view.desktop.detail;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import dev.sdb.client.view.ReleaseDetailView;
@@ -19,11 +18,12 @@ public class ReleaseDetailWidget extends DetailWidget implements ReleaseDetailVi
 	interface ReleaseDetailWidgetUiBinder extends UiBinder<Widget, ReleaseDetailWidget> {}
 	private static ReleaseDetailWidgetUiBinder uiBinder = GWT.create(ReleaseDetailWidgetUiBinder.class);
 
-	@UiField ReleaseMasterData releaseMasterData;
-	@UiField SublistWidget releaseSoundtrackList;
+	@UiField(provided = true) MasterDataWidget masterData;
+	@UiField SublistWidget sublist;
 
 	public ReleaseDetailWidget() {
 		super();
+		this.masterData = GWT.create(ReleaseMasterData.class);
 		initWidget(uiBinder.createAndBindUi(this));
 
 		initSublist();
@@ -34,25 +34,21 @@ public class ReleaseDetailWidget extends DetailWidget implements ReleaseDetailVi
 		super.showSublistResult(resultInfo, searchResult);
 	}
 
-	@Override public CellTable<Entity> getSublistTable() {
-		return this.releaseSoundtrackList.getTable();
-	}
-
 	@Override protected MasterDataWidget getMasterDataWidget() {
-		return this.releaseMasterData;
+		return this.masterData;
 	}
 
 	@Override protected SublistWidget getSublist() {
-		return this.releaseSoundtrackList;
+		return this.sublist;
 	}
 
 	public void initEntity(Entity entity) {
 		if (entity == null) {
-			this.releaseMasterData.initEntity(null);
-			this.releaseSoundtrackList.setElementVisibility(-1);
+			this.masterData.initEntity(null);
+			this.sublist.setElementVisibility(-1);
 		} else {
 			Release release = (Release) entity;
-			this.releaseMasterData.initEntity(release);
+			this.masterData.initEntity(release);
 			getPresenter().getSequenceListFromServer(this);
 		}
 	}

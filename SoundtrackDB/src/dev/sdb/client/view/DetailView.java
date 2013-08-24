@@ -6,12 +6,15 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.Range;
 
+import dev.sdb.client.view.UiFactory.HtmlFactory;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Entity;
 
 public interface DetailView extends IsWidget, HasEnabled {
 
 	public interface Presenter {
+
+		HtmlFactory getHtmlFactory();
 		//void onBrowse(ContentPresenterType type, Entity entity);
 	}
 

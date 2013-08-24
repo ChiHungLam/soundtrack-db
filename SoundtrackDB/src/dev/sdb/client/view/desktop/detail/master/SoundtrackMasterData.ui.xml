@@ -1,22 +1,26 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder
 	xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:s="urn:import:dev.sdb.client.view.desktop.detail.master">
 	
 	<ui:style>
 		
 	</ui:style>
 	
 	<g:HTMLPanel>
+		<g:Label text="Soundtrack-Details"/>
 		<g:Grid>
 			<g:row>
 				<g:customCell>
 					<g:Label text="Id"/>
 				</g:customCell>
 				<g:customCell>
-					<g:LongBox ui:field="idField"/>
+					<g:LongBox ui:field="idField" readOnly="true"/>
 				</g:customCell>
 			</g:row>
 		</g:Grid>
+		<s:ReleaseMasterData ui:field="releaseMasterData"/>
+		<s:MusicMasterData ui:field="musicMasterData"/>
 	</g:HTMLPanel>
 </ui:UiBinder> 

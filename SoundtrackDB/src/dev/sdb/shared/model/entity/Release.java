@@ -1,8 +1,7 @@
 package dev.sdb.shared.model.entity;
 
-import java.util.Date;
-
 import dev.sdb.shared.model.StatusChecker;
+import dev.sdb.shared.model.db.Flavor;
 
 public class Release extends AbstractEntity<Release> {
 
@@ -21,14 +20,14 @@ public class Release extends AbstractEntity<Release> {
 	private int productionStatus;
 	private int releaseStatus;
 	private int printStatus;
-	private Date duration;
+	private int durationSeconds;
 	private long audioId;
 
 	public Release() {
 		super();
 	}
 
-	public Release(long id, String type, Series series, String artworkUrl, int episode, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, Date duration, long audioId) {
+	public Release(long id, String type, Series series, String artworkUrl, int episode, String title, String label, String media, String catalogNumber, int print, int year, int typeStatus, int productionStatus, int releaseStatus, int printStatus, int durationSeconds, long audioId) {
 		super(id);
 		this.type = type;
 		this.series = series;
@@ -45,20 +44,20 @@ public class Release extends AbstractEntity<Release> {
 		this.productionStatus = productionStatus;
 		this.releaseStatus = releaseStatus;
 		this.printStatus = printStatus;
-		this.duration = duration;
+		this.durationSeconds = durationSeconds;
 		this.audioId = audioId;
 	}
 
-	@Override public String toString() {
-		return "Release #" + getId();
-	}
-
-	public String getArtworkUrl() {
-		return this.artworkUrl;
+	@Override public Flavor getFlavor() {
+		return Flavor.RELEASE;
 	}
 
 	@Override public String getMatch() {
 		return getTitleInfo();
+	}
+
+	public String getArtworkUrl() {
+		return this.artworkUrl;
 	}
 	
 	public String getTitleInfo() {
@@ -207,10 +206,10 @@ public class Release extends AbstractEntity<Release> {
 	}
 
 	/**
-	 * @return the duration
+	 * @return the durationSeconds
 	 */
-	public Date getDuration() {
-		return this.duration;
+	public int getDurationSeconds() {
+		return this.durationSeconds;
 	}
 
 	public boolean isYearApprox() {

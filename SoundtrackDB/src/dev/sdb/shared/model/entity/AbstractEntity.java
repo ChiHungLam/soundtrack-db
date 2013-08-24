@@ -23,4 +23,13 @@ public abstract class AbstractEntity<T> implements Entity {
 		return this.id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override public String toString() {
+		return getFlavor().name() + " #" + getId();
+	}
+
 }
