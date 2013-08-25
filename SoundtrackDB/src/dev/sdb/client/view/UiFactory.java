@@ -20,6 +20,7 @@ public interface UiFactory {
 		SafeHtml getSeriesInfo(Series series);
 
 		SafeHtml getSoundtrackSeqNum(Soundtrack soundtrack);
+
 		SafeHtml getSoundtrackTime(Soundtrack soundtrack);
 	}
 
@@ -40,7 +41,7 @@ public interface UiFactory {
 	MusicQueryView getMusicQueryView();
 	SoundtrackQueryView getSoundtrackQueryView();
 	SeriesQueryView getSeriesQueryView();
-	CatalogTreeView getCatalogTreeView(CatalogTreeView.Presenter presenter);
+	CatalogBrowseView getCatalogTreeView(CatalogBrowseView.Presenter presenter);
 
 	ReleaseDetailView getReleaseDetailView();
 	MusicDetailView getMusicDetailView();

@@ -15,7 +15,7 @@ import com.google.gwt.user.cellview.client.Column;
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.presenter.ContentPresenterType;
 import dev.sdb.client.view.CatalogDetailView;
-import dev.sdb.client.view.CatalogTreeView;
+import dev.sdb.client.view.CatalogBrowseView;
 import dev.sdb.client.view.ErrorView;
 import dev.sdb.client.view.FooterView;
 import dev.sdb.client.view.HeaderView;
@@ -728,7 +728,7 @@ public class UiFactoryImpl implements UiFactory {
 	private MusicQueryView musicQueryView;
 	private SoundtrackQueryView soundtrackQueryView;
 	private SeriesQueryView seriesQueryView;
-	private CatalogTreeView catalogTreeView;
+	private CatalogBrowseView catalogTreeView;
 
 	private ReleaseDetailView releaseDetailView;
 	private MusicDetailView musicDetailView;
@@ -826,9 +826,9 @@ public class UiFactoryImpl implements UiFactory {
 		return this.seriesQueryView;
 	}
 
-	@Override public CatalogTreeView getCatalogTreeView(CatalogTreeView.Presenter presenter) {
+	@Override public CatalogBrowseView getCatalogTreeView(CatalogBrowseView.Presenter presenter) {
 		if (this.catalogTreeView == null) {
-			this.catalogTreeView = new CatalogTreeWidget(presenter);
+			this.catalogTreeView = new CatalogBrowseWidget(presenter);
 			this.columnFactory.appendCatalogTreeReleaseColumns(this.catalogTreeView.getReleaseTable());
 		}
 		return this.catalogTreeView;

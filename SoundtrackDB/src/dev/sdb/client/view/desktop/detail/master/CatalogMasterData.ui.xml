@@ -8,7 +8,6 @@
 	</ui:style>
 	
 	<g:HTMLPanel>
-		<g:Label text="Katalog-Details"/>
 		<g:Grid>
 			<g:row>
 				<g:customCell>

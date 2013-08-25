@@ -24,7 +24,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 
-import dev.sdb.client.view.CatalogTreeView;
+import dev.sdb.client.view.CatalogBrowseView;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Catalog;
 import dev.sdb.shared.model.entity.Entity;
@@ -37,11 +37,11 @@ import dev.sdb.shared.model.entity.Entity;
  * @author s.christ
  * 
  */
-public class CatalogTreeWidget extends Composite implements CatalogTreeView {
+public class CatalogBrowseWidget extends Composite implements CatalogBrowseView {
 
 	private static final int VISIBLE_RANGE_LENGTH = 10;
 
-	interface CatalogTreeWidgetUiBinder extends UiBinder<Widget, CatalogTreeWidget> {}
+	interface CatalogTreeWidgetUiBinder extends UiBinder<Widget, CatalogBrowseWidget> {}
 	private static CatalogTreeWidgetUiBinder uiBinder = GWT.create(CatalogTreeWidgetUiBinder.class);
 
 	/**
@@ -117,11 +117,11 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 			if (value == null) {
 				// Top level.
 				CatalogListDataProvider dataProvider = new CatalogListDataProvider(0);
-				return new DefaultNodeInfo<Entity>(dataProvider, this.catalogCell, CatalogTreeWidget.this.treeSelectionModel, null);
+				return new DefaultNodeInfo<Entity>(dataProvider, this.catalogCell, CatalogBrowseWidget.this.treeSelectionModel, null);
 			} else if (value instanceof Entity) {
 				// Any other level.
 				CatalogListDataProvider dataProvider = new CatalogListDataProvider(((Entity) value).getId());
-				return new DefaultNodeInfo<Entity>(dataProvider, this.catalogCell, CatalogTreeWidget.this.treeSelectionModel, null);
+				return new DefaultNodeInfo<Entity>(dataProvider, this.catalogCell, CatalogBrowseWidget.this.treeSelectionModel, null);
 			}
 
 			return null;
@@ -145,7 +145,7 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		}
 
 		@Override protected void onRangeChanged(HasData<Entity> view) {
-			CatalogTreeWidget.this.presenter.getCatalogLevelEntries(this.parentId, this);
+			CatalogBrowseWidget.this.presenter.getCatalogLevelEntries(this.parentId, this);
 		}
 	}
 
@@ -164,7 +164,7 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 
 	private Presenter presenter;
 
-	public CatalogTreeWidget(Presenter presenter) {
+	public CatalogBrowseWidget(Presenter presenter) {
 		super();
 		setPresenter(presenter);
 
@@ -186,12 +186,12 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
 			@Override protected void onRangeChanged(HasData<Entity> display) {
-				if (CatalogTreeWidget.this.lastCatalog == null)
+				if (CatalogBrowseWidget.this.lastCatalog == null)
 					return;
-				CatalogTreeWidget.this.presenter.getCatalogReleases(
-						CatalogTreeWidget.this.lastCatalog,
-						CatalogTreeWidget.this.releaseTable.getVisibleRange(),
-						CatalogTreeWidget.this);
+				CatalogBrowseWidget.this.presenter.getCatalogReleases(
+						CatalogBrowseWidget.this.lastCatalog,
+						CatalogBrowseWidget.this.releaseTable.getVisibleRange(),
+						CatalogBrowseWidget.this);
 			}
 		};
 
@@ -265,17 +265,17 @@ public class CatalogTreeWidget extends Composite implements CatalogTreeView {
 		// adds its own handler.
 		this.treeSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			public void onSelectionChange(SelectionChangeEvent event) {
-				Object selected = CatalogTreeWidget.this.treeSelectionModel.getSelectedObject();
+				Object selected = CatalogBrowseWidget.this.treeSelectionModel.getSelectedObject();
 				if (selected == null) {
-					CatalogTreeWidget.this.lastCatalog = null;
+					CatalogBrowseWidget.this.lastCatalog = null;
 				} else if (selected instanceof Entity) {
-					CatalogTreeWidget.this.lastCatalog = (Catalog) selected;
+					CatalogBrowseWidget.this.lastCatalog = (Catalog) selected;
 				}
 
 				onCatalogSelection();
 
-				if (CatalogTreeWidget.this.listener != null) {
-					CatalogTreeWidget.this.listener.onSelection(CatalogTreeWidget.this.lastCatalog);
+				if (CatalogBrowseWidget.this.listener != null) {
+					CatalogBrowseWidget.this.listener.onSelection(CatalogBrowseWidget.this.lastCatalog);
 				}
 			}
 		});

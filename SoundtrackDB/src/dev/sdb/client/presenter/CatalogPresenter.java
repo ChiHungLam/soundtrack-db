@@ -10,17 +10,17 @@ import dev.sdb.client.ClientFactory;
 import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.service.SearchServiceAsync;
 import dev.sdb.client.view.CatalogDetailView;
-import dev.sdb.client.view.CatalogTreeView;
+import dev.sdb.client.view.CatalogBrowseView;
 import dev.sdb.client.view.DetailView;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
 import dev.sdb.shared.model.entity.Catalog;
 import dev.sdb.shared.model.entity.Entity;
 
-public class CatalogPresenter extends AbstractBrowsePresenter implements CatalogTreeView.Presenter,
+public class CatalogPresenter extends AbstractBrowsePresenter implements CatalogBrowseView.Presenter,
 		CatalogDetailView.Presenter {
 
-	private CatalogTreeView treeView;
+	private CatalogBrowseView treeView;
 
 	public CatalogPresenter(ClientFactory clientFactory) {
 		super(clientFactory, ContentPresenterType.CATALOG, Flavor.CATALOG);
@@ -69,7 +69,7 @@ public class CatalogPresenter extends AbstractBrowsePresenter implements Catalog
 
 	}
 
-	@Override public void getCatalogReleases(final Catalog catalog, Range range, final CatalogTreeView view) {
+	@Override public void getCatalogReleases(final Catalog catalog, Range range, final CatalogBrowseView view) {
 		SearchServiceAsync service = getClientFactory().getSearchService();
 
 		// Then, we send the input to the server.
@@ -152,9 +152,9 @@ public class CatalogPresenter extends AbstractBrowsePresenter implements Catalog
 		return this.treeView;
 	}
 
-	protected CatalogTreeView createTreeView(String term) {
+	protected CatalogBrowseView createTreeView(String term) {
 		// Create the query widget instance
-		final CatalogTreeView treeView = getClientFactory().getUi().getCatalogTreeView(this);
+		final CatalogBrowseView treeView = getClientFactory().getUi().getCatalogTreeView(this);
 
 		// Set the search term
 		//		treeView.setText(term);

@@ -1,11 +1,13 @@
 package dev.sdb.client.view.desktop.detail.master;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.LongBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
+import dev.sdb.client.view.UiFactory.HtmlFactory;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Soundtrack;
 
@@ -14,9 +16,7 @@ public class SoundtrackMasterData extends MasterDataWidget {
 	interface SoundtrackMasterDataUiBinder extends UiBinder<Widget, SoundtrackMasterData> {}
 	private static SoundtrackMasterDataUiBinder uiBinder = GWT.create(SoundtrackMasterDataUiBinder.class);
 
-	@UiField LongBox idField;
-	@UiField ReleaseMasterData releaseMasterData;
-	@UiField MusicMasterData musicMasterData;
+	@UiField HTML content;
 
 	public SoundtrackMasterData() {
 		super();
@@ -25,14 +25,29 @@ public class SoundtrackMasterData extends MasterDataWidget {
 
 	public void initEntity(Entity entity) {
 		if (entity == null) {
-			this.idField.setValue(null);
-			this.releaseMasterData.initEntity(null);
-			this.musicMasterData.initEntity(null);
+			this.content.setHTML("");
 		} else {
 			Soundtrack soundtrack = (Soundtrack) entity;
-			this.idField.setValue(Long.valueOf(soundtrack.getId()));
-			this.releaseMasterData.initEntity(soundtrack.getRelease());
-			this.musicMasterData.initEntity(soundtrack.getMusic());
+
+			HtmlFactory htmlFactory = getPresenter().getHtmlFactory();
+
+			SafeHtml releaseHtml = htmlFactory.getReleaseInfoDetailed(soundtrack.getRelease());
+			SafeHtml seqNumHtml = htmlFactory.getSoundtrackSeqNum(soundtrack);
+			SafeHtml musicHtml = htmlFactory.getMusicInfoCompact(soundtrack.getMusic());
+			SafeHtml timeHtml = htmlFactory.getSoundtrackTime(soundtrack);
+			
+			String html = "<div style='text-align:left;'>";
+			html += releaseHtml.asString() + "<br><br>";
+			html += "<table><tr><td style='position:relative;width:100px;'>";
+			html += seqNumHtml.asString();
+			html += "</td><td>";
+			html += musicHtml.asString();
+			html += "</td></tr></table>";
+			html += "<br><br>";
+			html += "Zeitindex: " + timeHtml.asString();
+			html += "</div>";
+
+			this.content.setHTML(html);
 		}
 	}
 }
