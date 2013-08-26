@@ -124,6 +124,7 @@ public class SoundtrackDB implements EntryPoint {
 				LOGGER.info("Scheduler after");
 			}
 		});
+
 	}
 
 	public static void setBrowserWindowTitle(String title) {

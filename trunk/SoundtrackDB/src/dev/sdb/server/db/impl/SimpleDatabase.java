@@ -20,7 +20,7 @@ public class SimpleDatabase extends AbstractDatabase {
 		super(sqlServer);
 	}
 
-	@Override public void repairCatalogChildInfo() throws IOException {
+	@Override public void repairCatalogInfo() throws IOException {
 		// TODO SimpleDatabase
 	}
 

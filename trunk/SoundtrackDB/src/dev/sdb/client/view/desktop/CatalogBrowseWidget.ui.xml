@@ -1,8 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
 <ui:UiBinder
 	xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:s="urn:import:dev.sdb.client.view.desktop">
 	
 	<ui:style>
 		.stage {
@@ -95,7 +97,7 @@
 			<g:Label addStyleNames="{style.treeLabel}" text="Katalog-Auswahl"/>
 			
 			<g:ScrollPanel addStyleNames="{style.treeScrollPanel}">
-				<c:CellTree ui:field="catalogCellTree" addStyleNames="{style.tree}"/>
+				<s:CatalogTreeWidget ui:field="catalogTree" addStyleNames="{style.tree}"/>
 			</g:ScrollPanel>
 		</g:FlowPanel>
 		

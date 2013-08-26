@@ -93,6 +93,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 			"`cat_title` , " +
 			"`cat_parent_id` , " +
 			"`cat_children` , " +
+			"`cat_entries` , " +
 			"`cat_info_catalog` , " +
 			"`cat_start` , " +
 			"`cat_end`";
@@ -101,7 +102,76 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		super(sqlServer);
 	}
 
-	@Override public void repairCatalogChildInfo() throws IOException {
+	@Override public void repairCatalogInfo() throws IOException {
+		repairCatalogChildInfo();
+		repairCatalogEntryInfo();
+	}
+
+	private void repairCatalogEntryInfo() throws IOException {
+		PreparedStatement selectPS = null;
+		PreparedStatement countPS = null;
+		PreparedStatement updatePS = null;
+
+		List<Entity> result = new Vector<Entity>();
+
+		try {
+
+			String sqlSelect = "SELECT `cat_id` , `cat_entries` FROM `catalog` ;";
+			String sqlCount = "SELECT COUNT( * ) AS `rows` FROM `release` WHERE `release`.`rel_catalog_id` = ? ;";
+			String sqlUpdate = "UPDATE `sdb`.`catalog` SET `cat_entries` = ? WHERE `catalog`.`cat_id` = ? LIMIT 1 ;";
+
+			selectPS = getStatement(sqlSelect);
+			countPS = getStatement(sqlCount);
+			updatePS = getUpdatableStatement(sqlUpdate);
+
+			//			queryCatalogLevelList(listPS, result, parentId);
+
+			ResultSet rsSelect = null;
+
+			try {
+
+				rsSelect = selectPS.executeQuery();
+
+				while (rsSelect.next()) {
+					long id = rsSelect.getLong("cat_id");
+					boolean entries = rsSelect.getBoolean("cat_entries");
+
+					int count = count(countPS, Long.valueOf(id));
+					boolean currentEntries = (count > 0);
+
+					if (entries != currentEntries) {
+
+						try {
+
+							updatePS.clearParameters();
+							updatePS.setBoolean(1, currentEntries);
+							updatePS.setLong(2, id);
+
+							updatePS.executeUpdate();
+
+						} catch (SQLException e) {
+							throw new IOException(e);
+						}
+					}
+				}
+
+			} catch (SQLException e) {
+				throw new IOException(e);
+			} finally {
+				closeResultSet(rsSelect);
+			}
+
+		} catch (SQLException e) {
+			result.clear();
+			throw new IOException(e);
+		} finally {
+			closeStatement(updatePS);
+			closeStatement(countPS);
+			closeStatement(selectPS);
+		}
+	}
+
+	private void repairCatalogChildInfo() throws IOException {
 		PreparedStatement selectPS = null;
 		PreparedStatement countPS = null;
 		PreparedStatement updatePS = null;
@@ -164,7 +234,6 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 			closeStatement(selectPS);
 		}
 	}
-
 	protected Release readRelease(ResultSet rs) throws SQLException {
 		long id = rs.getLong("print_id");
 		if (id <= 0)
@@ -253,11 +322,12 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		String title = rs.getString("cat_title");
 		String info = rs.getString("cat_info_catalog");
 		long parentId = rs.getLong("cat_parent_id");
-		boolean children = rs.getBoolean("cat_children");
+		boolean catalogChildren = rs.getBoolean("cat_children");
+		boolean catalogEntries = rs.getBoolean("cat_entries");
 		int eraBegin = rs.getInt("cat_start");
 		int eraEnd = rs.getInt("cat_end");
 
-		return new Catalog(id, parentId, children, title, info, eraBegin, eraEnd);
+		return new Catalog(id, parentId, catalogChildren, catalogEntries, title, info, eraBegin, eraEnd);
 	}
 	protected Music readMusic(ResultSet rs) throws SQLException {
 		long id = rs.getLong("vers_id");

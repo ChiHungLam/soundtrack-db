@@ -5,7 +5,8 @@ import dev.sdb.shared.model.db.Flavor;
 public class Catalog extends AbstractEntity<Catalog> {
 
 	private long parentId;
-	private boolean children;
+	private boolean catalogChildren;
+	private boolean catalogEntries;
 	private String title;
 	private String info;
 	private int eraBegin;
@@ -15,10 +16,11 @@ public class Catalog extends AbstractEntity<Catalog> {
 		super();
 	}
 
-	public Catalog(long id, long parentId, boolean children, String title, String info, int eraBegin, int eraEnd) {
+	public Catalog(long id, long parentId, boolean catalogChildren, boolean catalogEntries, String title, String info, int eraBegin, int eraEnd) {
 		super(id);
 		this.parentId = parentId;
-		this.children = children;
+		this.catalogChildren = catalogChildren;
+		this.catalogEntries = catalogEntries;
 		this.title = title;
 		this.info = info;
 		this.eraBegin = eraBegin;
@@ -36,8 +38,16 @@ public class Catalog extends AbstractEntity<Catalog> {
 		return match;
 	}
 
-	public boolean hasChildren() {
-		return this.children;
+	public boolean hasCatalogChildren() {
+		return this.catalogChildren;
+	}
+
+	public boolean hasCatalogEntries() {
+		return this.catalogEntries;
+	}
+
+	public boolean hasCatalogChildrenAndEntries() {
+		return this.catalogChildren && this.catalogEntries;
 	}
 
 	public String getTitle() {
