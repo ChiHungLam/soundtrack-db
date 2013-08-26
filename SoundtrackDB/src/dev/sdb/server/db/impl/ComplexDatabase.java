@@ -21,7 +21,7 @@ import dev.sdb.shared.model.entity.Soundtrack;
 
 public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
-	private static final String ARTWORTK_ROOT = "http://localhost/mimg/";
+	private static final String ARTWORTK_ROOT = "http://localhost/mimg/artwork/";
 	private static final String NO_ARTWORK_DIRECTORY = "unknown/";
 	private static final String NO_ARTWORK_IMAGE = "missing.png";
 
@@ -281,12 +281,9 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 			if (catalogNumber == null || catalogNumber.isEmpty())
 				throw new IllegalStateException();
 
-			catalogNumber = catalogNumber.replace("/", "-");
+			String fileName = getArtworkFileName(catalogNumber, print);
 
-			String url = ARTWORTK_ROOT + artworkRootUrl + catalogNumber;
-			if (print > 1)
-				url += ".P" + print;
-			return url + ".jpg";
+			return ARTWORTK_ROOT + artworkRootUrl + fileName;
 			
 		} catch (IllegalStateException e) {
 			if (label == null || label.isEmpty())
@@ -294,8 +291,18 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 			return ARTWORTK_ROOT + NO_ARTWORK_DIRECTORY + label.toLowerCase() + ".png";
 		}
+	}
 
+	private String getArtworkFileName(String catalogNumber, int print) {
+		String name = catalogNumber.replace("/", "-");
 
+		if (name.length() == 9 && name.charAt(7) == '.')
+			name = name.substring(0, 7);
+
+		if (print > 1)
+			name += ".P" + print;
+
+		return name + ".jpg";
 	}
 
 	protected Series readSeries(ResultSet rs) throws SQLException {
