@@ -44,6 +44,17 @@ import dev.sdb.shared.model.entity.Entity;
 		return new ComplexDatabase(sqlServer);
 	}
 
+	@Override public void repairCatalogInfo() throws IOException {
+		Database database = getDatabase();
+		database.open();
+
+		try {
+			database.repairCatalogInfo();
+		} finally {
+			database.close();
+		}
+	}
+
 	@Override public Entity get(Flavor flavor, long id) throws IllegalArgumentException, IOException {
 		assert (flavor != null);
 		assert (id > 0);

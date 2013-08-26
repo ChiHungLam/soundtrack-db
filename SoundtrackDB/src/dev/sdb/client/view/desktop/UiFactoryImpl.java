@@ -14,8 +14,8 @@ import com.google.gwt.user.cellview.client.Column;
 
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.presenter.ContentPresenterType;
-import dev.sdb.client.view.CatalogDetailView;
 import dev.sdb.client.view.CatalogBrowseView;
+import dev.sdb.client.view.CatalogDetailView;
 import dev.sdb.client.view.ErrorView;
 import dev.sdb.client.view.FooterView;
 import dev.sdb.client.view.HeaderView;
@@ -37,6 +37,7 @@ import dev.sdb.client.view.desktop.detail.ReleaseDetailWidget;
 import dev.sdb.client.view.desktop.detail.SeriesDetailWidget;
 import dev.sdb.client.view.desktop.detail.SoundtrackDetailWidget;
 import dev.sdb.shared.model.db.Flavor;
+import dev.sdb.shared.model.entity.Catalog;
 import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
@@ -130,6 +131,43 @@ public class UiFactoryImpl implements UiFactory {
 	private class HtmlFactory implements UiFactory.HtmlFactory {
 
 		private static final String IMG_STATIC_ROOT_URL = "http://localhost/mimg/static/";
+
+		@Override public SafeHtml getCatalogTreeEntry(Catalog catalog) {
+
+			String info = catalog.getInfo();
+			String era = catalog.getEra();
+
+			String icon;
+			if (catalog.hasCatalogChildrenAndEntries()) {
+				icon = "catalog_children_entries.png";
+			} else if (catalog.hasCatalogChildren()) {
+				icon = "catalog_children.png";
+			} else if (catalog.hasCatalogEntries()) {
+				icon = "catalog_entries.png";
+			} else {
+				icon = "catalog_none.png";
+			}
+
+			icon = "<img style='margin-top: 4px; width: 16px; height: 16px;' src='" + IMG_STATIC_ROOT_URL + icon + "' alt='" + icon + "'>";
+
+			SafeHtmlBuilder sb = new SafeHtmlBuilder();
+
+			sb.appendHtmlConstant("<table><tr>");
+			sb.appendHtmlConstant("<td style='min-width: 16px;'>");
+			sb.appendHtmlConstant(icon);
+			sb.appendHtmlConstant("</td>");
+			sb.appendHtmlConstant("<td style='text-align: left; width: 100%;'>");
+			sb.appendHtmlConstant("<span style='font-weight: bold;'>" + catalog.getTitle() + "</span>");
+			if ((info != null) && !info.isEmpty())
+				sb.appendHtmlConstant("&nbsp;<span style='font-size: smaller;'>[" + info + "]</span>");
+			sb.appendHtmlConstant("</td>");
+			sb.appendHtmlConstant("<td style='text-align: right; width: 100px;'>");
+			if ((era != null) && !era.isEmpty())
+				sb.appendHtmlConstant("<span style='font-size: smaller;'>(" + era.replace(" ", "&nbsp;") + ")</span>");
+			sb.appendHtmlConstant("</td>");
+			sb.appendHtmlConstant("</tr></table>");
+			return sb.toSafeHtml();
+		}
 
 		@Override public SafeHtml getMusicInfoCompact(Music music) {
 

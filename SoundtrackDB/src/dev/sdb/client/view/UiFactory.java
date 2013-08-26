@@ -3,6 +3,7 @@ package dev.sdb.client.view;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 import dev.sdb.client.ClientFactory;
+import dev.sdb.shared.model.entity.Catalog;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
 import dev.sdb.shared.model.entity.Series;
@@ -20,8 +21,9 @@ public interface UiFactory {
 		SafeHtml getSeriesInfo(Series series);
 
 		SafeHtml getSoundtrackSeqNum(Soundtrack soundtrack);
-
 		SafeHtml getSoundtrackTime(Soundtrack soundtrack);
+
+		SafeHtml getCatalogTreeEntry(Catalog catalog);
 	}
 
 	void setClientFactory(ClientFactory clientFactory);
