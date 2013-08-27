@@ -27,7 +27,4 @@ public interface Database {
 
 	Result getCatalogList(long parentCatalogId) throws IOException;
 
-	void repairCatalogInfo() throws IOException;
-
-
 }

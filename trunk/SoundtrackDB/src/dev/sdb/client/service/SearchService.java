@@ -28,6 +28,4 @@ import dev.sdb.shared.model.entity.Entity;
 	Result getCatalogReleaseList(long catalogId, Range range) throws IllegalArgumentException, IOException;
 
 	Result getCatalogList(long parentCatalogId) throws IllegalArgumentException, IOException;
-
-	void repairCatalogInfo() throws IOException;
 }

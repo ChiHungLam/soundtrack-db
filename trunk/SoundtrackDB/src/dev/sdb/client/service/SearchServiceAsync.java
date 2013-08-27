@@ -25,6 +25,4 @@ public interface SearchServiceAsync {
 	void getCatalogReleaseList(long catalogId, Range range, AsyncCallback<Result> asyncCallback);
 
 	void getCatalogList(long parentCatalogId, AsyncCallback<Result> asyncCallback);
-
-	void repairCatalogInfo(AsyncCallback<Void> asyncCallback);
 }

@@ -1,25 +1,21 @@
 package dev.sdb.server.db.impl;
 
-import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.util.List;
-import java.util.Vector;
 
 import com.google.gwt.view.client.Range;
 
 import dev.sdb.server.db.SqlServer;
+import dev.sdb.shared.model.StatusChecker;
 import dev.sdb.shared.model.entity.Catalog;
-import dev.sdb.shared.model.entity.Entity;
 import dev.sdb.shared.model.entity.Genre;
 import dev.sdb.shared.model.entity.Music;
 import dev.sdb.shared.model.entity.Release;
 import dev.sdb.shared.model.entity.Series;
 import dev.sdb.shared.model.entity.Soundtrack;
 
-public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
+public class ComplexDatabase extends AbstractDatabase {
 
 	private static final String ARTWORTK_ROOT = "http://localhost/mimg/artwork/";
 	private static final String NO_ARTWORK_DIRECTORY = "unknown/";
@@ -43,7 +39,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 			"`rel_status` , " +
 			"`prod_res_title` , " +
 			"`prod_status` , " +
-			"`prod_episode` , " +
+			"`print_episode` , " +
 			"`lab_titel` , " +
 			"`typ_name` , " +
 			"`typ_status` , " +
@@ -86,14 +82,14 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 			"`rec_status` , " +
 			GENRE_INFO_FIELDS + " , " +
 			"`auts_display` , " +
-			"`perf_name`";
+			"`perf_name` , " +
+			"`mix_duration`";
 
 	private static final String CATALOG_INFO_FIELDS = "" +
 			"`cat_id` , " +
 			"`cat_title` , " +
 			"`cat_parent_id` , " +
-			"`cat_children` , " +
-			"`cat_entries` , " +
+			"`cat_status` , " +
 			"`cat_info_catalog` , " +
 			"`cat_start` , " +
 			"`cat_end`";
@@ -102,138 +98,6 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		super(sqlServer);
 	}
 
-	@Override public void repairCatalogInfo() throws IOException {
-		repairCatalogChildInfo();
-		repairCatalogEntryInfo();
-	}
-
-	private void repairCatalogEntryInfo() throws IOException {
-		PreparedStatement selectPS = null;
-		PreparedStatement countPS = null;
-		PreparedStatement updatePS = null;
-
-		List<Entity> result = new Vector<Entity>();
-
-		try {
-
-			String sqlSelect = "SELECT `cat_id` , `cat_entries` FROM `catalog` ;";
-			String sqlCount = "SELECT COUNT( * ) AS `rows` FROM `release` WHERE `release`.`rel_catalog_id` = ? ;";
-			String sqlUpdate = "UPDATE `sdb`.`catalog` SET `cat_entries` = ? WHERE `catalog`.`cat_id` = ? LIMIT 1 ;";
-
-			selectPS = getStatement(sqlSelect);
-			countPS = getStatement(sqlCount);
-			updatePS = getUpdatableStatement(sqlUpdate);
-
-			//			queryCatalogLevelList(listPS, result, parentId);
-
-			ResultSet rsSelect = null;
-
-			try {
-
-				rsSelect = selectPS.executeQuery();
-
-				while (rsSelect.next()) {
-					long id = rsSelect.getLong("cat_id");
-					boolean entries = rsSelect.getBoolean("cat_entries");
-
-					int count = count(countPS, Long.valueOf(id));
-					boolean currentEntries = (count > 0);
-
-					if (entries != currentEntries) {
-
-						try {
-
-							updatePS.clearParameters();
-							updatePS.setBoolean(1, currentEntries);
-							updatePS.setLong(2, id);
-
-							updatePS.executeUpdate();
-
-						} catch (SQLException e) {
-							throw new IOException(e);
-						}
-					}
-				}
-
-			} catch (SQLException e) {
-				throw new IOException(e);
-			} finally {
-				closeResultSet(rsSelect);
-			}
-
-		} catch (SQLException e) {
-			result.clear();
-			throw new IOException(e);
-		} finally {
-			closeStatement(updatePS);
-			closeStatement(countPS);
-			closeStatement(selectPS);
-		}
-	}
-
-	private void repairCatalogChildInfo() throws IOException {
-		PreparedStatement selectPS = null;
-		PreparedStatement countPS = null;
-		PreparedStatement updatePS = null;
-
-		List<Entity> result = new Vector<Entity>();
-
-		try {
-
-			String sqlSelect = "SELECT `cat_id` , `cat_children` FROM `catalog` ;";
-			String sqlCount = "SELECT COUNT( * ) AS `rows` FROM `catalog` WHERE `catalog`.`cat_parent_id` = ? ;";
-			String sqlUpdate = "UPDATE `sdb`.`catalog` SET `cat_children` = ? WHERE `catalog`.`cat_id` = ? LIMIT 1 ;";
-
-			selectPS = getStatement(sqlSelect);
-			countPS = getStatement(sqlCount);
-			updatePS = getUpdatableStatement(sqlUpdate);
-
-			//			queryCatalogLevelList(listPS, result, parentId);
-
-			ResultSet rsSelect = null;
-
-			try {
-
-				rsSelect = selectPS.executeQuery();
-
-				while (rsSelect.next()) {
-					long id = rsSelect.getLong("cat_id");
-					boolean children = rsSelect.getBoolean("cat_children");
-
-					int count = count(countPS, Long.valueOf(id));
-					boolean currentChildren = (count > 0);
-
-					if (children != currentChildren) {
-
-						try {
-
-							updatePS.clearParameters();
-							updatePS.setBoolean(1, currentChildren);
-							updatePS.setLong(2, id);
-
-							updatePS.executeUpdate();
-
-						} catch (SQLException e) {
-							throw new IOException(e);
-						}
-					}
-				}
-
-			} catch (SQLException e) {
-				throw new IOException(e);
-			} finally {
-				closeResultSet(rsSelect);
-			}
-
-		} catch (SQLException e) {
-			result.clear();
-			throw new IOException(e);
-		} finally {
-			closeStatement(updatePS);
-			closeStatement(countPS);
-			closeStatement(selectPS);
-		}
-	}
 	protected Release readRelease(ResultSet rs) throws SQLException {
 		long id = rs.getLong("print_id");
 		if (id <= 0)
@@ -261,7 +125,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 
 		String type = rs.getString("typ_name");
 
-		int episode = rs.getInt("prod_episode");
+		int episode = rs.getInt("print_episode");
 
 		String artworkRootUrl = rs.getString("cat_artwork_root");
 
@@ -329,10 +193,12 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		String title = rs.getString("cat_title");
 		String info = rs.getString("cat_info_catalog");
 		long parentId = rs.getLong("cat_parent_id");
-		boolean catalogChildren = rs.getBoolean("cat_children");
-		boolean catalogEntries = rs.getBoolean("cat_entries");
+		int status = rs.getInt("cat_status");
 		int eraBegin = rs.getInt("cat_start");
 		int eraEnd = rs.getInt("cat_end");
+
+		boolean catalogChildren = StatusChecker.isBitSet(status, 1);
+		boolean catalogEntries = StatusChecker.isBitSet(status, 2);
 
 		return new Catalog(id, parentId, catalogChildren, catalogEntries, title, info, eraBegin, eraEnd);
 	}
@@ -355,7 +221,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 		String authors = rs.getString("auts_display");
 		String artist = rs.getString("perf_name");
 
-		Time duration = null;
+		Time duration = rs.getTime("mix_duration");
 
 		Genre genre = readGenre(rs);
 
@@ -524,7 +390,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
-				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `print_edition_id` "
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
 				+ "WHERE `print_id` = ? ;";
@@ -540,6 +406,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
 				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
+				+ "LEFT JOIN `mix` ON `mix_id` = `vers_default_mix_id` "
 				+ "WHERE `vers_id` = ? ;";
 		return sql;
 	}
@@ -574,6 +441,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
 				+ "LEFT JOIN `recording` ON `rec_id` = `stk_recording_id` "
 				+ "LEFT JOIN `genre` ON `gen_id` = `rec_genre_id` "
+				+ "LEFT JOIN `mix` ON `mix_id` = `vers_default_mix_id` "
 				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
 				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
@@ -590,7 +458,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
-				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `print_edition_id` "
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
 				+ "WHERE `stk_id` = ? ;";
@@ -660,9 +528,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 	protected String composeSeriesReleaseListCount() {
 		String sql = "SELECT COUNT( * ) AS `rows` "
 				+ "FROM `print` "
-				+ "LEFT JOIN `release` ON `rel_id` = `print_release_id` "
-				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
-				+ "WHERE `prod_edition_id` LIKE ? ;";
+				+ "WHERE `print_edition_id` LIKE ? ;";
 		return sql;
 	}
 
@@ -680,7 +546,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
-				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `print_edition_id` "
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `rel_catalog_id` LIKE ? "
 				+ "ORDER BY " + composePrintOrder(ascending) + " "
@@ -709,7 +575,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
-				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `print_edition_id` "
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `prod_res_title` LIKE ? "
 				+ "ORDER BY " + composePrintOrder(ascending) + " "
@@ -725,6 +591,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
 				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
+				+ "LEFT JOIN `mix` ON `mix_id` = `vers_default_mix_id` "
 				+ "WHERE `rec_title` LIKE ? "
 				+ "ORDER BY `rec_title` " + getOrderDirection(ascending) + " "
 				+ getLimit(range);
@@ -748,6 +615,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
 				+ "LEFT JOIN `recording` ON `rec_id` = `stk_recording_id` "
 				+ "LEFT JOIN `genre` ON `gen_id` = `rec_genre_id` "
+				+ "LEFT JOIN `mix` ON `mix_id` = `vers_default_mix_id` "
 				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
 				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
@@ -764,7 +632,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				//				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
-				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `print_edition_id` "
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
 				+ "WHERE `rec_title` LIKE ? "
@@ -784,6 +652,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `part` ON `part_id` = `stk_part_id` "
 				+ "LEFT JOIN `recording` ON `rec_id` = `stk_recording_id` "
 				+ "LEFT JOIN `genre` ON `gen_id` = `rec_genre_id` "
+				+ "LEFT JOIN `mix` ON `mix_id` = `vers_default_mix_id` "
 				+ "LEFT JOIN `lineup` ON `lin_id` = `vers_lineup_id` "
 				+ "LEFT JOIN `performer` ON `perf_id` = `lin_performer_id` "
 				+ "LEFT JOIN `author_set` ON `auts_id` = `vers_authorset_id` "
@@ -814,7 +683,7 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
-				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `print_edition_id` "
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "WHERE `print_audio_id` IN ( " + inSelect + " ) "
 				+ "ORDER BY " + composePrintOrder(true) + " "
@@ -834,10 +703,10 @@ public class ComplexDatabase extends AbstractDatabase implements ComplexSchema {
 				+ "LEFT JOIN `multimedium` ON `mm_id` = `rel_multimedia_id` "
 				+ "LEFT JOIN `production` ON `prod_id` = `rel_production_id` "
 				+ "LEFT JOIN `type` ON `typ_id` = `prod_type_id` "
-				+ "LEFT JOIN `edition` ON `edt_id` = `prod_edition_id` "
+				+ "LEFT JOIN `edition` ON `edt_id` = `print_edition_id` "
 				+ "LEFT JOIN `series` ON `ser_id` = `edt_series_id` "
 				+ "LEFT JOIN `catalog` ON `cat_id` = `rel_catalog_id` "
-				+ "WHERE `prod_edition_id` LIKE ? "
+				+ "WHERE `print_edition_id` LIKE ? "
 				+ "ORDER BY " + composePrintOrder(true) + " "
 				+ getLimit(range);
 		return sql;
