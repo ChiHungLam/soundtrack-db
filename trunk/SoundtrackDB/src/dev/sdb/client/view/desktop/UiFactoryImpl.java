@@ -5,8 +5,10 @@ import java.util.Vector;
 
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.SafeHtmlCell;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -130,25 +132,26 @@ public class UiFactoryImpl implements UiFactory {
 
 	private class HtmlFactory implements UiFactory.HtmlFactory {
 
-		private static final String IMG_STATIC_ROOT_URL = "http://localhost/mimg/static/";
-
 		@Override public SafeHtml getCatalogTreeEntry(Catalog catalog) {
+
+			DesktopBundle bundle = getClientBundle();
 
 			String info = catalog.getInfo();
 			String era = catalog.getEra();
 
-			String icon;
+			ImageResource res = null;
+
 			if (catalog.hasCatalogChildrenAndEntries()) {
-				icon = "catalog_children_entries.png";
+				res = bundle.catalogChildrenAndEntriesIcon();
 			} else if (catalog.hasCatalogChildren()) {
-				icon = "catalog_children.png";
+				res = bundle.catalogChildrenIcon();
 			} else if (catalog.hasCatalogEntries()) {
-				icon = "catalog_entries.png";
+				res = bundle.catalogEntriesIcon();
 			} else {
-				icon = "catalog_none.png";
+				res = bundle.catalogNoneIcon();
 			}
 
-			icon = "<img style='margin-top: 4px; width: 16px; height: 16px;' src='" + IMG_STATIC_ROOT_URL + icon + "' alt='" + icon + "'>";
+			String icon = "<img style='margin-top: 4px; width: 16px; height: 16px;' src='" + res.getSafeUri().asString() + "'>";
 
 			SafeHtmlBuilder sb = new SafeHtmlBuilder();
 
@@ -368,10 +371,12 @@ public class UiFactoryImpl implements UiFactory {
 
 		protected SafeHtml getGotoImage(Flavor flavor) {
 
+			DesktopBundle bundle = getClientBundle();
+
 			String title = flavor.getPrefix() + "-Details anzeigen";
 
 			SafeHtmlBuilder sb = new SafeHtmlBuilder();
-			sb.appendHtmlConstant("<img style='margin-top: 4px; width: 16px; height: 16px;' src='" + IMG_STATIC_ROOT_URL + "goto16.png' alt='Gehe zu' title='" + title + "'>");
+			sb.appendHtmlConstant("<img style='margin-top: 4px; width: 16px; height: 16px;' src='" + bundle.gotoIcon().getSafeUri().asString() + "' alt='Gehe zu' title='" + title + "'>");
 
 			return sb.toSafeHtml();
 		}
@@ -777,6 +782,7 @@ public class UiFactoryImpl implements UiFactory {
 	private ClientFactory clientFactory;
 	private HtmlFactory htmlFactory;
 	private ColumnFactory columnFactory;
+	private DesktopBundle clientBundle;
 
 	public UiFactoryImpl() {
 		super();
@@ -912,4 +918,10 @@ public class UiFactoryImpl implements UiFactory {
 		return this.catalogDetailView;
 	}
 
+	@Override public DesktopBundle getClientBundle() {
+		if (this.clientBundle == null) {
+			this.clientBundle = GWT.create(DesktopBundle.class);
+		}
+		return this.clientBundle;
+	}
 }
