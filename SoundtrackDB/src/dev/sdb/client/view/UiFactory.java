@@ -1,5 +1,6 @@
 package dev.sdb.client.view;
 
+import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 import dev.sdb.client.ClientFactory;
@@ -28,6 +29,7 @@ public interface UiFactory {
 
 	void setClientFactory(ClientFactory clientFactory);
 
+	ClientBundle getClientBundle();
 	HtmlFactory getHtmlFactory();
 
 	NavigatorView getNavigatorView();
