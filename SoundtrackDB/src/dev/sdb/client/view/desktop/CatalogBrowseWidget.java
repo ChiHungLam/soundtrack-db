@@ -21,7 +21,7 @@ import dev.sdb.shared.model.entity.Entity;
 
 public class CatalogBrowseWidget extends Composite implements CatalogBrowseView {
 
-	private static final int VISIBLE_RANGE_LENGTH = 10;
+	//	private static final int VISIBLE_RANGE_LENGTH = 10;
 
 	interface CatalogBrowseWidgetUiBinder extends UiBinder<Widget, CatalogBrowseWidget> {}
 	private static CatalogBrowseWidgetUiBinder uiBinder = GWT.create(CatalogBrowseWidgetUiBinder.class);
@@ -53,7 +53,7 @@ public class CatalogBrowseWidget extends Composite implements CatalogBrowseView 
 
 		// Set the range to display. In this case, our visible range is smaller than
 		// the data set.
-		this.releaseTable.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
+		this.releaseTable.setVisibleRange(0, Integer.MAX_VALUE);
 
 		// Create a data provider.
 		AsyncDataProvider<Entity> dataProvider = new AsyncDataProvider<Entity>() {
@@ -111,6 +111,11 @@ public class CatalogBrowseWidget extends Composite implements CatalogBrowseView 
 
 		this.releaseTable.setRowCount(total, true);
 		this.releaseTable.setRowData(catalogResult.getRangeStart(), catalogResult.getResultChunk());
+		//this.releaseTable.setVisibleRange(0, total);
+
+		if (total > 0)
+			this.releaseTable.getRowElement(0).scrollIntoView(); // scroll to top
+
 		this.selectionInfoLabel.setText(resultInfo);
 
 		setReleaseTableVisibility(total > 0);
@@ -122,7 +127,7 @@ public class CatalogBrowseWidget extends Composite implements CatalogBrowseView 
 
 		if (catalog == null) {
 			this.releaseTable.setRowCount(0, true);
-			this.releaseTable.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
+			//this.releaseTable.setVisibleRange(0, VISIBLE_RANGE_LENGTH);
 			//			this.releaseTable.setRowData(0, );
 			return;
 		}

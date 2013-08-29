@@ -9,8 +9,8 @@ import com.google.gwt.view.client.Range;
 import dev.sdb.client.ClientFactory;
 import dev.sdb.client.SoundtrackDB;
 import dev.sdb.client.service.SearchServiceAsync;
-import dev.sdb.client.view.CatalogDetailView;
 import dev.sdb.client.view.CatalogBrowseView;
+import dev.sdb.client.view.CatalogDetailView;
 import dev.sdb.client.view.DetailView;
 import dev.sdb.shared.model.db.Flavor;
 import dev.sdb.shared.model.db.Result;
@@ -73,7 +73,7 @@ public class CatalogPresenter extends AbstractBrowsePresenter implements Catalog
 		SearchServiceAsync service = getClientFactory().getSearchService();
 
 		// Then, we send the input to the server.
-		service.getCatalogReleaseList(catalog.getId(), range, new AsyncCallback<Result>() {
+		service.getCatalogReleaseList(catalog.getId(), null, new AsyncCallback<Result>() {
 
 			public void onSuccess(Result searchResult) {
 				view.showResult(searchResult);

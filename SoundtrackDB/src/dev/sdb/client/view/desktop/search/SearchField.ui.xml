@@ -15,6 +15,12 @@
 			margin-right: 5px;
 		}
 		.searchTerm {
+			-webkit-appearance: searchfield;
+			-moz-appearance: searchfield;
+			-o-appearance: searchfield;
+			-ms-appearance: searchfield;
+			appearance: searchfield;
+			
 			font-family: Arial Unicode MS, Arial, sans-serif;
 			font-size: 10pt;
 			

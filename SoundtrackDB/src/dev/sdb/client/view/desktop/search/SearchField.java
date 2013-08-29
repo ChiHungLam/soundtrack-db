@@ -33,6 +33,8 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 
 	public interface Style extends CssResource {
 		String error();
+
+		//String gwtTextBox();
 	}
 
 	@UiField protected Style style;
@@ -49,6 +51,7 @@ public class SearchField extends Composite implements HasEnabled, HasText, HasHa
 		super();
 		initWidget(uiBinder.createAndBindUi(this));
 
+		this.searchTerm.removeStyleName("gwt-TextBox");//Otherwise appearance: searchfield; won't work
 		if (searchText == null)
 			searchText = "";
 
