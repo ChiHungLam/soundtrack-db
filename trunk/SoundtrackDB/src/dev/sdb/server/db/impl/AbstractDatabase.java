@@ -174,12 +174,21 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 		try {
 
 			listPS = getStatement(composeCatalogReleaseList(range, true));
-			countPS = getStatement(composeCatalogReleaseListCount());
-
-			int count = count(countPS, Long.valueOf(catalogId));
 			queryCatalogReleaseList(listPS, result, catalogId);
 
-			return new Result(result, range.getStart(), count);
+			int rangeStart;
+			int totalLength;
+
+			if (range == null) {
+				rangeStart = 0;
+				totalLength = result.size();
+			} else {
+				rangeStart = range.getStart();
+				countPS = getStatement(composeCatalogReleaseListCount());
+				totalLength = count(countPS, Long.valueOf(catalogId));
+			}
+
+			return new Result(result, rangeStart, totalLength);
 
 		} catch (SQLException e) {
 			result.clear();
@@ -558,7 +567,7 @@ public abstract class AbstractDatabase extends SqlManager implements Database {
 	}
 
 	protected String getLimit(Range range) {
-		return "LIMIT " + range.getStart() + " , " + range.getLength() + " ;";
+		return (range == null) ? ";" : ("LIMIT " + range.getStart() + " , " + range.getLength() + " ;");
 	}
 
 

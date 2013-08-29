@@ -101,6 +101,7 @@ import dev.sdb.shared.model.entity.Entity;
 
 	@Override public Result getCatalogReleaseList(long catalogId, Range range) throws IllegalArgumentException, IOException {
 		assert (catalogId >= 0);
+		System.out.println("getCatalogReleaseList");
 
 		Database database = getDatabase();
 		database.open();
